@@ -94,6 +94,7 @@ jobs:
         - '3.13'
     steps:
     - uses: actions/checkout@v4.1.0
+    - run: python -m pip install --upgrade pip
     - run: pip install tox
     - run: tox -vv
 
