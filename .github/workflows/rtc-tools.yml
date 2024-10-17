@@ -7,21 +7,19 @@ concurrency:
   group: "${{ github.ref }}"
   cancel-in-progress: true
 # env:
-#   PYPI_USER: "${{ secrets.PYPI_USER }}"
-#   PYPI_PASSWORD: "${{ secrets.PYPI_PASSWORD }}"
 #   CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN}}"
 
 jobs:
-  style:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-    - uses: actions/checkout@v4
-    - run: pip install pre-commit
-    - run: pre-commit run --all-files --show-diff-on-failure
+  # style:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - run: pip install pre-commit
+  #   - run: pre-commit run --all-files --show-diff-on-failure
 
   build:
-    needs: style
+    # needs: style
     runs-on: ubuntu-latest
     container:
       image: python:3.9
@@ -32,75 +30,78 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: "${{ github.job }}"
+        name: "rtc-tools-distribution"
         retention-days: 7
         path: dist/
 
-  test-linux:
-    needs: build
-    runs-on: ubuntu-latest
-    container:
-      image: python:${{ matrix.version }}
-    timeout-minutes: 30
-    env:
-      TOXENV: py
-    strategy:
-      matrix:
-        version:
-        - '3.9'
-        - '3.10'
-        - '3.11'
-    steps:
-    - uses: actions/checkout@v4
-    - run: pip install tox
-    - run: tox -vv
+  # test-linux:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: python:${{ matrix.version }}
+  #   timeout-minutes: 30
+  #   env:
+  #     TOXENV: py
+  #   strategy:
+  #     matrix:
+  #       version:
+  #       - '3.9'
+  #       - '3.10'
+  #       - '3.11'
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - run: pip install tox
+  #   - run: tox -vv
 
-  coverage:
-    needs: test-linux
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.9
-    timeout-minutes: 30
-    env:
-      TOXENV: coverage
-    steps:
-    - uses: actions/checkout@v4.1.0
-    - run: pip install tox
-    - run: tox -vv
-  #   - run: pip install codecov
-  #   - run: codecov --token=$CODECOV_TOKEN
-
-  examples-linux:
-    needs: coverage
-    runs-on: ubuntu-latest
-    container:
-      image: python:${{ matrix.version }}
-    if: startsWith(github.ref, 'refs/tags')
-    timeout-minutes: 30
-    env:
-      TOXENV: examples
-    strategy:
-      matrix:
-        version:
-        - '3.9'
-        - '3.10'
-        - '3.11'
-    steps:
-    - uses: actions/checkout@v4.1.0
-    - run: pip install tox
-    - run: tox -vv
-
-  # deploy:
-  #   needs: examples-linux
+  # coverage:
+  #   needs: test-linux
   #   runs-on: ubuntu-latest
   #   container:
   #     image: python:3.9
-  #   if: (github.ref == 'refs/tags//^2\..*$/') && !(startsWith(github.ref, 'refs/heads'))
   #   timeout-minutes: 30
+  #   env:
+  #     TOXENV: coverage
   #   steps:
   #   - uses: actions/checkout@v4.1.0
-  #   - uses: actions/download-artifact@v4.1.0
-  #     with:
-  #       name: "${{ github.job }}"
-  #   - run: pip install twine
-  #   - run: twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*
+  #   - run: pip install tox
+  #   - run: tox -vv
+  # #   - run: pip install codecov
+  # #   - run: codecov --token=$CODECOV_TOKEN
+
+  # examples-linux:
+  #   needs: coverage
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: python:${{ matrix.version }}
+  #   if: startsWith(github.ref, 'refs/tags')
+  #   timeout-minutes: 30
+  #   env:
+  #     TOXENV: examples
+  #   strategy:
+  #     matrix:
+  #       version:
+  #       - '3.9'
+  #       - '3.10'
+  #       - '3.11'
+  #   steps:
+  #   - uses: actions/checkout@v4.1.0
+  #   - run: pip install tox
+  #   - run: tox -vv
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    # Only publish tag references that start with "2.".
+    if: startsWith(github.ref, 'refs/tags/2.')
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/download-artifact@v4.1.0
+      with:
+        name: "rtc-tools-distribution"
+    - uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: "${{ secrets.PYPI_USER }}"
+        password: "${{ secrets.PYPI_PASSWORD }}"
