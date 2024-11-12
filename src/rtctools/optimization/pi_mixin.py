@@ -3,6 +3,10 @@ from datetime import timedelta
 
 import rtctools.data.pi as pi
 import rtctools.data.rtc as rtc
+from rtctools.data.util import (
+    check_times_are_equidistant,
+    check_times_are_increasing,
+)
 from rtctools.optimization.io_mixin import IOMixin
 
 logger = logging.getLogger("rtctools")
@@ -109,23 +113,12 @@ class PIMixin(IOMixin):
 
         # Timestamp check
         if self.pi_validate_timeseries:
-            for i in range(len(timeseries_import_times) - 1):
-                if timeseries_import_times[i] >= timeseries_import_times[i + 1]:
-                    raise Exception("PIMixin: Time stamps must be strictly increasing.")
+            check_times_are_increasing(timeseries_import_times)
 
         if self.__timeseries_import.dt:
             # Check if the timeseries are truly equidistant
             if self.pi_validate_timeseries:
-                dt = timeseries_import_times[1] - timeseries_import_times[0]
-                for i in range(len(timeseries_import_times) - 1):
-                    if timeseries_import_times[i + 1] - timeseries_import_times[i] != dt:
-                        raise Exception(
-                            "PIMixin: Expecting equidistant timeseries, the time step "
-                            "towards {} is not the same as the time step(s) before. Set "
-                            "unit to nonequidistant if this is intended.".format(
-                                timeseries_import_times[i + 1]
-                            )
-                        )
+                check_times_are_equidistant(timeseries_import_times)
 
         # Offer input timeseries to IOMixin
         self.io.reference_datetime = self.__timeseries_import.forecast_datetime
@@ -277,6 +270,13 @@ class PIMixin(IOMixin):
         :class:`pi.Timeseries` object for holding the output data.
         """
         return self.__timeseries_export
+
+    @property
+    def data_config(self):
+        """
+        :class:`rtc.ConfigData` object for holding the configuration data.
+        """
+        return self.__data_config
 
     def set_unit(self, variable: str, unit: str):
         """
