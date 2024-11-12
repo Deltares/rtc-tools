@@ -1,0 +1,21 @@
+<ns0:TimeSeries xmlns:ns0="http://www.wldelft.nl/fews/PI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="http://www.wldelft.nl/fews/PI ../../xsd/pi_timeseries.xsd">
+	<ns0:timeZone>0.0</ns0:timeZone>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Seeds</ns0:locationId>
+			<ns0:parameterId>Q</ns0:parameterId>
+			<ns0:timeStep multiplier="1" unit="second" />
+			<ns0:startDate date="2020-01-01" time="00:00:00" />
+			<ns0:forecastDate date="2020-01-01" time="00:00:00" />
+			<ns0:endDate date="2020-01-01" time="00:00:04" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2020-01-01" flag="0" time="00:00:00" value="-999.0" />
+		<ns0:event date="2020-01-01" flag="0" time="00:00:01" value="1.0" />
+		<ns0:event date="2020-01-01" flag="0" time="00:00:02" value="-999.0" />
+		<ns0:event date="2020-01-01" flag="0" time="00:00:03" value="3.0" />
+		<ns0:event date="2020-01-01" flag="0" time="00:00:04" value="-999.0" />
+	</ns0:series>
+</ns0:TimeSeries>
