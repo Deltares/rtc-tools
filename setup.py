@@ -38,7 +38,7 @@ setup(
     description=DOCLINES[0],
     long_description="\n".join(DOCLINES[2:]),
     url="https://oss.deltares.nl/web/rtc-tools/home",
-    download_url="http://gitlab.com/deltares/rtc-tools/",
+    download_url="http://github.com/deltares/rtc-tools/",
     classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
     platforms=["Windows", "Linux", "Mac OS-X", "Unix"],
     packages=find_packages("src"),
