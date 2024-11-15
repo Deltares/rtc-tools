@@ -65,8 +65,12 @@ and
 
 
 ## License
-RTC-Tools is licensed under the **[GNU Lesser General Public License v3.0](https://gitlab.com/deltares/rtc-tools/-/blob/guidelines_contributions/COPYING)**, and can be used free of charge. Deltares offers support packages for users who require assistance.
+RTC-Tools is licensed under the **[GNU Lesser General Public License v3.0](COPYING)**,
+and can be used free of charge. Deltares offers support packages for users who require assistance.
 
 
 ## Acknowledgment
-If you use RTC-Tools in your work, please acknowledge it in any resulting publications. You can do this by citing RTC-Tools and providing a link to our [website](https://oss.deltares.nl/web/rtc-tools/home) or [Gitlab repository](https://gitlab.com/deltares/rtc-tools).
+If you use RTC-Tools in your work, please acknowledge it in any resulting publications.
+You can do this by citing RTC-Tools and providing a link to our
+[website](https://oss.deltares.nl/web/rtc-tools/home) or
+[GitHub repository](https://github.com/deltares/rtc-tools).
