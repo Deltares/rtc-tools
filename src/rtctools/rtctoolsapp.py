@@ -102,9 +102,7 @@ def download_examples(*args):
     version = rtctools.__version__
     rtc_full_name = "rtc-tools-{}".format(version)
     try:
-        url = "https://gitlab.com/deltares/rtc-tools/-/archive/{}/{}.zip".format(
-            version, rtc_full_name
-        )
+        url = "https://github.com/deltares/rtc-tools/zipball/{}".format(version)
 
         opener = urllib.request.build_opener()
         urllib.request.install_opener(opener)
