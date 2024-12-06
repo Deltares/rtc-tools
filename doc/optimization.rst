@@ -11,6 +11,7 @@ Contents:
    optimization/modelica_models
    optimization/csv_io
    optimization/fews_io
+   optimization/multi_seeding
    optimization/linearization
    optimization/lookup_tables
    optimization/homotopy
