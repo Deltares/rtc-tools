@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rtcDataConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtc="http://www.wldelft.nl/fews" xmlns="http://www.wldelft.nl/fews" xsi:schemaLocation="http://www.wldelft.nl/fews ../../../xsd/rtcDataConfig.xsd">
+	<timeSeries id="q_out">
+		<PITimeSeries>
+			<locationId>Seeds</locationId>
+			<parameterId>Q</parameterId>
+		</PITimeSeries>
+	</timeSeries>
+	<timeSeries id="q_in">
+		<PITimeSeries>
+			<locationId>Inputs</locationId>
+			<parameterId>Q</parameterId>
+		</PITimeSeries>
+	</timeSeries>
+</rtcDataConfig>
