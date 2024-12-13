@@ -94,7 +94,7 @@ class IOMixin(SimulationProblem, metaclass=ABCMeta):
             self.__cache_loop_timeseries = {}
 
             timeseries_names = set(self.io.get_timeseries_names(0))
-            for v in self.get_variables():
+            for v in self.get_input_variables():
                 if v in timeseries_names:
                     _, values = self.io.get_timeseries_sec(v)
                     self.__cache_loop_timeseries[v] = values
