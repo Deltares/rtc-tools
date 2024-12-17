@@ -1,10 +1,12 @@
 import logging
+from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
 )
-from rtctools.optimization.csv_mixin import CSVMixin
+from rtctools.optimization.csv_mixin import CSVMixin, get_timeseries_from_csv
 from rtctools.optimization.modelica_mixin import ModelicaMixin
 from test_case import TestCase
 
@@ -12,6 +14,8 @@ from .data_path import data_path
 
 logger = logging.getLogger("rtctools")
 logger.setLevel(logging.WARNING)
+
+DATA_DIR = Path(__file__).parent / "data" / "timeseries"
 
 
 class Model(CSVMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
@@ -112,3 +116,15 @@ class TestCSVMixinEnsemble(TestCase):
     def test_objective_value(self):
         objective_value_tol = 1e-6
         self.assertTrue(abs(self.problem.objective_value) < objective_value_tol)
+
+
+class TestReadTimeseries(TestCase):
+    def test_get_timeseries_from_csv(self):
+        """Test getting a timeseries from a cvs file."""
+        times, values = get_timeseries_from_csv(DATA_DIR / "timeseries.csv")
+        ref_times = [datetime(2020, 1, 1, 0, 0, sec) for sec in range(5)]
+        ref_values = {"Q_out": [np.nan, 1.0, np.nan, 3.0, np.nan]}
+        for time, ref_time in zip(times, ref_times):
+            self.assertEqual(time, ref_time)
+        for var in values:
+            np.testing.assert_almost_equal(values[var], ref_values[var])
