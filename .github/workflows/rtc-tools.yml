@@ -59,7 +59,7 @@ jobs:
     - run: tox -vv
 
   coverage:
-    needs: test-linux
+    needs: build
     runs-on: ubuntu-latest
     container:
       image: python:3.9
