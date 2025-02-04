@@ -95,17 +95,29 @@ jobs:
     - run: pip install tox
     - run: tox -vv
 
-  # deploy:
-  #   needs: examples-linux
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: python:3.9
-  #   if: (github.ref == 'refs/tags//^2\..*$/') && !(startsWith(github.ref, 'refs/heads'))
-  #   timeout-minutes: 30
-  #   steps:
-  #   - uses: actions/checkout@v4.1.0
-  #   - uses: actions/download-artifact@v4.1.0
-  #     with:
-  #       name: "${{ github.job }}"
-  #   - run: pip install twine
-  #   - run: twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*
+  deploy:
+    needs: [test-linux, examples-linux]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/2.')  }}
+    permissions:
+      id-token: write  # Required for OIDC PyPI publishing
+      contents: read
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
