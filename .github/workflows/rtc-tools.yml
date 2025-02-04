@@ -24,6 +24,8 @@ jobs:
     container:
       image: python:3.9
     timeout-minutes: 30
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4.1.0
       with:
