@@ -50,6 +50,9 @@ setup(
         "pymoca >= 0.9.1, == 0.9.*",
         "rtc-tools-channel-flow >= 1.2.0",
         "defusedxml >= 0.7.0",
+        # Python 3.9's importlib.metadata does not support the "group" parameter
+        # to entry_points yet.
+        "importlib_metadata >= 5.0.0; python_version < '3.10'",
     ],
     tests_require=["pytest", "pytest-runner", "netCDF4"],
     extras_require={
