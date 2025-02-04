@@ -4,6 +4,7 @@ from unittest import TestCase
 
 import numpy as np
 from pymoca.backends.casadi.alias_relation import AliasRelation
+
 from rtctools.data.storage import DataStoreAccessor
 
 logger = logging.getLogger("rtctools")

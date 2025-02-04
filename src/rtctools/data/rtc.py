@@ -60,9 +60,9 @@ class DataConfig:
                         logger.error(message)
                         raise Exception(message)
                     else:
-                        self.__location_parameter_ids[
-                            internal_id
-                        ] = self.__pi_location_parameter_id(pi_timeseries, "fews")
+                        self.__location_parameter_ids[internal_id] = (
+                            self.__pi_location_parameter_id(pi_timeseries, "fews")
+                        )
                         self.__variable_map[external_id] = internal_id
 
             for k in ["import", "export"]:

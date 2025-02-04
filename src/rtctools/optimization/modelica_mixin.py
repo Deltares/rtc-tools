@@ -334,7 +334,7 @@ class ModelicaMixin(OptimizationProblem):
             try:
                 (m, M) = bounds[sym_name]
             except KeyError:
-                if self.__python_types.get(sym_name, float) == bool:
+                if self.__python_types.get(sym_name, float) is bool:
                     (m, M) = (0, 1)
                 else:
                     (m, M) = (-np.inf, np.inf)
@@ -408,7 +408,7 @@ class ModelicaMixin(OptimizationProblem):
         return seed
 
     def variable_is_discrete(self, variable):
-        return self.__python_types.get(variable, float) != float
+        return self.__python_types.get(variable, float) is not float
 
     @property
     @cached

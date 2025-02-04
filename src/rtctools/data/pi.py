@@ -333,8 +333,11 @@ class ParameterConfig:
 
             parameters = group.findall("pi:parameter", ns)
             for parameter in parameters:
-                yield location_id, model_id, parameter.attrib["id"], self.__parse_parameter(
-                    parameter
+                yield (
+                    location_id,
+                    model_id,
+                    parameter.attrib["id"],
+                    self.__parse_parameter(parameter),
                 )
 
 

@@ -4,10 +4,11 @@ from typing import List
 
 import casadi as ca
 import numpy as np
+from test_case import TestCase
+
 from rtctools._internal.alias_tools import AliasDict
 from rtctools.simulation.csv_mixin import CSVMixin
 from rtctools.simulation.simulation_problem import SimulationProblem, Variable
-from test_case import TestCase
 
 from .data_path import data_path
 
@@ -83,7 +84,7 @@ class TestSimulation(TestCase):
 
     def test_get_var_name_and_type(self):
         t = self.problem.get_var_type("switched")
-        self.assertTrue(t == float)
+        self.assertTrue(t is float)
         all_variables = self.problem.get_variables()
         idx = 0
         for var in all_variables.items():

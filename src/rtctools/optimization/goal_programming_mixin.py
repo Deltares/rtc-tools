@@ -351,8 +351,9 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
         if goal.has_target_bounds:
             # We use a violation variable formulation, with the violation
             # variables epsilon bounded between 0 and 1.
-            m, M = np.full_like(epsilon, -np.inf, dtype=np.float64), np.full_like(
-                epsilon, np.inf, dtype=np.float64
+            m, M = (
+                np.full_like(epsilon, -np.inf, dtype=np.float64),
+                np.full_like(epsilon, np.inf, dtype=np.float64),
             )
 
             # A function range does not have to be specified for critical

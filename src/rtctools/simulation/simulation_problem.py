@@ -500,8 +500,9 @@ class SimulationProblem(DataStoreAccessor):
                 self.set_var(var_name, numeric_start_val)
             except KeyError:
                 logger.warning(
-                    "Initialize: {} not found in state vector. "
-                    "Initial value of {} not set.".format(var_name, numeric_start_val)
+                    "Initialize: {} not found in state vector. Initial value of {} not set.".format(
+                        var_name, numeric_start_val
+                    )
                 )
 
             # Add a residual for the difference between the state and its starting expression
@@ -1067,9 +1068,9 @@ class SimulationProblem(DataStoreAccessor):
         :param dt: Timestep size of the simulation.
         """
         if self._dt_is_fixed:
-            assert math.isclose(
-                self.__dt, dt
-            ), "Timestep size dt is marked as constant and cannot be changed."
+            assert math.isclose(self.__dt, dt), (
+                "Timestep size dt is marked as constant and cannot be changed."
+            )
         else:
             self.__dt = dt
 

@@ -1028,8 +1028,8 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             + len(self.dae_variables["constant_inputs"])
         ]
         constant_inputs_1 = accumulated_U[
-            2 * len(collocated_variables)
-            + len(self.dae_variables["constant_inputs"]) : 2 * len(collocated_variables)
+            2 * len(collocated_variables) + len(self.dae_variables["constant_inputs"]) : 2
+            * len(collocated_variables)
             + 2 * len(self.dae_variables["constant_inputs"])
         ]
 
@@ -1803,9 +1803,9 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     # Cast delay from DM to np.array
                     delay = delay.toarray().flatten()
 
-                    assert np.all(
-                        np.isfinite(delay)
-                    ), "Delay duration must be resolvable to real values at transcribe()"
+                    assert np.all(np.isfinite(delay)), (
+                        "Delay duration must be resolvable to real values at transcribe()"
+                    )
 
                     out_times = np.concatenate([history_times, collocation_times])
                     out_values = ca.veccat(
@@ -2869,8 +2869,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
         # Check coefficient matrix
         logger.info(
-            "Sanity check on objective and constraints Jacobian matrix"
-            "/constant coefficients values"
+            "Sanity check on objective and constraints Jacobian matrix/constant coefficients values"
         )
 
         in_var = nlp["x"]

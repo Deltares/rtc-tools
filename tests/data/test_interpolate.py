@@ -1,9 +1,10 @@
 from unittest import TestCase
 
 import numpy as np
+from casadi import SX, Function, linspace
+
 import rtctools.data.interpolation.bspline1d
 import rtctools.data.interpolation.bspline2d
-from casadi import SX, Function, linspace
 
 
 class TestBSpline1DFit(TestCase):

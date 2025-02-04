@@ -4,6 +4,7 @@ from unittest import TestCase
 import numpy as np
 import numpy.ma as ma
 from netCDF4 import Dataset, chartostring
+
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
 )
