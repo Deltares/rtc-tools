@@ -98,6 +98,9 @@ class CSVMixin(IOMixin):
                 names=True,
                 encoding=None,
             )
+            if len(self.__ensemble.shape) == 0:
+                # If there is only one ensemble member, the array is 0-dimensional.
+                self.__ensemble = np.expand_dims(self.__ensemble, 0)
 
             logger.debug("CSVMixin: Read ensemble description")
 

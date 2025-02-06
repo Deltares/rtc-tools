@@ -1,4 +1,5 @@
 import logging
+import os
 
 import numpy as np
 from rtctools.optimization.collocated_integrated_optimization_problem import (
@@ -17,9 +18,9 @@ logger.setLevel(logging.WARNING)
 class Model(CSVMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
     def __init__(self, **kwargs):
         kwargs["model_name"] = kwargs.get("model_name", "Model")
-        kwargs["input_folder"] = data_path()
-        kwargs["output_folder"] = data_path()
-        kwargs["model_folder"] = data_path()
+        kwargs["input_folder"] = kwargs.get("input_folder", data_path())
+        kwargs["output_folder"] = kwargs.get("output_folder", data_path())
+        kwargs["model_folder"] = kwargs.get("model_folder", data_path())
         super().__init__(**kwargs)
 
     def objective(self, ensemble_member):
@@ -42,10 +43,10 @@ class Model(CSVMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
 class ModelEnsemble(Model):
     csv_ensemble_mode = True
 
-    def __init__(self):
+    def __init__(self, io_folder):
         super().__init__(
-            input_folder=data_path(),
-            output_folder=data_path(),
+            input_folder=io_folder,
+            output_folder=io_folder,
             model_name="Model",
             model_folder=data_path(),
             lookup_tables=[],
@@ -105,7 +106,18 @@ class TestCSVMixin(TestCase):
 
 class TestCSVMixinEnsemble(TestCase):
     def setUp(self):
-        self.problem = ModelEnsemble()
+        self.problem = ModelEnsemble(data_path())
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_objective_value(self):
+        objective_value_tol = 1e-6
+        self.assertTrue(abs(self.problem.objective_value) < objective_value_tol)
+
+
+class TestCSVMixinOneMemberEnsemble(TestCase):
+    def setUp(self):
+        self.problem = ModelEnsemble(os.path.join(data_path(), "one-member-ensemble"))
         self.problem.optimize()
         self.tolerance = 1e-6
 
