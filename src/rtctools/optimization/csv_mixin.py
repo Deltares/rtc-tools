@@ -1,12 +1,18 @@
 import logging
 import os
-from datetime import timedelta
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 import numpy as np
 
 import rtctools.data.csv as csv
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.caching import cached
+from rtctools.data.util import (
+    check_times_are_equidistant,
+    check_times_are_increasing,
+)
 from rtctools.optimization.io_mixin import IOMixin
 from rtctools.optimization.timeseries import Timeseries
 
@@ -102,26 +108,18 @@ class CSVMixin(IOMixin):
             logger.debug("CSVMixin: Read ensemble description")
 
             for ensemble_member_index, ensemble_member_name in enumerate(self.__ensemble["name"]):
-                _timeseries = csv.load(
+                times, values = get_timeseries_from_csv(
                     os.path.join(
                         self._input_folder,
                         ensemble_member_name,
                         self.timeseries_import_basename + ".csv",
                     ),
                     delimiter=self.csv_delimiter,
-                    with_time=True,
                 )
-                self.__timeseries_times = _timeseries[_timeseries.dtype.names[0]]
-
-                self.io.reference_datetime = self.__timeseries_times[0]
-
-                for key in _timeseries.dtype.names[1:]:
-                    self.io.set_timeseries(
-                        key,
-                        self.__timeseries_times,
-                        np.asarray(_timeseries[key], dtype=np.float64),
-                        ensemble_member_index,
-                    )
+                self.__timeseries_times = times
+                self.io.reference_datetime = times[0]
+                for key, value in values.items():
+                    self.io.set_timeseries(key, times, value, ensemble_member_index)
             logger.debug("CSVMixin: Read timeseries")
 
             for ensemble_member_index, ensemble_member_name in enumerate(self.__ensemble["name"]):
@@ -159,19 +157,14 @@ class CSVMixin(IOMixin):
                 self.__initial_state.append(AliasDict(self.alias_relation, _initial_state))
             logger.debug("CSVMixin: Read initial state.")
         else:
-            _timeseries = csv.load(
+            times, values = get_timeseries_from_csv(
                 os.path.join(self._input_folder, self.timeseries_import_basename + ".csv"),
                 delimiter=self.csv_delimiter,
-                with_time=True,
             )
-            self.__timeseries_times = _timeseries[_timeseries.dtype.names[0]]
-
-            self.io.reference_datetime = self.__timeseries_times[0]
-
-            for key in _timeseries.dtype.names[1:]:
-                self.io.set_timeseries(
-                    key, self.__timeseries_times, np.asarray(_timeseries[key], dtype=np.float64)
-                )
+            self.__timeseries_times = times
+            self.io.reference_datetime = times[0]
+            for key, value in values.items():
+                self.io.set_timeseries(key, times, value)
             logger.debug("CSVMixin: Read timeseries.")
 
             try:
@@ -202,22 +195,13 @@ class CSVMixin(IOMixin):
         # Timestamp check
         if self.csv_validate_timeseries:
             times = self.__timeseries_times
-            for i in range(len(times) - 1):
-                if times[i] >= times[i + 1]:
-                    raise Exception("CSVMixin: Time stamps must be strictly increasing.")
+            check_times_are_increasing(times)
 
         if self.csv_equidistant:
             # Check if the timeseries are truly equidistant
             if self.csv_validate_timeseries:
                 times = self.__timeseries_times
-                dt = times[1] - times[0]
-                for i in range(len(times) - 1):
-                    if times[i + 1] - times[i] != dt:
-                        raise Exception(
-                            "CSVMixin: Expecting equidistant timeseries, the time step towards "
-                            "{} is not the same as the time step(s) before. "
-                            "Set csv_equidistant = False if this is intended.".format(times[i + 1])
-                        )
+                check_times_are_equidistant(times)
 
     def ensemble_member_probability(self, ensemble_member):
         if self.csv_ensemble_mode:
@@ -295,3 +279,19 @@ class CSVMixin(IOMixin):
                 )
         else:
             write_output(0, self._output_folder)
+
+
+def get_timeseries_from_csv(
+    file: Path, delimiter=","
+) -> Tuple[List[datetime], Dict[str, np.ndarray]]:
+    """Read timeseries from csv
+
+    :param file:        Path to CSV.
+    :param delimiter:   CSV column delimiter.
+
+    :returns: A list of time stamps (datetimes) and dict of values.
+    """
+    data = csv.load(file, delimiter=delimiter, with_time=True)
+    times = data[data.dtype.names[0]]
+    var_dict = {key: np.asarray(data[key], dtype=np.float64) for key in data.dtype.names[1:]}
+    return times, var_dict
