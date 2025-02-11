@@ -21,10 +21,6 @@ RTC-Tools, including its dependencies, can be installed using the `pip <https://
     # Install RTC-Tools using pip package manager
     pip install rtc-tools
 
-When using Python 3.12 or higher, you might first need to install setuptools::
-
-    pip install setuptools
-
 From Source
 -----------
 
@@ -40,10 +36,6 @@ Then you can install this latest version as follows::
 Or if you would like to have an editable installation (e.g. as developer)::
 
     pip install -e ./rtc-tools
-
-When using Python 3.12 or higher, you might first need to install setuptools::
-
-    pip install setuptools
 
 Note that rtc-tools-channel-flow is a dependency of rtc-tools which is included in the above installations. 
 

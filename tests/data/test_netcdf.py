@@ -5,9 +5,10 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 import numpy as np
-import rtctools.data.netcdf as netcdf
 from netCDF4 import Dataset
 from test_case import TestCase
+
+import rtctools.data.netcdf as netcdf
 
 from .data_path import data_path
 
@@ -147,8 +148,9 @@ class TestInputDataset_requirements(TestCase):
                 if _variable != "ensemble":
                     self.assertTrue(
                         self.variable_found[_variable],
-                        "Variable '{}' was not found by its alias '{}' in file '{}.nc' ."
-                        "".format(_variable, _variable_alias, filepaths[file_key]),
+                        "Variable '{}' was not found by its alias '{}' in file '{}.nc' .".format(
+                            _variable, _variable_alias, filepaths[file_key]
+                        ),
                     )
 
                 # check requirements of attributes for found variables
@@ -670,10 +672,10 @@ class TestExportDataset(TestCase):
             for _variable in unique_parameter_ids:
                 variables[station_id][_variable] = {}
                 for ensemble_member in range(ensemble_size):
-                    variables[station_id][_variable][
-                        ensemble_member
-                    ] = self.import_dataset.read_timeseries_values(
-                        list(stations.station_ids).index(station_id), _variable, ensemble_member
+                    variables[station_id][_variable][ensemble_member] = (
+                        self.import_dataset.read_timeseries_values(
+                            list(stations.station_ids).index(station_id), _variable, ensemble_member
+                        )
                     )
 
         self.dataset = netcdf.ExportDataset(data_path(), "timeseries_export")

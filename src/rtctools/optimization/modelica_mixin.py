@@ -1,10 +1,18 @@
+import importlib.resources
 import itertools
 import logging
+import sys
 from typing import Dict, Union
+
+# Python 3.9's importlib.metadata does not support the "group" parameter to
+# entry_points yet.
+if sys.version_info < (3, 10):
+    import importlib_metadata
+else:
+    from importlib import metadata as importlib_metadata
 
 import casadi as ca
 import numpy as np
-import pkg_resources
 import pymoca
 import pymoca.backends.casadi.api
 
@@ -174,9 +182,9 @@ class ModelicaMixin(OptimizationProblem):
         # Where imported model libraries are located.
         library_folders = self.modelica_library_folders.copy()
 
-        for ep in pkg_resources.iter_entry_points(group="rtctools.libraries.modelica"):
+        for ep in importlib_metadata.entry_points(group="rtctools.libraries.modelica"):
             if ep.name == "library_folder":
-                library_folders.append(pkg_resources.resource_filename(ep.module_name, ep.attrs[0]))
+                library_folders.append(str(importlib.resources.files(ep.module).joinpath(ep.attr)))
 
         compiler_options["library_folders"] = library_folders
 
@@ -326,7 +334,7 @@ class ModelicaMixin(OptimizationProblem):
             try:
                 (m, M) = bounds[sym_name]
             except KeyError:
-                if self.__python_types.get(sym_name, float) == bool:
+                if self.__python_types.get(sym_name, float) is bool:
                     (m, M) = (0, 1)
                 else:
                     (m, M) = (-np.inf, np.inf)
@@ -400,7 +408,7 @@ class ModelicaMixin(OptimizationProblem):
         return seed
 
     def variable_is_discrete(self, variable):
-        return self.__python_types.get(variable, float) != float
+        return self.__python_types.get(variable, float) is not float
 
     @property
     @cached

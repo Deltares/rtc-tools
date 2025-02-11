@@ -55,7 +55,7 @@ class LookupTable(LookupTableBase):
                 "This lookup table was not instantiated with tck metadata. \
                                   Domain/Range information is unavailable."
             )
-        if type(t) == tuple and len(t) == 2:
+        if isinstance(t, tuple) and len(t) == 2:
             raise NotImplementedError(
                 "Domain/Range information is not yet implemented for 2D LookupTables"
             )
@@ -298,8 +298,9 @@ class CSVLookupTableMixin(OptimizationProblem):
         def check_lookup_table(lookup_table):
             if lookup_table in self.__lookup_tables:
                 raise Exception(
-                    "Cannot add lookup table {},"
-                    "since there is already one with this name.".format(lookup_table)
+                    "Cannot add lookup table {},since there is already one with this name.".format(
+                        lookup_table
+                    )
                 )
 
         # Read CSV files

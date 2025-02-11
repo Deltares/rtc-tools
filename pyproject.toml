@@ -8,15 +8,16 @@ exclude = '''
 '''
 
 [tool.ruff]
-ignore = [
+lint.ignore = [
 	"B904", # Fix someday: raising exceptions within except
 ]
 line-length = 100
-select = [
+lint.select = [
     "B", # flake8-bugbear
     "C4", # flake8-comprehensions
     "E", # default / pycodestyle
     "F", # default / pyflakes
     "I", # isort
     "W", # pycodestyle
+
 ]

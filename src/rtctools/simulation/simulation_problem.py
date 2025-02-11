@@ -1,13 +1,21 @@
 import copy
+import importlib.resources
 import itertools
 import logging
 import math
+import sys
 from collections import OrderedDict
 from typing import List, Union
 
+# Python 3.9's importlib.metadata does not support the "group" parameter to
+# entry_points yet.
+if sys.version_info < (3, 10):
+    import importlib_metadata
+else:
+    from importlib import metadata as importlib_metadata
+
 import casadi as ca
 import numpy as np
-import pkg_resources
 import pymoca
 import pymoca.backends.casadi.api
 
@@ -492,8 +500,9 @@ class SimulationProblem(DataStoreAccessor):
                 self.set_var(var_name, numeric_start_val)
             except KeyError:
                 logger.warning(
-                    "Initialize: {} not found in state vector. "
-                    "Initial value of {} not set.".format(var_name, numeric_start_val)
+                    "Initialize: {} not found in state vector. Initial value of {} not set.".format(
+                        var_name, numeric_start_val
+                    )
                 )
 
             # Add a residual for the difference between the state and its starting expression
@@ -1059,9 +1068,9 @@ class SimulationProblem(DataStoreAccessor):
         :param dt: Timestep size of the simulation.
         """
         if self._dt_is_fixed:
-            assert math.isclose(
-                self.__dt, dt
-            ), "Timestep size dt is marked as constant and cannot be changed."
+            assert math.isclose(self.__dt, dt), (
+                "Timestep size dt is marked as constant and cannot be changed."
+            )
         else:
             self.__dt = dt
 
@@ -1244,9 +1253,9 @@ class SimulationProblem(DataStoreAccessor):
         # Where imported model libraries are located.
         library_folders = self.modelica_library_folders.copy()
 
-        for ep in pkg_resources.iter_entry_points(group="rtctools.libraries.modelica"):
+        for ep in importlib_metadata.entry_points(group="rtctools.libraries.modelica"):
             if ep.name == "library_folder":
-                library_folders.append(pkg_resources.resource_filename(ep.module_name, ep.attrs[0]))
+                library_folders.append(str(importlib.resources.files(ep.module).joinpath(ep.attr)))
 
         compiler_options["library_folders"] = library_folders
 
