@@ -46,12 +46,6 @@ RTC-Tools uses [CasADi](https://web.casadi.org/) as a symbolic framework for alg
 pip install rtc-tools
 ```
 
-When using Python 3.12 or higher, you might first need to install setuptools
-
-```bash
-pip install setuptools
-```
-
 ## Documentation
 
 Documentation and examples can be found on [readthedocs](https://rtc-tools.readthedocs.io).

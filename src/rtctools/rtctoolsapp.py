@@ -1,8 +1,16 @@
+import importlib.resources
 import logging
 import os
 import shutil
 import sys
 from pathlib import Path
+
+# Python 3.9's importlib.metadata does not support the "group" parameter to
+# entry_points yet.
+if sys.version_info < (3, 10):
+    import importlib_metadata
+else:
+    from importlib import metadata as importlib_metadata
 
 import rtctools
 
@@ -22,9 +30,6 @@ def copy_libraries(*args):
 
     if not os.path.exists(path):
         sys.exit("Folder '{}' does not exist".format(path))
-
-    # pkg_resources can be quite a slow import, so we do it here
-    import pkg_resources
 
     def _copytree(src, dst, symlinks=False, ignore=None):
         if not os.path.exists(dst):
@@ -56,11 +61,10 @@ def copy_libraries(*args):
     dst = Path(path)
 
     library_folders = []
-    for ep in pkg_resources.iter_entry_points(group="rtctools.libraries.modelica"):
+
+    for ep in importlib_metadata.entry_points(group="rtctools.libraries.modelica"):
         if ep.name == "library_folder":
-            library_folders.append(
-                Path(pkg_resources.resource_filename(ep.module_name, ep.attrs[0]))
-            )
+            library_folders.append(str(importlib.resources.files(ep.module).joinpath(ep.attr)))
 
     tlds = {}
     for lf in library_folders:
