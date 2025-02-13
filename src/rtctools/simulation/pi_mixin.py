@@ -41,6 +41,9 @@ class PIMixin(IOMixin):
     #: Check consistency of timeseries
     pi_validate_timeseries = True
 
+    #: Read forecast date from timeseries_import
+    pi_read_forecast_date = True
+
     #: Check for duplicate parameters
     pi_check_for_duplicate_parameters = True
 
@@ -89,6 +92,7 @@ class PIMixin(IOMixin):
                 self.timeseries_import_basename,
                 binary=self.pi_binary_timeseries,
                 pi_validate_times=self.pi_validate_timeseries,
+                pi_read_forecast_date=self.pi_read_forecast_date,
             )
         except FileNotFoundError:
             raise FileNotFoundError(
@@ -103,6 +107,7 @@ class PIMixin(IOMixin):
             self.timeseries_export_basename,
             binary=self.pi_binary_timeseries,
             pi_validate_times=False,
+            pi_read_forecast_date=True,
             make_new_file=True,
         )
 
