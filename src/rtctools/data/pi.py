@@ -350,6 +350,7 @@ class Timeseries:
         basename,
         binary=True,
         pi_validate_times=False,
+        pi_read_forecast_date=True,
         make_new_file=False,
     ):
         """
@@ -454,7 +455,7 @@ class Timeseries:
                     )
 
                 el = header.find("pi:forecastDate", ns)
-                if el is not None:
+                if el is not None and pi_read_forecast_date:
                     forecast_datetime = self.__parse_date_time(el)
                 else:
                     # the timeseries has no forecastDate, so the forecastDate
