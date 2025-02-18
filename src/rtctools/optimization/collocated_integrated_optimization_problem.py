@@ -939,7 +939,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     )
                 except RuntimeError as e:
                     # We only expect to fail if the DAE was an external function
-                    if "'eval_sx' not defined for External" in str(e):
+                    if "'eval_sx' not defined for" in str(e):
                         pass
                     else:
                         raise
