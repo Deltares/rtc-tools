@@ -278,6 +278,13 @@ class PIMixin(IOMixin):
         """
         return self.__timeseries_export
 
+    @property
+    def data_config(self):
+        """
+        :class:`rtc.ConfigData` object for holding the configuration data.
+        """
+        return self.__data_config
+
     def set_unit(self, variable: str, unit: str):
         """
         Set the unit of a time series.
