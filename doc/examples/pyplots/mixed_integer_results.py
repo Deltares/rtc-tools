@@ -6,7 +6,9 @@ import numpy as np
 
 # Import Data
 data_path = "../../../examples/mixed_integer/reference_output/timeseries_export.csv"
-results = np.recfromcsv(data_path, encoding=None)
+results = np.genfromtxt(
+    data_path, delimiter=",", encoding=None, dtype=None, names=True, case_sensitive="lower"
+)
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in results["time"]]

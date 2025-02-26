@@ -9,17 +9,46 @@ import numpy as np
 output_dir = Path("../../../examples/channel_pulse/reference_output/").resolve()
 
 # Import Data
-rtc_tools_record = np.recfromcsv(output_dir / "timeseries_export_inertial_wave.csv", encoding=None)
-rtc_tools_semi_impl_record = np.recfromcsv(
-    output_dir / "timeseries_export_inertial_wave_semi_implicit.csv", encoding=None
+rtc_tools_record = np.genfromtxt(
+    output_dir / "timeseries_export_inertial_wave.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
 )
-rtc_tools_conv_acc_record = np.recfromcsv(
-    output_dir / "timeseries_export_saint_venant.csv", encoding=None
+rtc_tools_semi_impl_record = np.genfromtxt(
+    output_dir / "timeseries_export_inertial_wave_semi_implicit.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
 )
-rtc_tools_conv_acc_upwind_record = np.recfromcsv(
-    output_dir / "timeseries_export_saint_venant_upwind.csv", encoding=None
+rtc_tools_conv_acc_record = np.genfromtxt(
+    output_dir / "timeseries_export_saint_venant.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
 )
-hec_ras_record = np.recfromcsv(output_dir / "HEC-RAS_export.csv", encoding=None)
+rtc_tools_conv_acc_upwind_record = np.genfromtxt(
+    output_dir / "timeseries_export_saint_venant_upwind.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
+)
+hec_ras_record = np.genfromtxt(
+    output_dir / "HEC-RAS_export.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
+)
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in rtc_tools_record["time"]]

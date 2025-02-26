@@ -13,7 +13,7 @@ class Example(CSVMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
 
     def objective(self, ensemble_member):
         # Minimize water pumped. The total water pumped is the integral of the
-        # water pumped from the starting time until the stoping time. In
+        # water pumped from the starting time until the stopping time. In
         # practice, self.integral() is a summation of all the discrete states.
         return self.integral("Q_release", ensemble_member=ensemble_member)
 

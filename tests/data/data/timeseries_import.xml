@@ -15,14 +15,14 @@
     <pi:event date="2013-05-19" flag="0" time="22:00:00" value="0.0" />
     <pi:event date="2013-05-19" flag="0" time="23:00:00" value="1.0" />
     <pi:event date="2013-05-20" flag="0" time="00:00:00" value="2.0" />
-    <pi:event date="2013-05-20" flag="0" time="01:00:00" value="nan" />
+    <pi:event date="2013-05-20" flag="0" time="01:00:00" value="-999.0" />
     <pi:event date="2013-05-20" flag="0" time="02:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="03:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="04:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="05:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="06:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="07:00:00" value="5.4175" />
-    <pi:event date="2013-05-20" time="08:00:00" value="nan" />
+    <pi:event date="2013-05-20" time="08:00:00" value="-999.0" />
     <pi:event date="2013-05-20" time="09:00:00" value="12345.0" />
     </pi:series>
   </pi:TimeSeries>

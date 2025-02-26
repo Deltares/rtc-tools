@@ -43,6 +43,43 @@ class TestBSpline1DFit(TestCase):
         y_slope_list = y_list[1:] - y_list[:-1]
         self.assertTrue(np.all((y_slope_list[1:] - y_slope_list[:-1]) < 0))
 
+    def test_fit(self):
+        """
+        Regression test for BSpline1D.fit.
+
+        This checks that BSpline1D.fit succeeds for a particular case when using
+        the nlp option nlp_scaling_method=none.
+        """
+        x = [4.91, 5.92, 10.83, 11.16, 11.51]
+        y = [1.124038e08, 1.354540e08, 2.475718e08, 2.551113e08, 2.631086e08]
+        t, c, k = rtctools.data.interpolation.bspline1d.BSpline1D.fit(
+            x=x,
+            y=y,
+            k=3,
+            monotonicity=1,
+            curvature=0,
+            ipopt_options={"nlp_scaling_method": "none"},
+        )
+        t_ref = np.array(
+            [4.9099, 4.9099, 4.9099, 4.9099, 10.83, 11.5101, 11.5101, 11.5101, 11.5101]
+        )
+        c_ref = np.array(
+            [
+                1.12401518e08,
+                1.57433811e08,
+                2.07664058e08,
+                2.57930573e08,
+                2.63110885e08,
+                2.63210885e08,
+                2.63310885e08,
+                2.63410885e08,
+                2.63510885e08,
+            ]
+        )
+        np.testing.assert_almost_equal(t, t_ref)
+        np.testing.assert_almost_equal(c, c_ref, decimal=0)
+        self.assertEqual(k, 3)
+
 
 # class TestBSpline2D(TestCase):
 #     def setUp(self):

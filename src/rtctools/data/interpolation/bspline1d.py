@@ -55,6 +55,7 @@ class BSpline1D(BSpline):
         epsilon=1e-7,
         delta=1e-4,
         interior_pts=None,
+        ipopt_options=None,
     ):
         """
         fit() returns a tck tuple like scipy.interpolate.splrep, but adjusts
@@ -153,7 +154,10 @@ class BSpline1D(BSpline):
         nlp = {"x": c, "f": f, "g": g}
         my_solver = "ipopt"
         solver = nlpsol(
-            "solver", my_solver, nlp, {"print_time": 0, "expand": True, "ipopt": {"print_level": 0}}
+            "solver",
+            my_solver,
+            nlp,
+            {"print_time": 0, "expand": True, "ipopt": ipopt_options},
         )
         sol = solver(lbg=lbg, ubg=ubg)
         stats = solver.stats()

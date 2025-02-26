@@ -1,0 +1,125 @@
+name: deltares/rtc-tools
+
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+# env:
+#   PYPI_USER: "${{ secrets.PYPI_USER }}"
+#   PYPI_PASSWORD: "${{ secrets.PYPI_PASSWORD }}"
+#   CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN}}"
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v4
+    - run: pip install pre-commit
+    - run: pre-commit run --all-files --show-diff-on-failure
+
+  build:
+    needs: style
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: |
+        python -m pip install --upgrade pip
+        pip install build
+    - run: python -m build
+    - uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        retention-days: 7
+        path: dist/
+
+  test-linux:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: python:${{ matrix.version }}
+    timeout-minutes: 30
+    env:
+      TOXENV: py
+    strategy:
+      matrix:
+        version:
+        - '3.9'
+        - '3.10'
+        - '3.11'
+        - '3.12'
+        - '3.13'
+    steps:
+    - uses: actions/checkout@v4
+    - run: pip install tox
+    - run: tox -vv
+
+  coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    timeout-minutes: 30
+    env:
+      TOXENV: coverage
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: pip install tox
+    - run: tox -vv
+  #   - run: pip install codecov
+  #   - run: codecov --token=$CODECOV_TOKEN
+
+  examples-linux:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: python:${{ matrix.version }}
+    if: startsWith(github.ref, 'refs/tags')
+    timeout-minutes: 30
+    env:
+      TOXENV: examples
+    strategy:
+      matrix:
+        version:
+        - '3.9'
+        - '3.10'
+        - '3.11'
+        - '3.12'
+        - '3.13'
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: pip install tox
+    - run: tox -vv
+
+  deploy:
+    needs: [test-linux, coverage, examples-linux]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/2.')  }}
+    permissions:
+      id-token: write  # Required for OIDC PyPI publishing
+      contents: read
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

@@ -7,10 +7,22 @@ import numpy as np
 
 # Import Data
 output_dir = Path("../../../examples/channel_wave_damping/reference_output/").resolve()
-record_local_control = np.recfromcsv(
-    output_dir / "timeseries_export_local_control.csv", encoding=None
+record_local_control = np.genfromtxt(
+    output_dir / "timeseries_export_local_control.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
 )
-record_optimization = np.recfromcsv(output_dir / "timeseries_export.csv", encoding=None)
+record_optimization = np.genfromtxt(
+    output_dir / "timeseries_export.csv",
+    delimiter=",",
+    encoding=None,
+    dtype=None,
+    names=True,
+    case_sensitive="lower",
+)
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in record_optimization["time"]]

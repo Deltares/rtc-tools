@@ -667,6 +667,7 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
         logger.info("Starting goal programming")
 
         success = False
+        self.skip_priority = False
 
         self.__constraint_store = [OrderedDict() for ensemble_member in range(self.ensemble_size)]
         self.__path_constraint_store = [
@@ -690,6 +691,13 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
 
             # Call the pre priority hook
             self.priority_started(priority)
+
+            if self.skip_priority:
+                logger.info(
+                    "priority {} was removed in priority_started. No optimization problem "
+                    "is solved at this priority.".format(priority)
+                )
+                continue
 
             (
                 self.__subproblem_epsilons,

@@ -5,12 +5,12 @@ import casadi as ca
 logger = logging.getLogger("rtctools")
 
 
-def is_affine(e, v):
+def is_affine(expr, symbols):
     try:
-        Af = ca.Function("f", [v], [ca.jacobian(e, v)]).expand()
-    except RuntimeError as e:
-        if "'eval_sx' not defined for" in str(e):
-            Af = ca.Function("f", [v], [ca.jacobian(e, v)])
+        Af = ca.Function("f", [symbols], [ca.jacobian(expr, symbols)]).expand()
+    except RuntimeError as error:
+        if "'eval_sx' not defined for" in str(error):
+            Af = ca.Function("f", [symbols], [ca.jacobian(expr, symbols)])
         else:
             raise
     return Af.sparsity_jac(0, 0).nnz() == 0

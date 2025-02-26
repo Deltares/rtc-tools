@@ -20,7 +20,11 @@ logger.setLevel(logging.WARNING)
 
 
 class Model(GoalProgrammingMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
-    def __init__(self):
+    n_priorities_completed = 0
+
+    def __init__(self, test_skip_priority=False):
+        self.test_skip_priority = test_skip_priority
+
         super().__init__(
             input_folder=data_path(),
             output_folder=data_path(),
@@ -62,6 +66,16 @@ class Model(GoalProgrammingMixin, ModelicaMixin, CollocatedIntegratedOptimizatio
         compiler_options["cache"] = False
         compiler_options["library_folders"] = []
         return compiler_options
+
+    def priority_started(self, priority: int) -> None:
+        super().priority_started(priority)
+        if self.test_skip_priority:
+            if priority == 1:
+                self.skip_priority = True
+
+    def priority_completed(self, priority: int) -> None:
+        super().priority_completed(priority)
+        self.n_priorities_completed += 1
 
 
 class Goal1(Goal):
@@ -108,6 +122,29 @@ class TestGoalProgramming(TestCase):
             0.1,
             objective_value_tol,
         )
+
+    def test_number_of_completed_priorites(self):
+        self.assertEqual(self.problem.n_priorities_completed, 2)
+
+
+class TestGoalProgrammingSkipPriority(TestCase):
+    def setUp(self):
+        self.problem = Model(test_skip_priority=True)
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_x(self):
+        objective_value_tol = 1e-6
+        self.assertAlmostGreaterThan(
+            self.problem.interpolate(
+                0.7, self.problem.times(), self.problem.extract_results()["x"]
+            ),
+            0.1,
+            objective_value_tol,
+        )
+
+    def test_number_of_completed_priorites(self):
+        self.assertEqual(self.problem.n_priorities_completed, 1)
 
 
 class GoalNoMinMax(Goal):

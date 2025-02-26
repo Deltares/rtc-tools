@@ -7,8 +7,12 @@ import numpy as np
 # Import Data
 data_path = "../../../examples/pumped_hydropower_system/reference_output/timeseries_export.csv"
 import_data_path = "../../../examples/pumped_hydropower_system/input//timeseries_import.csv"
-results = np.recfromcsv(data_path, encoding=None)
-inputs = np.recfromcsv(import_data_path, encoding=None)
+results = np.genfromtxt(
+    data_path, delimiter=",", encoding=None, dtype=None, names=True, case_sensitive="lower"
+)
+inputs = np.genfromtxt(
+    import_data_path, delimiter=",", encoding=None, dtype=None, names=True, case_sensitive="lower"
+)
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in results["time"]]

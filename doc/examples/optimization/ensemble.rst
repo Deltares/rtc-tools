@@ -243,6 +243,9 @@ should print out the following lines::
 This is the same output as the output for :doc:`mixed_integer`, except
 now the output for each ensemble is printed.
 
+
+.. _ensemble-results:
+
 Extracting Results
 ------------------
 
@@ -253,9 +256,6 @@ matplotlib:
 
 .. plot:: examples/pyplots/ensemble_results.py
    :include-source:
-
-
-.. _ensemble-results:
 
 This plots the inflow and release values in two different ways: the middle graph 
 depicts them in the same way you have seen until now (and this is how they truly 

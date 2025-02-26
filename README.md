@@ -1,8 +1,14 @@
 # Deltares RTC-Tools
 
-[![Pipeline](https://gitlab.com/deltares/rtc-tools/badges/master/pipeline.svg)](https://gitlab.com/deltares/rtc-tools/commits/master)
-[![Coverage](https://codecov.io/gl/deltares/rtc-tools/branch/master/graph/badge.svg)](https://codecov.io/gl/deltares/rtc-tools)
+[![Pipeline](https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml/badge.svg)](
+    https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml
+)
+[![Coverage](https://codecov.io/gl/deltares/rtc-tools/branch/master/graph/badge.svg)](
+    https://codecov.io/gl/deltares/rtc-tools
+)
 
+> **NOTE** The rtc-tools repository has been migrated from gitlab to here;
+see [migration from gitlab](#migration-from-gitlab).
 
 RTC-Tools is an open-source Python package for simulation and optimization of cyber-physical systems.  It can be used for model-predictive control and operational decision making of water and energy systems.  It is developed and maintained by Deltares, in collaboration with partners.
 
@@ -45,9 +51,26 @@ pip install rtc-tools
 Documentation and examples can be found on [readthedocs](https://rtc-tools.readthedocs.io).
 
 
+## Migration from GitLab
+
+The rtc-tools repository has been migrated from gitlab (https://gitlab.com/deltares/rtc-tools)
+to here.
+To change the git remote url, run
+
+`git remote set-url origin https://github.com/Deltares/rtc-tools.git`
+
+and
+
+`git remote set-url --push origin https://github.com/Deltares/rtc-tools.git`.
+
+
 ## License
-RTC-Tools is licensed under the **[GNU Lesser General Public License v3.0](https://gitlab.com/deltares/rtc-tools/-/blob/guidelines_contributions/COPYING)**, and can be used free of charge. Deltares offers support packages for users who require assistance.
+RTC-Tools is licensed under the **[GNU Lesser General Public License v3.0](COPYING)**,
+and can be used free of charge. Deltares offers support packages for users who require assistance.
 
 
 ## Acknowledgment
-If you use RTC-Tools in your work, please acknowledge it in any resulting publications. You can do this by citing RTC-Tools and providing a link to our [website](https://oss.deltares.nl/web/rtc-tools/home) or [Gitlab repository](https://gitlab.com/deltares/rtc-tools).
+If you use RTC-Tools in your work, please acknowledge it in any resulting publications.
+You can do this by citing RTC-Tools and providing a link to our
+[website](https://oss.deltares.nl/web/rtc-tools/home) or
+[GitHub repository](https://github.com/deltares/rtc-tools).

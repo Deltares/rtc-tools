@@ -1,6 +1,7 @@
 import logging
 import sys
 from datetime import datetime
+from typing import Union
 
 import numpy as np
 
@@ -41,6 +42,21 @@ def _boolean_to_nan(data, fname):
     return data
 
 
+def _string_to_datetime(string: Union[str, bytes]) -> datetime:
+    """Convert a string to a datetime object."""
+    if isinstance(string, bytes):
+        string = string.decode("utf-8")
+    return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
+
+
+def _string_to_float(string: Union[str, bytes]) -> float:
+    """Convert a string to a float."""
+    if isinstance(string, bytes):
+        string = string.decode("utf-8")
+    string = string.replace(",", ".")
+    return float(string)
+
+
 def load(fname, delimiter=",", with_time=False):
     """
     Check delimiter of csv and read contents to an array. Assumes no date-time conversion needed.
@@ -53,7 +69,7 @@ def load(fname, delimiter=",", with_time=False):
     """
     c = {}
     if with_time:
-        c.update({0: lambda str: datetime.strptime(str.decode("utf-8"), "%Y-%m-%d %H:%M:%S")})
+        c.update({0: _string_to_datetime})
 
     # Check delimiter of csv file. If semicolon, check if decimal separator is
     # a comma.
@@ -73,12 +89,7 @@ def load(fname, delimiter=",", with_time=False):
             # If commas are used as decimal separator, we need additional
             # converters.
             if n_comma_decimal:
-                c.update(
-                    {
-                        i + len(c): lambda str: float(str.decode("utf-8").replace(",", "."))
-                        for i in range(1 + n_semicolon - len(c))
-                    }
-                )
+                c.update({i + len(c): _string_to_float for i in range(1 + n_semicolon - len(c))})
 
     # Read the csv file and convert to array
     try:

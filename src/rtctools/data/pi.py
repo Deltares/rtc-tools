@@ -881,29 +881,26 @@ class Timeseries:
                     events = series.findall("pi:event", ns)
 
                     t = self.__start_datetime
-                    for i in range(min(len(events), len(values))):
+                    for i, value in enumerate(values):
                         if self.dt is None:
                             t = self.times[i]
-                        # Set the date/time, so that any date/time steps that
-                        # are wrong in the placeholder file are corrected.
-                        events[i].set("date", t.strftime("%Y-%m-%d"))
-                        events[i].set("time", t.strftime("%H:%M:%S"))
 
-                        # Set the value
-                        events[i].set("value", str(values[i]))
-                        if self.dt:
-                            t += self.dt
-                    for i in range(len(events), len(values)):
-                        if self.dt is None:
-                            t = self.times[i]
-                        event = ET.Element("pi:event")
+                        if i < len(events):
+                            event = events[i]
+                        else:
+                            event = ET.Element("pi:event")
+                            series.append(event)
+
+                        # Always set the date/time, so that any date/time steps
+                        # that are wrong in the placeholder file are corrected.
                         event.set("date", t.strftime("%Y-%m-%d"))
                         event.set("time", t.strftime("%H:%M:%S"))
+
                         if nans[i]:
                             event.set("value", miss_val)
                         else:
-                            event.set("value", str(values[i]))
-                        series.append(event)
+                            event.set("value", str(value))
+
                         if self.dt:
                             t += self.dt
 

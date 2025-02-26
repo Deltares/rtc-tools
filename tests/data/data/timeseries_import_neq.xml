@@ -18,7 +18,7 @@
     <pi:event date="2013-05-20" flag="0" time="04:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="06:00:00" value="5.4175" />
     <pi:event date="2013-05-20" flag="0" time="07:00:00" value="5.4175" />
-    <pi:event date="2013-05-20" time="08:00:00" value="nan" />
+    <pi:event date="2013-05-20" time="08:00:00" value="-999.0" />
     <pi:event date="2013-05-20" time="09:00:00" value="12345.0" />
     </pi:series>
   </pi:TimeSeries>

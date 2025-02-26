@@ -12,7 +12,9 @@ dir_template = "../../../examples/ensemble/reference_output/{}/timeseries_export
 forcasts = {}
 for forecast in forecast_names:
     data_path = dir_template.format(forecast)
-    forcasts[forecast] = np.recfromcsv(data_path, encoding=None)
+    forcasts[forecast] = np.genfromtxt(
+        data_path, delimiter=",", encoding=None, dtype=None, names=True, case_sensitive="lower"
+    )
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in forcasts[forecast_names[0]]["time"]]

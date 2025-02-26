@@ -898,11 +898,11 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     function_options,
                 )
 
+                # Expand the residual function if possible.
                 try:
                     dae_residual_function_integrated = dae_residual_function_integrated.expand()
                 except RuntimeError as e:
-                    # We only expect to fail if the DAE was an external function
-                    if "'eval_sx' not defined for External" in str(e):
+                    if "'eval_sx' not defined for" in str(e):
                         pass
                     else:
                         raise
@@ -933,13 +933,13 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     [dae_residual_collocated],
                     function_options,
                 )
+                # Expand the residual function if possible.
                 try:
                     self.__dae_residual_function_collocated = (
                         self.__dae_residual_function_collocated.expand()
                     )
                 except RuntimeError as e:
-                    # We only expect to fail if the DAE was an external function
-                    if "'eval_sx' not defined for External" in str(e):
+                    if "'eval_sx' not defined for" in str(e):
                         pass
                     else:
                         raise

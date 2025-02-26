@@ -6,7 +6,9 @@ import numpy as np
 
 # Import Data
 data_path = "../../../examples/cascading_channels/reference_output/timeseries_export.csv"
-record = np.recfromcsv(data_path, encoding=None)
+record = np.genfromtxt(
+    data_path, delimiter=",", encoding=None, dtype=None, names=True, case_sensitive="lower"
+)
 
 # Get times as datetime objects
 times = [datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in record["time"]]
