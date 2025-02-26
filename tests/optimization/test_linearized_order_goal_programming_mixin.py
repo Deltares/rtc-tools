@@ -1,9 +1,10 @@
+from test_case import TestCase
+
 from rtctools.optimization.goal_programming_mixin import Goal, StateGoal
 from rtctools.optimization.linearized_order_goal_programming_mixin import (
     LinearizedOrderGoal,
     LinearizedOrderGoalProgrammingMixin,
 )
-from test_case import TestCase
 
 from .test_goal_programming import Model
 

@@ -437,7 +437,7 @@ class _GoalConstraint:
     ):
         assert isinstance(m, (float, np.ndarray, Timeseries))
         assert isinstance(M, (float, np.ndarray, Timeseries))
-        assert type(m) == type(M)
+        assert type(m) is type(M)
 
         # NumPy arrays only allowed for vector goals
         if isinstance(m, np.ndarray):
@@ -982,8 +982,9 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
         if goal.has_target_bounds:
             # We use a violation variable formulation, with the violation
             # variables epsilon bounded between 0 and 1.
-            m, M = np.full_like(epsilon, -np.inf, dtype=np.float64), np.full_like(
-                epsilon, np.inf, dtype=np.float64
+            m, M = (
+                np.full_like(epsilon, -np.inf, dtype=np.float64),
+                np.full_like(epsilon, np.inf, dtype=np.float64),
             )
 
             # A function range does not have to be specified for critical

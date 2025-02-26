@@ -4,13 +4,14 @@ import unittest
 
 import numpy as np
 from casadi import MX
+from test_case import TestCase
+
 from rtctools._internal.alias_tools import AliasDict
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
 )
 from rtctools.optimization.modelica_mixin import ModelicaMixin
 from rtctools.optimization.timeseries import Timeseries
-from test_case import TestCase
 
 from .data_path import data_path
 

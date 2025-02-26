@@ -1,8 +1,9 @@
+from test_case import TestCase
+
 from rtctools.optimization.csv_mixin import CSVMixin as OptimizationCSVMixin
 from rtctools.optimization.io_mixin import IOMixin as OptimizationIOMixin
 from rtctools.optimization.pi_mixin import PIMixin as OptimizationPIMixin
 from rtctools.util import run_simulation_problem
-from test_case import TestCase
 
 
 class BadProblemClass1(OptimizationCSVMixin):

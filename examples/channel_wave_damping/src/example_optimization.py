@@ -1,4 +1,7 @@
 from example_local_control import ExampleLocalControl
+from steady_state_initialization_mixin import SteadyStateInitializationMixin
+from step_size_parameter_mixin import StepSizeParameterMixin
+
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
 )
@@ -7,8 +10,6 @@ from rtctools.optimization.goal_programming_mixin import Goal, GoalProgrammingMi
 from rtctools.optimization.homotopy_mixin import HomotopyMixin
 from rtctools.optimization.modelica_mixin import ModelicaMixin
 from rtctools.util import run_optimization_problem
-from steady_state_initialization_mixin import SteadyStateInitializationMixin
-from step_size_parameter_mixin import StepSizeParameterMixin
 
 
 class TargetLevelGoal(Goal):

@@ -401,20 +401,21 @@ class ExportDataset:
         """
         assert len(set(variable_names)) == len(variable_names)
 
-        assert (
-            self.__time_dim is not None
-        ), "First call write_times to ensure the time dimension has been created."
-        assert (
-            self.__station_dim is not None
-        ), "First call write_station_data to ensure the station dimension has been created"
+        assert self.__time_dim is not None, (
+            "First call write_times to ensure the time dimension has been created."
+        )
+        assert self.__station_dim is not None, (
+            "First call write_station_data to ensure the station dimension has been created"
+        )
         assert (
             self.__station_id_to_index_mapping is not None
         )  # should also be created in write_station_data
 
         if ensemble_size > 1:
-            assert (
-                self.__ensemble_member_dim is not None
-            ), "First call write_ensemble_data to ensure the realization dimension has been created"
+            assert self.__ensemble_member_dim is not None, (
+                "First call write_ensemble_data to ensure "
+                "the realization dimension has been created"
+            )
 
             for variable_name in variable_names:
                 self.__dataset.createVariable(
@@ -446,15 +447,15 @@ class ExportDataset:
         :param values:        The values that are to be written to the file
         :param ensemble_size: the number of members in the ensemble
         """
-        assert (
-            self.__station_id_to_index_mapping is not None
-        ), "First call write_station_data and create_variables."
+        assert self.__station_id_to_index_mapping is not None, (
+            "First call write_station_data and create_variables."
+        )
 
         station_index = self.__station_id_to_index_mapping[station_id]
         if ensemble_size > 1:
-            self.__dataset.variables[variable_name][
-                :, station_index, ensemble_member_index
-            ] = values
+            self.__dataset.variables[variable_name][:, station_index, ensemble_member_index] = (
+                values
+            )
         else:
             self.__dataset.variables[variable_name][:, station_index] = values
 

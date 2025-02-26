@@ -1,7 +1,8 @@
 import unittest
 
-import rtctools._internal.alias_tools as alias_tools
 from pymoca.backends.casadi.alias_relation import AliasRelation
+
+import rtctools._internal.alias_tools as alias_tools
 
 
 class AliasToolsTest(unittest.TestCase):

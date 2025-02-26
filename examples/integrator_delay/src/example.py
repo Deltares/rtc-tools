@@ -3,6 +3,7 @@ Examples for optimization/simulation problems with a delay component.
 
 The examples use the same model and result in the same output.
 """
+
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
 )
