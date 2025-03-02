@@ -47,8 +47,9 @@ setup(
         "casadi >= 3.6.3, == 3.6.*, !=3.6.6",
         "numpy >= 1.16.0",
         "scipy >= 1.0.0",
-        "pymoca >= 0.9.1, == 0.9.*",
+        "pymoca == 0.11.*",
         "rtc-tools-channel-flow >= 1.2.0",
+        "rtc-tools-standard-library >= 0.1.0",
         "defusedxml >= 0.7.0",
         # Python 3.9's importlib.metadata does not support the "group" parameter
         # to entry_points yet.
