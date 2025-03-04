@@ -24,6 +24,11 @@ class Example(CSVMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
         constraints.append((self.state("storage.V"), 380000, 420000))
         return constraints
 
+    def compiler_options(self):
+        compiler_options = super().compiler_options()
+        compiler_options["basemodelica"] = True
+        compiler_options["cache"] = False
+        return compiler_options
 
 # Run
 run_optimization_problem(Example)

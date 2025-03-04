@@ -176,6 +176,9 @@ class ModelicaMixin(OptimizationProblem):
         # Default options
         compiler_options = {}
 
+        # Use <model_name>.basemodelica.mo
+        compiler_options["basemodelica"] = False
+
         # Expand vector states to multiple scalar component states.
         compiler_options["expand_vectors"] = True
 
