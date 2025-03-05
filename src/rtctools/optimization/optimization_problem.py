@@ -314,6 +314,13 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         if log_level == logging.ERROR and not log_solver_failure_as_error:
             log_level = logging.INFO
 
+        if self.solver_options()["solver"].lower() in ["knitro"]:
+            if solver_stats["return_status"] in [
+                "KN_RC_OPTIMAL_OR_SATISFACTORY",
+                "KN_RC_ITER_LIMIT_FEAS",
+            ]:
+                success = True
+
         return success, log_level
 
     @abstractproperty
