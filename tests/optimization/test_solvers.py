@@ -1,8 +1,8 @@
 import logging
 
 import numpy as np
-from test_case import TestCase
 
+from ..test_case import TestCase
 from .test_modelica_mixin import ModelAlgebraic, ModelMixedInteger
 
 logger = logging.getLogger("rtctools")

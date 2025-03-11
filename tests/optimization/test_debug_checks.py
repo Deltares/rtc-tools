@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 import numpy as np
-from test_case import TestCase
 
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
@@ -10,6 +9,7 @@ from rtctools.optimization.collocated_integrated_optimization_problem import (
 from rtctools.optimization.io_mixin import IOMixin
 from rtctools.optimization.modelica_mixin import ModelicaMixin
 
+from ..test_case import TestCase
 from .data_path import data_path
 
 logger = logging.getLogger("rtctools")

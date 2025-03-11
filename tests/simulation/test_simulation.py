@@ -4,12 +4,12 @@ from typing import List
 
 import casadi as ca
 import numpy as np
-from test_case import TestCase
 
 from rtctools._internal.alias_tools import AliasDict
 from rtctools.simulation.csv_mixin import CSVMixin
 from rtctools.simulation.simulation_problem import SimulationProblem, Variable
 
+from ..test_case import TestCase
 from .data_path import data_path
 
 

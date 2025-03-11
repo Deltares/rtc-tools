@@ -3,7 +3,6 @@ import unittest
 
 import casadi as ca
 import numpy as np
-from test_case import TestCase
 
 from rtctools.optimization.collocated_integrated_optimization_problem import (
     CollocatedIntegratedOptimizationProblem,
@@ -11,6 +10,7 @@ from rtctools.optimization.collocated_integrated_optimization_problem import (
 from rtctools.optimization.modelica_mixin import ModelicaMixin
 from rtctools.optimization.timeseries import Timeseries
 
+from ..test_case import TestCase
 from .data_path import data_path
 
 logger = logging.getLogger("rtctools")

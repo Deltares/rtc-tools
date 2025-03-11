@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 
 import numpy as np
 from netCDF4 import Dataset
-from test_case import TestCase
 
 import rtctools.data.netcdf as netcdf
 
+from ..test_case import TestCase
 from .data_path import data_path
 
 logging.basicConfig(
