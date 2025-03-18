@@ -20,8 +20,20 @@ jobs:
     - run: pip install pre-commit
     - run: pre-commit run --all-files --show-diff-on-failure
 
+  security:  # Also includes a few basic code quality checks.
+    name: sonarqube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis.
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build:
-    needs: style
+    needs: [style, security]
     runs-on: ubuntu-latest
     container:
       image: python:3.9
@@ -49,7 +61,7 @@ jobs:
       TOXENV: py
     strategy:
       matrix:
-        version:
+        version:  # Also update sonar-project.properties when updating the python versions.
         - '3.9'
         - '3.10'
         - '3.11'
