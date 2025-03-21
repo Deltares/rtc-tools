@@ -1,5 +1,22 @@
 # Release Notes
 
+## 2.7
+
+### Features
+
+- PIMixin: allow setting the unit of measurement when exporting a timeseries.
+- PI: enable writing a timeseries to a given file.
+- GoalProgrammingMixin: add aoption to skip a priority.
+- Interpolation: add ipopt options to the bspline fit method.
+
+### Fixes / Improvements
+
+- Simulation: improve checks and warning messages when setting initial values.
+- ModelicaMixin/Simulation: compile Modelica model again if loading cached file fails.
+- CSVMixin: enable support for ensembles with one member.
+- Casadi Helpers: fix handling exception in checking if an expression is affine.
+- Optimization: do not expand residual functions if this is not possible.
+
 ## 2.6
 
 ### Features
