@@ -85,7 +85,7 @@ You can clone the repository and install it from source:
 ```bash
 git clone https://github.com/Deltares/RTC-Tools.git
 cd RTC-Tools
-pip install -e .
+pip install -e . --config-settings editable_mode=compat
 ```
 
 To ensure that your code meets our standards, we recommend using pre-commit.
