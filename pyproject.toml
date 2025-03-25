@@ -1,3 +1,70 @@
+[build-system]
+requires = ["setuptools>=42", "versioneer[toml]==0.29"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rtc-tools"
+dynamic = ["version"]
+license = { file = "COPYING.LESSER" }
+description = "Toolbox for control and optimization of water systems."
+readme = "README.md"
+authors = [
+    {name = "Deltares"}
+]
+maintainers = [
+    {name = "Deltares"}
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS"
+]
+dependencies = [
+    "casadi >= 3.6.3, <= 3.7, !=3.6.6",
+    "numpy >= 1.16.0",
+    "scipy >= 1.0.0",
+    "pymoca >= 0.9.1, == 0.9.*",
+    "rtc-tools-channel-flow >= 1.2.0",
+    "defusedxml >= 0.7.0",
+    "importlib_metadata >= 5.0.0; python_version < '3.10'"
+]
+
+[project.optional-dependencies]
+netcdf = ["netCDF4"]
+all = ["netCDF4"]
+test = ["pytest", "pytest-runner", "netCDF4"]
+
+[project.urls]
+Homepage = "https://oss.deltares.nl/web/rtc-tools/home"
+Download = "http://github.com/deltares/rtc-tools/"
+
+[project.scripts]
+rtc-tools-download-examples = "rtctools.rtctoolsapp:download_examples"
+rtc-tools-copy-libraries = "rtctools.rtctoolsapp:copy_libraries"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = {find = {where = ["src"]}}
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "src/rtctools/_version.py"
+versionfile_build = "rtctools/_version.py"
+tag_prefix = ""
+parentdir_prefix = "rtctools-"
+
 [tool.ruff]
 lint.ignore = [
 	"B904", # Fix someday: raising exceptions within except
