@@ -1,0 +1,33 @@
+name: "Setup Python Environment"
+description: "Sets up Python environment with uv package manager"
+
+inputs:
+  uv-version:
+    description: "Version of uv to install"
+    required: false
+    default: "0.7.9"
+  dependency-groups:
+    description: "Space-separated list of dependency groups to install (e.g. 'deploy tests')"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: ${{ inputs.uv-version }}
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        CMD="uv sync --frozen --no-dev"
+        if [[ -n "${{ inputs.dependency-groups }}" ]]; then
+          for group in ${{ inputs.dependency-groups }}; do
+            CMD="$CMD --group $group"
+          done
+        fi
+        $CMD
