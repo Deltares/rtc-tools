@@ -17,8 +17,10 @@ jobs:
     timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
-    - run: pip install pre-commit
-    - run: pre-commit run --all-files --show-diff-on-failure
+    - uses: ./.github/actions/setup-python
+      with:
+        dependency-groups: "style"
+    - run: uv run pre-commit run --all-files --show-diff-on-failure
 
   build:
     needs: [style]
@@ -28,10 +30,10 @@ jobs:
     timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4.1.0
-    - run: |
-        python -m pip install --upgrade pip
-        pip install build
-    - run: python -m build
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup-python
+    - run: uv build
     - uses: actions/upload-artifact@v4
       if: success()
       with:
@@ -57,8 +59,10 @@ jobs:
         - '3.13'
     steps:
     - uses: actions/checkout@v4
-    - run: pip install tox
-    - run: tox -vv
+    - uses: ./.github/actions/setup-python
+      with:
+        dependency-groups: "tests"
+    - run: uv run tox -vv
 
   coverage:
     needs: build
@@ -70,8 +74,10 @@ jobs:
       TOXENV: coverage
     steps:
     - uses: actions/checkout@v4.1.0
-    - run: pip install tox
-    - run: tox -vv
+    - uses: ./.github/actions/setup-python
+      with:
+        dependency-groups: "tests"
+    - run: uv run tox -vv
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       if: success()
@@ -115,9 +121,10 @@ jobs:
         - '3.13'
     steps:
     - uses: actions/checkout@v4.1.0
-    - run: python -m pip install --upgrade pip
-    - run: pip install tox
-    - run: tox -vv
+    - uses: ./.github/actions/setup-python
+      with:
+        dependency-groups: "tests"
+    - run: uv run tox -vv
 
   deploy:
     needs: [test-linux, coverage, examples-linux]
@@ -130,18 +137,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install build dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
+      - name: Set up Python and uv
+        uses: ./.github/actions/setup-python
 
       - name: Build package
-        run: python -m build
+        run: uv build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

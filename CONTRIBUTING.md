@@ -85,34 +85,28 @@ You can clone the repository and install it from source:
 ```bash
 git clone https://github.com/Deltares/RTC-Tools.git
 cd RTC-Tools
-pip install -e . --config-settings editable_mode=compat
+uv sync
 ```
 
 To ensure that your code meets our standards, we recommend using pre-commit.
-To install pre-commit, run
+Run the following command to set up the pre-commit hook:
 ```bash
- pip install pre-commit
- ```
-Once installed, run
-```bash
- pre-commit install
- ```
-to set up the pre-commit hook. This will
+pre-commit install
+```
+. This will
 automatically check your code for formatting and linting issues before each
 commit.
 
 
-To run the tests, you will need pytest:
+To run the tests:
 
 ```bash
-pip install pytest
 pytest tests
 ```
 
-To build the documentation, you will need matploblib, sphinx and sphinx-rtd-theme:
+To build the documentation:
 
 ```bash
-pip install matplotlib sphinx sphinx-rtd-theme
 cd doc
 make html
 ```
