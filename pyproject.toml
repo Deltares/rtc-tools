@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=42", "versioneer[toml]==0.29"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "rtc-tools"
@@ -53,17 +53,18 @@ Download = "http://github.com/deltares/rtc-tools/"
 rtc-tools-download-examples = "rtctools.rtctoolsapp:download_examples"
 rtc-tools-copy-libraries = "rtctools.rtctoolsapp:copy_libraries"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-packages = {find = {where = ["src"]}}
+[tool.hatch.version]
+source = "vcs"
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440"
-versionfile_source = "src/rtctools/_version.py"
-versionfile_build = "rtctools/_version.py"
-tag_prefix = ""
-parentdir_prefix = "rtctools-"
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rtctools"]
+include = [
+  "/COPYING.LESSER",
+  "/README.md",
+]
 
 [tool.ruff]
 lint.ignore = [
