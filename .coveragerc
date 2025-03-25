@@ -2,6 +2,7 @@
 branch = True
 source = rtctools
 omit = src/rtctools/_version.py
+relative_fies = True
 
 [report]
 show_missing = true
