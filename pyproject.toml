@@ -43,7 +43,20 @@ dependencies = [
 [project.optional-dependencies]
 netcdf = ["netCDF4"]
 all = ["netCDF4"]
-test = ["pytest", "pytest-runner", "netCDF4"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=3.3.0",
+    "hatchling >= 1.26.3",
+    "hatch-vcs >= 0.4.0",
+    "tox >= 4.18.0",
+    {include-group = "tests"},
+]
+tests = [
+    "pytest >= 8.2.0",
+    "pytest-cov >= 6.0.0",
+]
+
 
 [project.urls]
 Homepage = "https://oss.deltares.nl/web/rtc-tools/home"
