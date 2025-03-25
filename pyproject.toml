@@ -1,12 +1,3 @@
-[tool.black]
-line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
-exclude = '''
-	(
-		src/rtctools/_version.py
-	)
-'''
-
 [tool.ruff]
 lint.ignore = [
 	"B904", # Fix someday: raising exceptions within except
@@ -19,5 +10,4 @@ lint.select = [
     "F", # default / pyflakes
     "I", # isort
     "W", # pycodestyle
-
 ]
