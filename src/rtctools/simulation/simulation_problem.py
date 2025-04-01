@@ -526,10 +526,14 @@ class SimulationProblem(DataStoreAccessor):
             # Check that the start_value is in between the variable bounds.
             if start_is_numeric and not min_is_symbolic and not max_is_symbolic:
                 if not (var.min <= start_val and start_val <= var.max):
-                    logger.warning(
-                        "Initialize: start value {} = {}".format(var_name, start_val)
-                        + " is not in between bounds {} and {}".format(var.min, var.max)
-                        + " and will be adjusted."
+                    logger.log(
+                        (
+                            logging.WARNING
+                            if source_description != "modelica file or default value"
+                            else logging.DEBUG
+                        ),
+                        f"Initialize: start value {var_name} = {start_val} "
+                        f"is not in between bounds {var.min} and {var.max} and will be adjusted.",
                     )
 
         # Default start var for ders is zero
