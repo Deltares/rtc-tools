@@ -97,7 +97,9 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
         logger.debug("Creating solver")
 
-        if options.pop("expand", False):
+        expand = options.pop("expand", False)
+        export_model = options.get("export_model", False)
+        if expand or export_model:
             # NOTE: CasADi only supports the "expand" option for nlpsol. To
             # also be able to expand with e.g. qpsol, we do the expansion
             # ourselves here.
@@ -110,6 +112,17 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
             nlp["f"] = f_sx
             nlp["g"] = g_sx
             nlp["x"] = X_sx
+
+            if options.pop("export_model", False):
+                import pickle
+                import time
+                with open("nlp_func_{}.pickle".format(int(time.time())), 'wb') as pck:
+                    myd = {}
+                    myd['indices'] = self._CollocatedIntegratedOptimizationProblem__indices
+                    myd['func'] = expand_f_g
+                    myd['other'] = (lbx, ubx, lbg, ubg, x0)
+                    myd['discrete'] = discrete
+                    pickle.dump(myd, pck)
 
         # Debug check for non-linearity in constraints
         self.__debug_check_linearity_constraints(nlp)
@@ -255,7 +268,8 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         :returns: A dictionary of solver options. See the CasADi and
                   respective solver documentation for details.
         """
-        options = {"error_on_fail": False, "optimized_num_dir": 3, "casadi_solver": ca.nlpsol}
+        options = {"error_on_fail": False, "optimized_num_dir": 3, "casadi_solver": ca.nlpsol, 
+                   "export_model": False}
 
         if self.__mixed_integer:
             options["solver"] = "bonmin"
