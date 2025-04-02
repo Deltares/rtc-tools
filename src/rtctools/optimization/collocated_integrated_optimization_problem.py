@@ -2043,9 +2043,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
     def controls(self):
         return self.__controls
 
-    def _collint_get_lbx_ubx(self, count, indices):
-        bounds = self.bounds()
-
+    def _collint_get_lbx_ubx(self, bounds, count, indices):
         lbx = np.full(count, -np.inf, dtype=np.float64)
         ubx = np.full(count, np.inf, dtype=np.float64)
 
@@ -2210,7 +2208,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 count = max(count, control_indices_stop)
 
         discrete = self._collint_get_discrete(count, indices)
-        lbx, ubx = self._collint_get_lbx_ubx(count, indices)
+        lbx, ubx = self._collint_get_lbx_ubx(bounds, count, indices)
         x0 = self._collint_get_x0(count, indices)
 
         # Return number of control variables
@@ -2326,7 +2324,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 offset += 1
 
         discrete = self._collint_get_discrete(count, indices)
-        lbx, ubx = self._collint_get_lbx_ubx(count, indices)
+        lbx, ubx = self._collint_get_lbx_ubx(bounds, count, indices)
         x0 = self._collint_get_x0(count, indices)
 
         # Return number of state variables
