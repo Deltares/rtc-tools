@@ -9,6 +9,14 @@ from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.debug_check_helpers import DebugLevel, debug_check
 from rtctools.data.storage import DataStoreAccessor
 
+from rtctools._internal.casadi_to_LP import (
+    build_objective,
+    build_constraints,
+    build_bounds,
+    sanitize_var_names,
+    write_lp_file
+)
+
 from .timeseries import Timeseries
 
 logger = logging.getLogger("rtctools")
@@ -98,7 +106,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         logger.debug("Creating solver")
 
         expand = options.pop("expand", False)
-        export_model = options.get("export_model", False)
+        export_model = options.pop("export_model", False)
         if expand or export_model:
             # NOTE: CasADi only supports the "expand" option for nlpsol. To
             # also be able to expand with e.g. qpsol, we do the expansion
@@ -113,16 +121,36 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
             nlp["g"] = g_sx
             nlp["x"] = X_sx
 
-            if options.pop("export_model", False):
-                import pickle
-                import time
-                with open("nlp_func_{}.pickle".format(int(time.time())), 'wb') as pck:
-                    myd = {}
-                    myd['indices'] = self._CollocatedIntegratedOptimizationProblem__indices
-                    myd['func'] = expand_f_g
-                    myd['other'] = (lbx, ubx, lbg, ubg, x0)
-                    myd['discrete'] = discrete
-                    pickle.dump(myd, pck)
+            if export_model:
+                # Export LF if collocation constraints are linear
+                if self.linear_collocation:
+                    # Get variable names - note the [0] to get the dictionary from the list
+                    indices_dict = self._CollocatedIntegratedOptimizationProblem__indices[0]
+                    var_names = sanitize_var_names(
+                        indices_dict,  # Pass the dictionary, not the list
+                        expand_f_g.nnz_in()
+                    )
+                    
+                    # Build LP components
+                    obj_str = build_objective(expand_f_g, var_names)
+                    constr_str = build_constraints(expand_f_g, lbg, ubg, var_names)
+                    bounds_str = build_bounds(var_names, lbx, ubx)
+                    
+                    # Write LP file
+                    import time
+                    filename = "myproblem_{}.lp".format(int(time.time()))
+                    write_lp_file(
+                        filename,
+                        obj_str,
+                        constr_str,
+                        bounds_str,
+                        var_names,
+                        discrete
+                    )
+                else:
+                    logger.warning("Skipping LP export: collocation constraints are not linear")
+                    return
+                
 
         # Debug check for non-linearity in constraints
         self.__debug_check_linearity_constraints(nlp)

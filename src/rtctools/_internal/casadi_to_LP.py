@@ -1,32 +1,9 @@
 from typing import Dict, Any, Tuple, List, Union, Callable
-import os
-import glob
-import pickle
 import shutil
 import casadi as ca
 import numpy as np
 import textwrap
 
-def load_latest_pickle(pattern: str = "nlp*.pickle") -> Tuple[Dict[str, Any], str]:
-    """
-    Load the latest pickle file matching the given pattern.
-
-    Args:
-        pattern (str): File pattern to match. Defaults to "nlp*.pickle".
-
-    Returns:
-        Tuple[Dict[str, Any], str]: The loaded pickle data and the extracted pickle id.
-    
-    Raises:
-        FileNotFoundError: If no matching pickle files are found.
-    """
-    ps = sorted(glob.glob(pattern))
-    if not ps:
-        raise FileNotFoundError("No pickle files found.")
-    with open(ps[-1], 'rb') as f:
-        d = pickle.load(f)
-    pickleid = os.path.basename(ps[-1]).split('.')[0].rsplit('_', 1)[1]
-    return d, pickleid
 
 def build_objective(expand_f_g: Callable[[ca.SX], Tuple[ca.SX, ca.SX]], var_names: List[str]) -> str:
     """
@@ -62,30 +39,21 @@ def build_objective(expand_f_g: Callable[[ca.SX], Tuple[ca.SX, ca.SX]], var_name
     wrapped_objective = "\n".join(textwrap.wrap("  " + objective_str, width=255))
     return wrapped_objective
 
-def build_constraints(expand_f_g: Callable[[ca.SX], Tuple[ca.SX, ca.SX]],
-                      indices: Dict[str, Union[int, slice]],
-                      lbx: List[Any],
-                      ubx: List[Any],
-                      lbg: List[Any],
-                      ubg: List[Any],
-                      var_names: List[str]) -> str:
+def build_constraints(expand_f_g: ca.Function,
+                     lbg: List[Any],
+                     ubg: List[Any],
+                     var_names: List[str]) -> str:
     """
     Build the LP constraints string.
 
     Args:
-        expand_f_g (Callable): A callable function for constraints.
-        indices (Dict[str, Union[int, slice]]): Dictionary of variable indices.
-        lbx (List[Any]): Lower bounds on variables.
-        ubx (List[Any]): Upper bounds on variables.
-        lbg (List[Any]): Lower bounds on constraints.
-        ubg (List[Any]): Upper bounds on constraints.
-        var_names (List[str]): List of variable names.
+        expand_f_g: The expanded CasADi function
+        lbg: Lower bounds on constraints
+        ubg: Upper bounds on constraints
+        var_names: List of variable names
 
     Returns:
-        str: The formatted constraints string.
-
-    Raises:
-        Exception: If bounds are invalid.
+        str: The formatted constraints string
     """
     X = ca.SX.sym('X', expand_f_g.nnz_in())
     _, g = expand_f_g(X)
@@ -172,7 +140,7 @@ def sanitize_var_names(indices: Dict[str, Union[int, slice]], num_total: int) ->
         var_names[i] = v
     return var_names
 
-def write_lp_file(pickleid: str,
+def write_lp_file(filename: str,
                   objective_str: str,
                   constraints_str: str,
                   bounds_str: str,
@@ -182,14 +150,14 @@ def write_lp_file(pickleid: str,
     Write the LP file according to the LP format and copy it.
 
     Args:
-        pickleid (str): Identifier for the pickle.
+        filename (str): Name of the LP file where the model will be exported.
         objective_str (str): The objective function string.
         constraints_str (str): The constraints string.
         bounds_str (str): The bounds string.
         var_names (List[str]): List of variable names.
         discrete (List[bool]): Boolean list indicating discrete variables.
     """
-    filename = "myproblem_{}.lp".format(pickleid)
+
     with open(filename, 'w') as o:
         o.write("Minimize\n")
         o.write(objective_str + "\n")
@@ -203,25 +171,3 @@ def write_lp_file(pickleid: str,
             o.write(discrete_vars + "\n")
         o.write("End")
     shutil.copy(filename, "myproblem.lp")
-
-def main() -> None:
-    """
-    Main function to load data, build LP components, and write the LP file.
-    """
-    d, pickleid = load_latest_pickle()
-    
-    indices = d['indices'][0]
-    expand_f_g = d['func']
-    lbx, ubx, lbg, ubg, x0 = d['other']
-    
-    num_total = expand_f_g.nnz_in()
-    var_names = sanitize_var_names(indices, num_total)
-    
-    obj_str = build_objective(expand_f_g, var_names)
-    constr_str = build_constraints(expand_f_g, indices, lbx, ubx, lbg, ubg, var_names)
-    bounds_str = build_bounds(var_names, lbx, ubx)
-    
-    write_lp_file(pickleid, obj_str, constr_str, bounds_str, var_names, d['discrete'])
-
-if __name__ == "__main__":
-    main()
