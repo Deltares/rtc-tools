@@ -86,6 +86,11 @@ class ControlTreeMixin(OptimizationProblem):
         logger.debug("ControlTreeMixin: Branching times:")
         logger.debug(self.__branching_times)
 
+        # Avoid calling constant_inputs() many times
+        constant_inputs = [
+            self.constant_inputs(ensemble_member=i) for i in range(self.ensemble_size)
+        ]
+
         # Branches start at branching times, so that the tree looks like the following:
         #
         #         *-----
@@ -122,18 +127,16 @@ class ControlTreeMixin(OptimizationProblem):
             for forecast_variable in options["forecast_variables"]:
                 # We assume the time stamps of the forecasts in all ensemble
                 # members to be identical
-                timeseries = self.constant_inputs(ensemble_member=0)[forecast_variable]
+                timeseries = constant_inputs[0][forecast_variable]
                 els = np.logical_and(
                     timeseries.times >= branching_time_0, timeseries.times < branching_time_1
                 )
 
                 # Compute distance between ensemble members
                 for i, member_i in enumerate(branches[current_branch]):
-                    timeseries_i = self.constant_inputs(ensemble_member=member_i)[forecast_variable]
+                    timeseries_i = constant_inputs[member_i][forecast_variable]
                     for j, member_j in enumerate(branches[current_branch]):
-                        timeseries_j = self.constant_inputs(ensemble_member=member_j)[
-                            forecast_variable
-                        ]
+                        timeseries_j = constant_inputs[member_j][forecast_variable]
                         distances[i, j] += np.linalg.norm(
                             timeseries_i.values[els] - timeseries_j.values[els]
                         )
