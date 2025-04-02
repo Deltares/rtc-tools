@@ -3112,7 +3112,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         variable_to_all_indices = {k: set(v) for k, v in indices[0].items()}
         for ensemble_indices in indices[1:]:
             for k, v in ensemble_indices.items():
-                variable_to_all_indices[k] |= v
+                variable_to_all_indices[k] |= set(v)
 
         if len(inds_up) > 0:
             exceedences = []
