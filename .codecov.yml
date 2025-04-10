@@ -8,5 +8,7 @@ coverage:
     patch:
       default:
         target: 0%
+  ignore:
+    - "src/rtctools/_version.py"  # Exclude _version.py
 comment:
   layout: "header, tree"
