@@ -359,6 +359,7 @@ class CSVLookupTableMixin(OptimizationProblem):
                             k=k,
                             monotonicity=mono,
                             curvature=curv,
+                            ipopt_options={"nlp_scaling_method": "none"},
                         )
                     else:
                         raise Exception(
