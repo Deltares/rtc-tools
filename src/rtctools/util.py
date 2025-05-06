@@ -110,6 +110,7 @@ def run_optimization_problem(
             "GoalProgrammingMixin",
             "PIMixin",
             "CSVMixin",
+            "IOMixin",
             "ModelicaMixin",
             "PlanningMixin",
             "ControlTreeMixin",
