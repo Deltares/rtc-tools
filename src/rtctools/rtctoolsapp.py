@@ -64,7 +64,7 @@ def copy_libraries(*args):
 
     for ep in importlib_metadata.entry_points(group="rtctools.libraries.modelica"):
         if ep.name == "library_folder":
-            library_folders.append(str(importlib.resources.files(ep.module).joinpath(ep.attr)))
+            library_folders.append(Path(importlib.resources.files(ep.module).joinpath(ep.attr)))
 
     tlds = {}
     for lf in library_folders:
