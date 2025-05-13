@@ -20,20 +20,8 @@ jobs:
     - run: pip install pre-commit
     - run: pre-commit run --all-files --show-diff-on-failure
 
-  security:  # Also includes a few basic code quality checks.
-    name: sonarqube
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis.
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   build:
-    needs: [style, security]
+    needs: [style]
     runs-on: ubuntu-latest
     container:
       image: python:3.9
@@ -84,8 +72,29 @@ jobs:
     - uses: actions/checkout@v4.1.0
     - run: pip install tox
     - run: tox -vv
-  #   - run: pip install codecov
-  #   - run: codecov --token=$CODECOV_TOKEN
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: coverage-report
+        retention-days: 7
+        path: coverage.xml
+
+  sonar:
+    needs: [coverage]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis.
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   examples-linux:
     needs: build

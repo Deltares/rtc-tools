@@ -3,9 +3,9 @@
 [![Pipeline](https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml/badge.svg)](
     https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml
 )
-[![Coverage](https://codecov.io/gl/deltares/rtc-tools/branch/master/graph/badge.svg)](
-    https://codecov.io/gl/deltares/rtc-tools
-)
+[![Coverage](
+    https://sonarcloud.io/api/project_badges/measure?project=Deltares_rtc-tools&metric=coverage
+)](https://sonarcloud.io/summary/new_code?id=Deltares_rtc-tools)
 
 > **NOTE** The rtc-tools repository has been migrated from gitlab to here;
 see [migration from gitlab](#migration-from-gitlab).
