@@ -104,7 +104,6 @@ def download_examples(*args):
     from zipfile import ZipFile
 
     version = rtctools.__version__
-    rtc_full_name = "rtc-tools-{}".format(version)
     try:
         url = "https://github.com/deltares/rtc-tools/zipball/{}".format(version)
 
@@ -117,11 +116,12 @@ def download_examples(*args):
 
     with ZipFile(local_filename, "r") as z:
         target = path / "rtc-tools-examples"
-        prefix = "{}/examples/".format(rtc_full_name)
+        zip_folder_name = next(x for x in z.namelist() if x.startswith("Deltares-rtc-tools-"))
+        prefix = "{}/examples/".format(zip_folder_name.rstrip("/"))
         members = [x for x in z.namelist() if x.startswith(prefix)]
         z.extractall(members=members)
         shutil.move(prefix, target)
-        shutil.rmtree(rtc_full_name)
+        shutil.rmtree(zip_folder_name)
 
         sys.exit("Succesfully downloaded the RTC-Tools examples to '{}'".format(target.resolve()))
 
