@@ -487,6 +487,8 @@ class SimulationProblem(DataStoreAccessor):
             start_val = start_values.get(input_source, None)
             start_is_numeric = start_val is not None and not isinstance(start_val, ca.MX)
             numeric_start_val = start_val if start_is_numeric else 0.0
+            if np.isnan(numeric_start_val):
+                numeric_start_val = 0.0
             if len(start_values) > 1:
                 logger.warning(
                     "Initialize: Multiple initial values for {} are provided: {}.".format(
@@ -506,7 +508,7 @@ class SimulationProblem(DataStoreAccessor):
                 )
 
             # Add a residual for the difference between the state and its starting expression
-            start_expr = start_val
+            start_expr = numeric_start_val if start_is_numeric else start_val
             min_is_symbolic = isinstance(var.min, ca.MX)
             max_is_symbolic = isinstance(var.max, ca.MX)
             if var.fixed:
@@ -525,14 +527,14 @@ class SimulationProblem(DataStoreAccessor):
 
             # Check that the start_value is in between the variable bounds.
             if start_is_numeric and not min_is_symbolic and not max_is_symbolic:
-                if not (var.min <= start_val and start_val <= var.max):
+                if not (var.min <= start_expr and start_expr <= var.max):
                     logger.log(
                         (
                             logging.WARNING
                             if source_description != "modelica file or default value"
                             else logging.DEBUG
                         ),
-                        f"Initialize: start value {var_name} = {start_val} "
+                        f"Initialize: start value {var_name} = {start_expr} "
                         f"is not in between bounds {var.min} and {var.max} and will be adjusted.",
                     )
 
