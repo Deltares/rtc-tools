@@ -77,7 +77,7 @@ Commit messages should have the following structure:
 
 To set up your development environment, you will need:
 
-- Python 3.9 or higher
+- Python 3.9 or higher (up to 3.13)
 - Git
 
 You can clone the repository and install it from source:
