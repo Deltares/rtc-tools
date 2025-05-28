@@ -670,7 +670,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 for ensemble_member in range(self.ensemble_size)
             ]
             if (
-                len(values) == 1 or (np.all(values) == values[0])
+                len(values) == 1 or all(v == values[0] for v in values)
             ) and parameter.name() not in dynamic_parameter_names:
                 constant_parameters.append(parameter)
                 constant_parameter_values.append(values[0])
