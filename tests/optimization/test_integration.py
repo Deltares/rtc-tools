@@ -243,3 +243,62 @@ class OldApiErrorTest(TestCase):
 
     def setUp(self):
         self.problem = OldApiErrorModel()
+
+
+class SingleShootingEnsembleBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"u": (-1.0, 1.0)}  # Tighter bounds for ensemble member 0
+        elif ensemble_member == 1:
+            return {"u": (-1.5, 1.5)}  # Medium bounds for ensemble member 1
+        else:
+            return {"u": (-2.0, 2.0)}  # Default bounds for ensemble member 2
+
+
+class TestEnsembleBounds(TestCase):
+    def setUp(self):
+        self.problem = SingleShootingEnsembleBoundsModel()
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_ensemble_bounds_applied(self):
+        # Test that different ensemble members have different effective bounds
+        # by checking that the control inputs respect their individual bounds
+        for ensemble_member in range(self.problem.ensemble_size):
+            results = self.problem.extract_results(ensemble_member)
+            bounds = self.problem.bounds(ensemble_member)
+            u_bounds = bounds["u"]
+
+            # Check that all control values are within the specified bounds
+            self.assertTrue(np.all(results["u"] >= u_bounds[0] - self.tolerance))
+            self.assertTrue(np.all(results["u"] <= u_bounds[1] + self.tolerance))
+
+
+class SingleShootingConflictingBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"u": (0.5, 1.0)}  # Lower bound 0.5, upper bound 1.0
+        elif ensemble_member == 1:
+            return {"u": (-1.0, 0.3)}  # Lower bound -1.0, upper bound 0.3
+        else:
+            return {"u": (-2.0, 2.0)}  # Default bounds
+
+
+class TestConflictingBounds(TestCase):
+    def test_conflicting_bounds_error(self):
+        # Test that conflicting bounds (where max lower > min upper) raise an error
+        problem = SingleShootingConflictingBoundsModel()
+        with self.assertRaises(ValueError) as error_context, self.assertLogs(level="ERROR") as cm:
+            problem.optimize()
+
+        self.assertIn(
+            "Lower bound (0.5) is higher than upper bound (0.3) for variable u", cm.output[0]
+        )
+        self.assertIn(
+            "Found at least one variable with lower bound higher than its upper bound",
+            str(error_context.exception),
+        )
