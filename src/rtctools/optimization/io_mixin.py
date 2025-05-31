@@ -7,6 +7,7 @@ import casadi as ca
 import numpy as np
 
 from rtctools._internal.caching import cached
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 from rtctools.optimization.optimization_problem import OptimizationProblem
 from rtctools.optimization.timeseries import Timeseries
 
@@ -174,9 +175,13 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
         return "_".join((variable, "Max"))
 
     @cached
-    def bounds(self):
-        # Call parent class first for default values.
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: int | None = None):
+        bounds = (
+            super().bounds(ensemble_member)
+            if getattr(self, "ensemble_specific_bounds", False)
+            else super().bounds()
+        )
 
         io_times = self.io.times_sec
         t_pos = bisect.bisect_left(io_times, self.initial_time)

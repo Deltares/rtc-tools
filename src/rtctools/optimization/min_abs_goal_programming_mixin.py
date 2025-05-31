@@ -5,6 +5,8 @@ from typing import List
 import casadi as ca
 import numpy as np
 
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
+
 from .goal_programming_mixin import GoalProgrammingMixin
 from .goal_programming_mixin_base import (
     Goal,
@@ -86,8 +88,14 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
     def path_variables(self):
         return super().path_variables + self.__problem_path_vars
 
-    def bounds(self):
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: int | None = None):
+        bounds = (
+            super().bounds(ensemble_member)
+            if getattr(self, "ensemble_specific_bounds", False)
+            else super().bounds()
+        )
+
         for abs_var in self.__problem_vars + self.__problem_path_vars:
             bounds[abs_var.name()] = (0.0, np.inf)
         return bounds

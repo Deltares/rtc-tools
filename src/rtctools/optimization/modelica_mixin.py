@@ -19,6 +19,7 @@ import pymoca.backends.casadi.api
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.caching import cached
 from rtctools._internal.casadi_helpers import substitute_in_external
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 
 from .optimization_problem import OptimizationProblem
 from .timeseries import Timeseries
@@ -315,9 +316,13 @@ class ModelicaMixin(OptimizationProblem):
         return self.__initial_residual
 
     @cached
-    def bounds(self):
-        # Call parent class first for default values.
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: int | None = None):
+        bounds = (
+            super().bounds(ensemble_member)
+            if getattr(self, "ensemble_specific_bounds", False)
+            else super().bounds()
+        )
 
         # Parameter values
         parameters = self.parameters(0)

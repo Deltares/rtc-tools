@@ -394,7 +394,17 @@ class StateGoal(Goal):
         # Extract state range from model
         if self.has_target_bounds:
             try:
-                self.function_range = optimization_problem.bounds()[self.state]
+                # Handle ensemble-specific bounds by using ensemble_member=0 if
+                # feature flag is enabled
+                # TODO: What do we do with this? Max? Min? User explicit input?
+                if (
+                    hasattr(optimization_problem, "ensemble_specific_bounds")
+                    and optimization_problem.ensemble_specific_bounds
+                ):
+                    bounds = optimization_problem.bounds(ensemble_member=0)
+                else:
+                    bounds = optimization_problem.bounds()
+                self.function_range = bounds[self.state]
             except KeyError:
                 raise Exception(
                     "State {} has no bounds or does not exist in the model.".format(self.state)

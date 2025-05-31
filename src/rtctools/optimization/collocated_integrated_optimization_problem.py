@@ -6,6 +6,7 @@ from typing import Dict, Union
 
 import casadi as ca
 import numpy as np
+from numpy.typing import NDArray
 
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.casadi_helpers import (
@@ -17,7 +18,7 @@ from rtctools._internal.casadi_helpers import (
 )
 from rtctools._internal.debug_check_helpers import DebugLevel, debug_check
 
-from .optimization_problem import OptimizationProblem
+from .optimization_problem import BT, OptimizationProblem
 from .timeseries import Timeseries
 
 logger = logging.getLogger("rtctools")
@@ -410,7 +411,10 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 if v.ndim == 1:
                     ensemble_data["extra_constant_inputs"][k] = v[:, None]
 
-        bounds = self.bounds()
+        if getattr(self, "ensemble_specific_bounds", False):
+            bounds = [self.bounds(ensemble_member=i) for i in range(self.ensemble_size)]
+        else:
+            bounds = self.bounds()
 
         # Initialize control discretization
         (
@@ -2043,7 +2047,67 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
     def controls(self):
         return self.__controls
 
-    def _collint_get_lbx_ubx(self, bounds, count, indices):
+    def _collint_get_lbx_ubx(
+        self,
+        bounds: dict[str, BT] | list[dict[str, BT]],
+        count: int,
+        indices: list[dict[str, slice | int]],
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+        if getattr(self, "ensemble_specific_bounds", False):
+            assert isinstance(bounds, list)
+            assert len(bounds) == self.ensemble_size
+
+            # Loop over ensemble members and collect bounds. For the lower bound
+            # we take the maximum of all of them, and for the upper bound we
+            # take the minimum.
+            ensemble_lbx_ubx = np.array(
+                [
+                    self._collint_get_lbx_ubx_member(bounds[i], count, indices)
+                    for i in range(self.ensemble_size)
+                ]
+            )
+
+            lbx = np.max(ensemble_lbx_ubx[:, 0, :], axis=0)
+            ubx = np.min(ensemble_lbx_ubx[:, 1, :], axis=0)
+
+            # Check that the lower bounds are not higher than the upper bounds
+            error_inds = np.where(lbx > ubx)[0]
+            if np.any(error_inds):
+                # Build a reverse map. Note that it is okay if this is somewhat
+                # computationally expensive, as it is only done when we raise
+                # an exception.
+                reverse_map = {}
+                for ensemble_member in range(self.ensemble_size):
+                    for variable, inds in indices[ensemble_member].items():
+                        if isinstance(inds, slice):
+                            inds = range(*inds.indices(count))
+
+                        for i in inds:
+                            reverse_map[i] = variable
+
+                # Log once per variable, to avoid spamming the log with an error
+                # per timestep.
+                variables_logged = {}
+                for i in error_inds:
+                    if reverse_map[i] not in variables_logged:
+                        logger.error(
+                            f"Lower bound ({lbx[i]}) is higher than "
+                            f"upper bound ({ubx[i]}) for variable {reverse_map[i]}"
+                        )
+                        variables_logged[reverse_map[i]] = True
+
+                raise ValueError(
+                    "Found at least one variable with lower bound higher than its upper bound"
+                )
+
+            return lbx, ubx
+        else:
+            assert isinstance(bounds, (AliasDict, dict))
+            return self._collint_get_lbx_ubx_member(bounds, count, indices)
+
+    def _collint_get_lbx_ubx_member(
+        self, bounds: dict[str, BT], count: int, indices: list[dict[str, slice | int]]
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         lbx = np.full(count, -np.inf, dtype=np.float64)
         ubx = np.full(count, np.inf, dtype=np.float64)
 
