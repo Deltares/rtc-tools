@@ -324,8 +324,10 @@ class ModelicaMixin(OptimizationProblem):
             else super().bounds()
         )
 
+        ensemble_member = ensemble_member if getattr(self, "ensemble_specific_bounds", False) else 0
+
         # Parameter values
-        parameters = self.parameters(0)
+        parameters = self.parameters(ensemble_member)
         parameter_values = [
             parameters.get(param.name(), param) for param in self.__mx["parameters"]
         ]

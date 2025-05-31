@@ -183,6 +183,8 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
             else super().bounds()
         )
 
+        ensemble_member = ensemble_member if getattr(self, "ensemble_specific_bounds", False) else 0
+
         io_times = self.io.times_sec
         t_pos = bisect.bisect_left(io_times, self.initial_time)
 
@@ -194,7 +196,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
             timeseries_id = self.min_timeseries_id(variable_name)
             try:
-                _, values = self.io.get_timeseries_sec(timeseries_id, 0)
+                _, values = self.io.get_timeseries_sec(timeseries_id, ensemble_member)
                 m = values[t_pos:]
             except KeyError:
                 pass
@@ -204,7 +206,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
             timeseries_id = self.max_timeseries_id(variable_name)
             try:
-                _, values = self.io.get_timeseries_sec(timeseries_id, 0)
+                _, values = self.io.get_timeseries_sec(timeseries_id, ensemble_member)
                 M = values[t_pos:]
             except KeyError:
                 pass
