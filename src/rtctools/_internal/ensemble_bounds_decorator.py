@@ -18,9 +18,6 @@ def ensemble_bounds_check(func):
 
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        # Get the feature flag status
-        ensemble_specific_bounds = getattr(self, "ensemble_specific_bounds", False)
-
         # Check that the decorator is used on a method that matches the
         # expected signature
         sig = inspect.signature(func)
@@ -47,7 +44,7 @@ def ensemble_bounds_check(func):
             ensemble_member_value = kwargs["ensemble_member"]
 
         # Check feature flag and enforce rules
-        if ensemble_specific_bounds:
+        if self.ensemble_specific_bounds:
             # Feature flag is ON - ensemble_member should be passed
             if not ensemble_member_provided:
                 raise TypeError(

@@ -411,7 +411,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 if v.ndim == 1:
                     ensemble_data["extra_constant_inputs"][k] = v[:, None]
 
-        if getattr(self, "ensemble_specific_bounds", False):
+        if self.ensemble_specific_bounds:
             bounds = [self.bounds(ensemble_member=i) for i in range(self.ensemble_size)]
         else:
             bounds = self.bounds()
@@ -2053,7 +2053,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         count: int,
         indices: list[dict[str, Union[slice, int]]],
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
-        if getattr(self, "ensemble_specific_bounds", False):
+        if self.ensemble_specific_bounds:
             assert isinstance(bounds, list)
             assert len(bounds) == self.ensemble_size
 

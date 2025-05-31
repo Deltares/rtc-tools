@@ -91,9 +91,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
     @ensemble_bounds_check
     def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
-            super().bounds(ensemble_member)
-            if getattr(self, "ensemble_specific_bounds", False)
-            else super().bounds()
+            super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
         )
 
         for abs_var in self.__problem_vars + self.__problem_path_vars:

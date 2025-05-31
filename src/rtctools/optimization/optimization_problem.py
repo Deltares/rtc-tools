@@ -225,7 +225,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
     def __check_bounds_control_input(self) -> None:
         # Checks if at the control inputs have bounds, log warning when a control input is not
         # bounded.
-        if getattr(self, "ensemble_specific_bounds", False):
+        if self.ensemble_specific_bounds:
             # We can just naively merge dictionaries, as we're just checking for
             # presence of keys.
             bounds = {}

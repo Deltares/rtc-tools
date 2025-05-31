@@ -179,12 +179,10 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
     @ensemble_bounds_check
     def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
-            super().bounds(ensemble_member)
-            if getattr(self, "ensemble_specific_bounds", False)
-            else super().bounds()
+            super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
         )
 
-        ensemble_member = ensemble_member if getattr(self, "ensemble_specific_bounds", False) else 0
+        ensemble_member = ensemble_member if self.ensemble_specific_bounds else 0
 
         io_times = self.io.times_sec
         t_pos = bisect.bisect_left(io_times, self.initial_time)
