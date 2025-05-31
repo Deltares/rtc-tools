@@ -2049,9 +2049,9 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
     def _collint_get_lbx_ubx(
         self,
-        bounds: dict[str, BT] | list[dict[str, BT]],
+        bounds: Union[dict[str, BT], list[dict[str, BT]]],
         count: int,
-        indices: list[dict[str, slice | int]],
+        indices: list[dict[str, Union[slice, int]]],
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         if getattr(self, "ensemble_specific_bounds", False):
             assert isinstance(bounds, list)
@@ -2106,7 +2106,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             return self._collint_get_lbx_ubx_member(bounds, count, indices)
 
     def _collint_get_lbx_ubx_member(
-        self, bounds: dict[str, BT], count: int, indices: list[dict[str, slice | int]]
+        self, bounds: dict[str, BT], count: int, indices: list[dict[str, Union[slice, int]]]
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         lbx = np.full(count, -np.inf, dtype=np.float64)
         ubx = np.full(count, np.inf, dtype=np.float64)

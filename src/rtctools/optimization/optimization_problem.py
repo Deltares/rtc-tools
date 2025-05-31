@@ -1,6 +1,6 @@
 import logging
 from abc import ABCMeta, abstractmethod, abstractproperty
-from typing import Any, Dict, Iterator, List, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import casadi as ca
 import numpy as np
@@ -619,7 +619,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return m, M
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: int | None = None) -> AliasDict[str, Tuple[BT, BT]]:
+    def bounds(self, ensemble_member: Optional[int] = None) -> AliasDict[str, Tuple[BT, BT]]:
         """
         Returns variable bounds as a dictionary mapping variable names to a pair of bounds.
         A bound may be a constant, or a time series.

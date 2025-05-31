@@ -1,7 +1,7 @@
 import itertools
 import logging
 from collections import OrderedDict
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 import casadi as ca
 import numpy as np
@@ -67,7 +67,7 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
         return self.__problem_path_epsilons + self.__subproblem_path_epsilons
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: int | None = None):
+    def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
             super().bounds(ensemble_member)
             if getattr(self, "ensemble_specific_bounds", False)

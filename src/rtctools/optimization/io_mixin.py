@@ -2,6 +2,7 @@ import bisect
 import logging
 import warnings
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 import casadi as ca
 import numpy as np
@@ -176,7 +177,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
     @cached
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: int | None = None):
+    def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
             super().bounds(ensemble_member)
             if getattr(self, "ensemble_specific_bounds", False)

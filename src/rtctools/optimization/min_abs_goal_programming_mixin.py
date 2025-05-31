@@ -1,6 +1,6 @@
 import functools
 import itertools
-from typing import List
+from typing import List, Optional
 
 import casadi as ca
 import numpy as np
@@ -89,7 +89,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
         return super().path_variables + self.__problem_path_vars
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: int | None = None):
+    def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
             super().bounds(ensemble_member)
             if getattr(self, "ensemble_specific_bounds", False)

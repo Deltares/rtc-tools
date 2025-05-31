@@ -2,7 +2,7 @@ import importlib.resources
 import itertools
 import logging
 import sys
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 # Python 3.9's importlib.metadata does not support the "group" parameter to
 # entry_points yet.
@@ -317,7 +317,7 @@ class ModelicaMixin(OptimizationProblem):
 
     @cached
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: int | None = None):
+    def bounds(self, ensemble_member: Optional[int] = None):
         bounds = (
             super().bounds(ensemble_member)
             if getattr(self, "ensemble_specific_bounds", False)

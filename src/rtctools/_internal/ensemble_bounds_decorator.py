@@ -30,7 +30,7 @@ def ensemble_bounds_check(func):
         if not has_ensemble_member_param:
             raise RuntimeError(
                 f"bounds() method {func.__qualname__} must have 'ensemble_member' parameter. "
-                f"Expected signature: def bounds(self, ensemble_member: int | None = None)"
+                f"Expected signature: def bounds(self, ensemble_member: Optional[int] = None)"
             )
 
         # Determine if ensemble_member was provided in the call
