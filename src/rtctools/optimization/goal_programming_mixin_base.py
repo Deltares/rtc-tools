@@ -394,7 +394,31 @@ class StateGoal(Goal):
         # Extract state range from model
         if self.has_target_bounds:
             try:
-                self.function_range = optimization_problem.bounds()[self.state]
+                if optimization_problem.ensemble_specific_bounds:
+                    bounds = optimization_problem.bounds(0)
+                    bounds_state_ref = bounds[self.state]
+                    if np.array_equal(self.function_range, (np.nan, np.nan), equal_nan=True):
+                        # If the user has not set the function range themselves, we
+                        # try and set it automatically. This is only possible if the
+                        # bounds are the same for all ensemble members.
+                        for ensemble_member in range(optimization_problem.ensemble_size):
+                            bounds_state_ensemble = optimization_problem.bounds(ensemble_member)[
+                                self.state
+                            ]
+                            # First, check if the types are equal, and then check if the values are
+                            # equal. For Timeseries and floats, we can do `==` comparison, for
+                            # arrays we need to use np.all. To simplify we wrap the `==` for floats
+                            # in an `np.all` as well.
+                            if type(bounds_state_ref) is not type(
+                                bounds_state_ensemble
+                            ) or not np.all(bounds_state_ref == bounds_state_ensemble):
+                                raise ValueError(
+                                    f"Bounds for state {self.state} are not the same for all "
+                                    f"ensemble members; please set the function_range explicitly"
+                                )
+                else:
+                    bounds = optimization_problem.bounds()
+                self.function_range = bounds[self.state]
             except KeyError:
                 raise Exception(
                     "State {} has no bounds or does not exist in the model.".format(self.state)

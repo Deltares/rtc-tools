@@ -1,12 +1,13 @@
 import logging
 from abc import ABCMeta, abstractmethod, abstractproperty
-from typing import Any, Dict, Iterator, List, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import casadi as ca
 import numpy as np
 
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.debug_check_helpers import DebugLevel, debug_check
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 from rtctools.data.storage import DataStoreAccessor
 
 from .timeseries import Timeseries
@@ -45,6 +46,9 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     _debug_check_level = DebugLevel.MEDIUM
     _debug_check_options = {}
+
+    #: Enable ensemble-specific bounds functionality
+    ensemble_specific_bounds = False
 
     def __init__(self, **kwargs):
         # Call parent class first for default behaviour.
@@ -221,14 +225,23 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
     def __check_bounds_control_input(self) -> None:
         # Checks if at the control inputs have bounds, log warning when a control input is not
         # bounded.
-        bounds = self.bounds()
+        if self.ensemble_specific_bounds:
+            bounds_list = [
+                self.bounds(ensemble_member) for ensemble_member in range(self.ensemble_size)
+            ]
+        else:
+            bounds_list = [self.bounds()]
 
-        for variable in self.dae_variables["control_inputs"]:
-            variable = variable.name()
-            if variable not in bounds:
-                logger.warning(
-                    "OptimizationProblem: control input {} has no bounds.".format(variable)
-                )
+        for ensemble_member, bounds in enumerate(bounds_list):
+            for variable in self.dae_variables["control_inputs"]:
+                variable = variable.name()
+                if variable not in bounds:
+                    logger.warning(
+                        "OptimizationProblem: control input {} has no bounds{}.".format(
+                            variable,
+                            f" ({ensemble_member=})" if self.ensemble_specific_bounds else "",
+                        )
+                    )
 
     @abstractmethod
     def transcribe(
@@ -607,19 +620,30 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
         return m, M
 
-    def bounds(self) -> AliasDict[str, Tuple[BT, BT]]:
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: Optional[int] = None) -> AliasDict[str, Tuple[BT, BT]]:
         """
         Returns variable bounds as a dictionary mapping variable names to a pair of bounds.
         A bound may be a constant, or a time series.
+
+        :param ensemble_member: The ensemble member index. Must be None (or not provided) when
+                               ensemble_specific_bounds is False. Must be an integer when
+                               ensemble_specific_bounds is True.
 
         :returns: A dictionary of variable names and ``(upper, lower)`` bound pairs.
                   The bounds may be numbers or :class:`.Timeseries` objects.
 
         Example::
-
+            # ensemble_specific_bounds is False
             def bounds(self):
                 return {'x': (1.0, 2.0), 'y': (2.0, 3.0)}
 
+            # ensemble_specific_bounds is True
+            def bounds(self, ensemble_member: int):
+                if ensemble_member == 0:
+                    return {'x': (1.0, 2.0), 'y': (2.0, 3.0)}
+                else:
+                    return {'x': (0.0, 3.0), 'y': (1.0, 4.0)}
         """
         return AliasDict(self.alias_relation)
 

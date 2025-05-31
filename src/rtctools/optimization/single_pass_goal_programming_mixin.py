@@ -2,10 +2,12 @@ import itertools
 import logging
 from collections import OrderedDict
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 import casadi as ca
 import numpy as np
+
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 
 from .goal_programming_mixin import GoalProgrammingMixin
 from .goal_programming_mixin_base import (  # noqa: F401
@@ -109,8 +111,12 @@ class SinglePassGoalProgrammingMixin(_GoalProgrammingMixinBase):
     def path_variables(self):
         return self.__problem_path_epsilons
 
-    def bounds(self):
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: Optional[int] = None):
+        bounds = (
+            super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
+        )
+
         for epsilon in self.__problem_epsilons + self.__problem_path_epsilons:
             bounds[epsilon.name()] = (0.0, 1.0)
         return bounds

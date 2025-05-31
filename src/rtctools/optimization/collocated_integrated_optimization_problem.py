@@ -6,6 +6,7 @@ from typing import Dict, Union
 
 import casadi as ca
 import numpy as np
+from numpy.typing import NDArray
 
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.casadi_helpers import (
@@ -17,7 +18,7 @@ from rtctools._internal.casadi_helpers import (
 )
 from rtctools._internal.debug_check_helpers import DebugLevel, debug_check
 
-from .optimization_problem import OptimizationProblem
+from .optimization_problem import BT, OptimizationProblem
 from .timeseries import Timeseries
 
 logger = logging.getLogger("rtctools")
@@ -410,7 +411,10 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 if v.ndim == 1:
                     ensemble_data["extra_constant_inputs"][k] = v[:, None]
 
-        bounds = self.bounds()
+        if self.ensemble_specific_bounds:
+            bounds = [self.bounds(ensemble_member=i) for i in range(self.ensemble_size)]
+        else:
+            bounds = self.bounds()
 
         # Initialize control discretization
         (
@@ -2043,7 +2047,12 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
     def controls(self):
         return self.__controls
 
-    def _collint_get_lbx_ubx(self, bounds, count, indices):
+    def _collint_get_lbx_ubx(
+        self,
+        bounds: Union[dict[str, BT], list[dict[str, BT]]],
+        count: int,
+        indices: list[dict[str, Union[slice, int]]],
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         lbx = np.full(count, -np.inf, dtype=np.float64)
         ubx = np.full(count, np.inf, dtype=np.float64)
 
@@ -2054,6 +2063,11 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
         # Bounds, defaulting to +/- inf, if not set
         for ensemble_member in range(self.ensemble_size):
+            if self.ensemble_specific_bounds:
+                bounds_member = bounds[ensemble_member]
+            else:
+                bounds_member = bounds
+
             for variable, inds in indices[ensemble_member].items():
                 variable_size = variable_sizes[variable]
 
@@ -2065,7 +2079,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     n_times = len(times)
 
                 try:
-                    bound = bounds[variable]
+                    bound = bounds_member[variable]
                 except KeyError:
                     pass
                 else:
@@ -2094,7 +2108,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                             )
                         else:
                             lower_bound = bound[0]
-                        lbx[inds] = lower_bound / nominal
+                        lbx[inds] = np.maximum(lbx[inds], lower_bound / nominal)
 
                     if bound[1] is not None:
                         if isinstance(bound[1], Timeseries):
@@ -2114,13 +2128,26 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                             )
                         else:
                             upper_bound = bound[1]
-                        ubx[inds] = upper_bound / nominal
+                        ubx[inds] = np.minimum(ubx[inds], upper_bound / nominal)
 
                 # Warn for NaNs
                 if np.any(np.isnan(lbx[inds])):
                     logger.error("Lower bound on variable {} contains NaN".format(variable))
                 if np.any(np.isnan(ubx[inds])):
                     logger.error("Upper bound on variable {} contains NaN".format(variable))
+
+                # Check that the lower bounds are not higher than the upper
+                # bounds. To avoid spam, we just log the first offending one per
+                # variable, not _all_ time steps.
+                if np.any(lbx[inds] > ubx[inds]):
+                    error_inds = np.where(lbx[inds] > ubx[inds])[0].tolist()
+                    logger.error(
+                        "Lower bound {} is higher than upper bound {} for variable {}".format(
+                            lbx[inds][error_inds[0]] * nominal,
+                            ubx[inds][error_inds[0]] * nominal,
+                            variable,
+                        )
+                    )
 
         return lbx, ubx
 
