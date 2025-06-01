@@ -2639,10 +2639,21 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
         return x, t
 
-    def states_in(self, variable, t0=None, tf=None, ensemble_member=0):
-        x, _ = self.__states_times_in(variable, t0, tf, ensemble_member)
+    def states_in(
+        self,
+        variable: str,
+        t0: float = None,
+        tf: float = None,
+        ensemble_member: int = 0,
+        *,
+        return_times: bool = False,
+    ) -> Union[ca.MX, tuple[ca.DM, ca.MX]]:
+        x, t = self.__states_times_in(variable, t0, tf, ensemble_member)
 
-        return x
+        if return_times:
+            return x, t
+        else:
+            return x
 
     def integral(self, variable, t0=None, tf=None, ensemble_member=0):
         x, t = self.__states_times_in(variable, t0, tf, ensemble_member)
