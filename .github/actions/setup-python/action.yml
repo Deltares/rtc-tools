@@ -10,6 +10,10 @@ inputs:
     description: "Space-separated list of dependency groups to install (e.g. 'deploy tests')"
     required: false
     default: ""
+  resolution-mode:
+    description: "Dependency resolution mode: 'frozen' (use uv.lock), 'lowest' (lowest-direct), 'highest' (upgrade to newest)."
+    required: false
+    default: "frozen"
 
 runs:
   using: "composite"
@@ -24,10 +28,25 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        CMD="uv sync --frozen --no-dev"
+        CMD_PARTS=("uv" "sync")
+
+        if [[ "${{ inputs.resolution-mode }}" == "lowest" ]]; then
+          CMD_PARTS+=("--resolution" "lowest-direct")
+        elif [[ "${{ inputs.resolution-mode }}" == "highest" ]]; then
+          CMD_PARTS+=("--upgrade")
+        else # Default to "frozen"
+          CMD_PARTS+=("--frozen")
+        fi
+
+        # Always exclude the default 'dev' group unless specific groups are requested that might include dev ones by intent.
+        # uv sync --no-dev is the default to exclude [tool.uv.dev-dependencies] or [dependency-groups.dev]
+        CMD_PARTS+=("--no-dev")
+
         if [[ -n "${{ inputs.dependency-groups }}" ]]; then
           for group in ${{ inputs.dependency-groups }}; do
-            CMD="$CMD --group $group"
+            CMD_PARTS+=("--group" "$group")
           done
         fi
-        $CMD
+
+        echo "Executing: ${CMD_PARTS[*]}"
+        "${CMD_PARTS[@]}"

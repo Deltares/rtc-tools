@@ -42,6 +42,7 @@ jobs:
         path: dist/
 
   test-linux:
+    name: Test Linux (Python ${{ matrix.version }}${{ matrix.label }})
     needs: build
     runs-on: ubuntu-latest
     container:
@@ -51,17 +52,25 @@ jobs:
       TOXENV: py
     strategy:
       matrix:
-        version:  # Also update sonar-project.properties when updating the python versions.
-        - '3.9'
-        - '3.10'
-        - '3.11'
-        - '3.12'
-        - '3.13'
+        include:
+          - version: '3.9'  # Also update sonar-project.properties when updating the python versions.
+          - version: '3.10'
+          - version: '3.11'
+          - version: '3.12'
+          - version: '3.13'
+          # Lowest and highest resolution modes to test oldest and newest dependencies.
+          - version: '3.9'
+            resolution_mode: 'lowest'
+            label: ' (Oldest Dependencies)'
+          - version: '3.13'
+            resolution_mode: 'highest'
+            label: ' (Newest Dependencies)'
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/setup-python
       with:
         dependency-groups: "tests"
+        resolution-mode: ${{ matrix.resolution_mode }}
     - run: uv run tox -vv
 
   coverage:
