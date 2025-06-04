@@ -413,3 +413,32 @@ class TestSymbolicInterpolation(TestCase):
 
         self.assertAlmostEqual(np.delete(u_copy, 10), u, self.tolerance)
         self.assertAlmostEqual(u_copy[10], u[10], self.tolerance)
+
+
+class ModelShort(Model):
+    """Model with just two collocation time steps, and 'u' only _one_ time step"""
+
+    def times(self, variable=None):
+        times = np.array([0.0, 1.0])
+        if variable == "u":
+            times = np.array([1.0])
+        return times
+
+
+class TestSymbolicInterpolationShort(TestCase):
+    def setUp(self):
+        self.problem = ModelShort()
+        self.tolerance = 1e-8
+
+    def test_single_timestep_u_backwards(self):
+        """Test that CasADi interp1d works when there is only one time step to
+        'interpolate' from"""
+        self.problem._interpolation_x = self.problem.INTERPOLATION_PIECEWISE_CONSTANT_BACKWARD
+        self.problem.optimize()
+
+        results = self.problem.extract_results()
+
+        self.assertEqual(len(results["u_copy"]), 2)
+        self.assertEqual(len(results["u"]), 1)
+
+        np.testing.assert_array_equal(results["u_copy"], np.broadcast_to(results["u"], (2,)))
