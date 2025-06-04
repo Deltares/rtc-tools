@@ -2635,7 +2635,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         else:
             tf = xf = ca.MX()
         t = ca.vertcat(t0, history_times[history_indices], times[indices], tf)
-        x = ca.vertcat(x0, history[history_indices], state[indices[0] : indices[-1] + 1], xf)
+        x = ca.vertcat(x0, history[history_indices], state[indices], xf)
 
         return x, t
 
