@@ -27,3 +27,6 @@ examples/**/output/**/*.csv
 .idea
 .ipynb_checkpoints
 .vscode
+
+# Virtual environment
+.venv
