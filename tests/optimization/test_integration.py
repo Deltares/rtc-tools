@@ -213,6 +213,55 @@ class TestEnsemble(TestCase):
             )
 
 
+class SingleShootingEnsembleParametersModel(SingleShootingBaseModel):
+    @property
+    def ensemble_size(self):
+        return 3
+
+    def parameters(self, ensemble_member):
+        parameters = super().parameters(ensemble_member)
+        parameters["k"] = 1.0 + ensemble_member * 0.01
+        return parameters
+
+    def pre(self):
+        super().pre()
+
+        # NOTE: The first parameter (for ensemble_member=0) has to be 1 for it
+        # to trigger the bug this test was introduced to cover.
+        assert self.parameters(0)["k"] == 1.0
+
+
+class TestEnsembleParameters(TestCase):
+    def setUp(self):
+        self.problem = SingleShootingEnsembleParametersModel()
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_states(self):
+        times = self.problem.times()
+        for ensemble_member in range(self.problem.ensemble_size):
+            parameters = self.problem.parameters(ensemble_member)
+            results = self.problem.extract_results(ensemble_member)
+            self.assertAlmostEqual(
+                (results["x"][1:] - results["x"][:-1]) / (times[1:] - times[:-1]),
+                parameters["k"] * results["x"][1:] + results["u"][1:],
+                self.tolerance,
+            )
+            self.assertAlmostEqual(
+                (results["w"][1:] - results["w"][:-1]) / (times[1:] - times[:-1]),
+                results["x"][1:],
+                self.tolerance,
+            )
+
+    def test_algebraic_variables(self):
+        for ensemble_member in range(self.problem.ensemble_size):
+            results = self.problem.extract_results(ensemble_member)
+            constant_input = self.problem.constant_inputs(ensemble_member)["constant_input"]
+            self.assertAlmostEqual(
+                results["a"], results["x"] + results["w"] + constant_input.values, self.tolerance
+            )
+
+
 class OldApiErrorModel(SingleShootingBaseModel):
     """
     Test that an exception is raised when the old API is used, and that
