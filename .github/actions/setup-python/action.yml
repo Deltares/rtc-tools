@@ -1,0 +1,52 @@
+name: "Setup Python Environment"
+description: "Sets up Python environment with uv package manager"
+
+inputs:
+  uv-version:
+    description: "Version of uv to install"
+    required: false
+    default: "0.7.9"
+  dependency-groups:
+    description: "Space-separated list of dependency groups to install (e.g. 'deploy tests')"
+    required: false
+    default: ""
+  resolution-mode:
+    description: "Dependency resolution mode: 'frozen' (use uv.lock), 'lowest' (lowest-direct), 'highest' (upgrade to newest)."
+    required: false
+    default: "frozen"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: ${{ inputs.uv-version }}
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        CMD_PARTS=("uv" "sync")
+
+        if [[ "${{ inputs.resolution-mode }}" == "lowest" ]]; then
+          CMD_PARTS+=("--resolution" "lowest-direct")
+        elif [[ "${{ inputs.resolution-mode }}" == "highest" ]]; then
+          CMD_PARTS+=("--upgrade")
+        else # Default to "frozen"
+          CMD_PARTS+=("--frozen")
+        fi
+
+        # Always exclude the default 'dev' group unless specific groups are requested that might include dev ones by intent.
+        # uv sync --no-dev is the default to exclude [tool.uv.dev-dependencies] or [dependency-groups.dev]
+        CMD_PARTS+=("--no-dev")
+
+        if [[ -n "${{ inputs.dependency-groups }}" ]]; then
+          for group in ${{ inputs.dependency-groups }}; do
+            CMD_PARTS+=("--group" "$group")
+          done
+        fi
+
+        echo "Executing: ${CMD_PARTS[*]}"
+        "${CMD_PARTS[@]}"
