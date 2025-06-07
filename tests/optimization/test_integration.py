@@ -292,3 +292,124 @@ class OldApiErrorTest(TestCase):
 
     def setUp(self):
         self.problem = OldApiErrorModel()
+
+
+class SingleShootingEnsembleBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"u": (-1.0, 1.0)}  # Tighter bounds for ensemble member 0
+        elif ensemble_member == 1:
+            return {"u": (-1.5, 1.5)}  # Medium bounds for ensemble member 1
+        else:
+            return {"u": (-2.0, 2.0)}  # Default bounds for ensemble member 2
+
+
+class TestEnsembleBounds(TestCase):
+    def setUp(self):
+        self.problem = SingleShootingEnsembleBoundsModel()
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_ensemble_bounds_applied(self):
+        # Test that different ensemble members have different effective bounds
+        # by checking that the control inputs respect their individual bounds
+        for ensemble_member in range(self.problem.ensemble_size):
+            results = self.problem.extract_results(ensemble_member)
+            bounds = self.problem.bounds(ensemble_member)
+            u_bounds = bounds["u"]
+
+            # Check that all control values are within the specified bounds
+            self.assertTrue(np.all(results["u"] >= u_bounds[0] - self.tolerance))
+            self.assertTrue(np.all(results["u"] <= u_bounds[1] + self.tolerance))
+
+
+class SingleShootingConflictingBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"u": (0.5, 1.0)}  # Lower bound 0.5, upper bound 1.0
+        elif ensemble_member == 1:
+            return {"u": (-1.0, 0.3)}  # Lower bound -1.0, upper bound 0.3
+        else:
+            return {"u": (-2.0, 2.0)}  # Default bounds
+
+
+class TestConflictingBounds(TestCase):
+    def test_conflicting_bounds_error(self):
+        # Test that conflicting bounds (where max lower > min upper) raise an error
+        problem = SingleShootingConflictingBoundsModel()
+        with self.assertRaises(RuntimeError), self.assertLogs(level="ERROR") as cm:
+            problem.optimize()
+
+        self.assertIn("Lower bound 0.5 is higher than upper bound 0.3 for variable u", cm.output[0])
+
+
+class SingleShootingEnsembleStatesBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"x": (0.0, 2.0), "u": (-1.0, 1.0)}
+        elif ensemble_member == 1:
+            return {"x": (1.0, 3.0), "u": (-1.5, 1.5)}
+        else:
+            return {"x": (-1.0, 1.0), "u": (-2.0, 2.0)}
+
+    def transcribe(self):
+        discrete, lbx, ubx, lbg, ubg, x0, nlp = super().transcribe()
+
+        self.test_lbx = lbx
+        self.test_ubx = ubx
+
+        return discrete, lbx, ubx, lbg, ubg, x0, nlp
+
+
+class TestEnsembleBoundsStates(TestCase):
+    def test_bounds_apply_per_member(self):
+        problem = SingleShootingEnsembleStatesBoundsModel()
+        problem.optimize()
+
+        # TODO: Update this when we expose the indices as a public property
+        indices = problem._CollocatedIntegratedOptimizationProblem__indices_as_lists
+
+        bounds = [
+            problem.bounds(ensemble_member) for ensemble_member in range(problem.ensemble_size)
+        ]
+
+        for ensemble_member in range(problem.ensemble_size):
+            indices_variable = indices[ensemble_member]["x"]
+            lb, ub = bounds[ensemble_member]["x"]
+            np.testing.assert_array_equal(
+                problem.test_lbx[indices_variable], np.full_like(indices_variable, lb)
+            )
+            np.testing.assert_array_equal(
+                problem.test_ubx[indices_variable], np.full_like(indices_variable, ub)
+            )
+
+
+class SingleShootingEnsembleMissingBoundsModel(SingleShootingEnsembleModel):
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        if ensemble_member == 0:
+            return {"x": (0.0, 2.0), "u": (-1.0, 1.0)}
+        elif ensemble_member == 1:
+            return {"x": (1.0, 3.0), "u": (-1.5, 1.5)}
+        else:
+            # u is missing bounds for member 2, will give a warning
+            return {"x": (-1.0, 1.0)}
+
+
+class TestEnsembleMissingBounds(TestCase):
+    def test_ensemble_member_missing_bounds_control_input_warning(self):
+        problem = SingleShootingEnsembleMissingBoundsModel()
+
+        with self.assertLogs(level="WARNING") as cm:
+            problem.optimize()
+
+        self.assertIn(
+            "OptimizationProblem: control input u has no bounds (ensemble_member=2)", cm.output[0]
+        )

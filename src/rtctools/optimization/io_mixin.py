@@ -2,11 +2,13 @@ import bisect
 import logging
 import warnings
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 import casadi as ca
 import numpy as np
 
 from rtctools._internal.caching import cached
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 from rtctools.optimization.optimization_problem import OptimizationProblem
 from rtctools.optimization.timeseries import Timeseries
 
@@ -174,9 +176,13 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
         return "_".join((variable, "Max"))
 
     @cached
-    def bounds(self):
-        # Call parent class first for default values.
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: Optional[int] = None):
+        bounds = (
+            super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
+        )
+
+        ensemble_member = ensemble_member if self.ensemble_specific_bounds else 0
 
         io_times = self.io.times_sec
         t_pos = bisect.bisect_left(io_times, self.initial_time)
@@ -189,7 +195,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
             timeseries_id = self.min_timeseries_id(variable_name)
             try:
-                _, values = self.io.get_timeseries_sec(timeseries_id, 0)
+                _, values = self.io.get_timeseries_sec(timeseries_id, ensemble_member)
                 m = values[t_pos:]
             except KeyError:
                 pass
@@ -199,7 +205,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
             timeseries_id = self.max_timeseries_id(variable_name)
             try:
-                _, values = self.io.get_timeseries_sec(timeseries_id, 0)
+                _, values = self.io.get_timeseries_sec(timeseries_id, ensemble_member)
                 M = values[t_pos:]
             except KeyError:
                 pass

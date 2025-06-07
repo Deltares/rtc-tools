@@ -2,7 +2,7 @@ import importlib.resources
 import itertools
 import logging
 import sys
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 # Python 3.9's importlib.metadata does not support the "group" parameter to
 # entry_points yet.
@@ -19,6 +19,7 @@ import pymoca.backends.casadi.api
 from rtctools._internal.alias_tools import AliasDict
 from rtctools._internal.caching import cached
 from rtctools._internal.casadi_helpers import substitute_in_external
+from rtctools._internal.ensemble_bounds_decorator import ensemble_bounds_check
 
 from .optimization_problem import OptimizationProblem
 from .timeseries import Timeseries
@@ -315,12 +316,16 @@ class ModelicaMixin(OptimizationProblem):
         return self.__initial_residual
 
     @cached
-    def bounds(self):
-        # Call parent class first for default values.
-        bounds = super().bounds()
+    @ensemble_bounds_check
+    def bounds(self, ensemble_member: Optional[int] = None):
+        bounds = (
+            super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
+        )
+
+        ensemble_member = ensemble_member if self.ensemble_specific_bounds else 0
 
         # Parameter values
-        parameters = self.parameters(0)
+        parameters = self.parameters(ensemble_member)
         parameter_values = [
             parameters.get(param.name(), param) for param in self.__mx["parameters"]
         ]

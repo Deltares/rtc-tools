@@ -258,3 +258,66 @@ class TestOptimizationProblemSubTimes(TestCase):
         times, values = self.problem.io.get_timeseries("subslice_timeseries")
         ref_values = [np.nan, np.nan, 0.0, 0.0, 0.0, np.nan]
         np.testing.assert_allclose(values, ref_values, equal_nan=True)
+
+
+class IOEnsembleModel(Model):
+    """Test model for IOMixin ensemble specific bounds."""
+
+    ensemble_specific_bounds = True
+
+    @property
+    def ensemble_size(self):
+        return 2
+
+    def read(self):
+        super().read()
+
+        # Copy all timeseries to the second member, except for u_Min and u_Max.
+        # Those we slightly modify for the second member.
+        for variable in self.io.get_timeseries_names():
+            datetimes, values = self.io.get_timeseries(variable, 0)
+
+            if variable.endswith("_Min"):
+                offset = -0.1
+            elif variable.endswith("_Max"):
+                offset = 0.1
+            else:
+                offset = 0.0
+
+            self.io.set_timeseries(variable, datetimes, values + offset, ensemble_member=1)
+
+
+class TestIOMixinEnsembleSpecificBounds(TestCase):
+    def setUp(self):
+        self.problem = IOEnsembleModel()
+        # Call pre() to trigger the read() method and setup io
+        self.problem.pre()
+        self.tolerance = 1e-9
+
+    def test_io_ensemble_bounds(self):
+        expected_times = np.array([0, 3600, 7200, 9800])
+
+        lb_values = np.array([0.3, 0.1, 0.4, 0.0])
+        ub_values = np.array([2.0, 2.4, 2.5, 2.3])
+
+        # Ensemble Member 0 - no offset
+        expected_lb_values_member_0 = lb_values
+        expected_ub_values_member_0 = ub_values
+        bounds_member_0 = self.problem.bounds(0)
+
+        lb, ub = bounds_member_0["u"]
+        np.testing.assert_array_equal(lb.times, expected_times)
+        np.testing.assert_array_equal(ub.times, expected_times)
+        np.testing.assert_array_equal(lb.values, expected_lb_values_member_0)
+        np.testing.assert_array_equal(ub.values, expected_ub_values_member_0)
+
+        # Ensemble Member 1 - with offset
+        expected_lb_values_member_1 = lb_values - 0.1
+        expected_ub_values_member_1 = ub_values + 0.1
+        bounds_member_1 = self.problem.bounds(1)
+
+        lb, ub = bounds_member_1["u"]
+        np.testing.assert_array_equal(lb.times, expected_times)
+        np.testing.assert_array_equal(ub.times, expected_times)
+        np.testing.assert_array_equal(lb.values, expected_lb_values_member_1)
+        np.testing.assert_array_equal(ub.values, expected_ub_values_member_1)

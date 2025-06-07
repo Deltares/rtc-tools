@@ -1013,3 +1013,165 @@ class TestGoalProgrammingSeed(TestCase):
     def test_seed(self):
         self.assertTrue(np.allclose(self.problem._results[0], self.problem._x0[1]))
         self.assertTrue(np.allclose(self.problem._results[1], self.problem._x0[2]))
+
+
+class EnsembleBoundsGoalProgrammingModel(ModelEnsemble):
+    """
+    Base model for testing ensemble-specific bounds in goal programming.
+    """
+
+    ensemble_specific_bounds = True
+
+    def bounds(self, ensemble_member: int):
+        # Do not call super().bounds() as that one does not accept
+        # ensemble_member as an argument.
+        bounds = {}
+        bounds["u"] = (-2.0, 2.0)
+        return bounds
+
+
+class EnsembleBoundsStateGoal(StateGoal):
+    """Generic StateGoal for state 'x' used in ensemble bounds tests."""
+
+    state = "x"
+    priority = 1
+    target_max = 2.0
+    # function_range is (np.nan, np.nan) by default, allowing auto-detection or
+    # explicit override.
+
+
+class ModelForUnequalBoundsDicts(EnsembleBoundsGoalProgrammingModel):
+    """Model where bounds() returns different dictionaries per ensemble member."""
+
+    def bounds(self, ensemble_member: int):
+        bounds = super().bounds(ensemble_member)
+        if ensemble_member == 0:
+            bounds["x"] = (-5.0, 5.0)
+        else:
+            bounds["x"] = (-6.0, 6.0)
+        return bounds
+
+    def path_goals(self):
+        return [EnsembleBoundsStateGoal(self)]
+
+
+class TestGoalProgrammingEnsembleBoundsUnequalDictsError(TestCase):
+    def test_exception_on_unequal_bounds_dictionaries(self):
+        """
+        Tests that an exception is raised if ensemble_specific_bounds=True,
+        StateGoal.function_range is not set, and problem.bounds() dicts differ
+        per ensemble member.
+        """
+        problem = ModelForUnequalBoundsDicts()
+        with self.assertRaisesRegex(
+            ValueError,
+            "Bounds for state x are not the same for all ensemble members; "
+            "please set the function_range explicitly",
+        ):
+            problem.optimize()
+
+
+class ModelForTypeMismatchBoundsDicts(EnsembleBoundsGoalProgrammingModel):
+    """
+    Model where bounds() returns dictionaries of different types for different
+    ensemble members.
+    """
+
+    def bounds(self, ensemble_member: int):
+        bounds = super().bounds(
+            ensemble_member
+        )  # This provides a base dict e.g., {'u': (-2.0, 2.0)}
+        if ensemble_member == 0:
+            bounds["x"] = (-7.0, 7.0)
+        else:
+            bounds["x"] = Timeseries(times=np.array([0.0, 1.0]), values=np.array([0.0, 0.0]))
+        return bounds
+
+    def path_goals(self):
+        # Reuse the same StateGoal which does not have an explicit function_range
+        return [EnsembleBoundsStateGoal(self)]
+
+
+class TestGoalProgrammingEnsembleBoundsTypeMismatchError(TestCase):
+    def test_exception_on_type_mismatch_bounds_dictionaries(self):
+        """
+        Tests that a ValueError is raised if ensemble_specific_bounds=True,
+        StateGoal.function_range is not set, and problem.bounds() returns
+        dictionaries of different types for different ensemble members.
+        """
+        problem = ModelForTypeMismatchBoundsDicts()
+        with self.assertRaisesRegex(
+            ValueError,
+            "Bounds for state x are not the same for all ensemble members; "
+            "please set the function_range explicitly",
+        ):
+            problem.optimize()
+
+
+class ExplicitFunctionRangeGoal(EnsembleBoundsStateGoal):
+    """EnsembleBoundsStateGoal with an explicitly set function_range."""
+
+    function_range = (-20.0, 20.0)
+
+
+class ModelForUnequalBoundsDictsWithExplicitFunctionRange(ModelForUnequalBoundsDicts):
+    """
+    Model with unequal bounds dicts, but the goal has an explicit function_range.
+    Inherits differing bounds() from ModelForUnequalBoundsDicts.
+    """
+
+    def path_goals(self):
+        return [ExplicitFunctionRangeGoal(self)]
+
+
+class TestGoalProgrammingEnsembleBoundsUnequalDictsWithExplicitFunctionRange(TestCase):
+    def test_no_exception_if_function_range_is_explicit(self):
+        """
+        Tests that no "Bounds not same" ValueError is raised if StateGoal.function_range
+        is explicitly set, even if problem.bounds() dicts differ per ensemble member.
+        """
+        problem = ModelForUnequalBoundsDictsWithExplicitFunctionRange()
+        try:
+            problem.optimize()
+            self.assertIsNotNone(problem.objective_value, "Optimization did not run to completion.")
+        except ValueError as e:
+            if "Bounds for state x are not the same" in str(e):
+                self.fail(
+                    "ValueError for unequal bounds dicts should not be "
+                    "raised when function_range is explicit."
+                )
+            else:
+                raise
+
+
+class ModelForEqualBoundsDicts(EnsembleBoundsGoalProgrammingModel):
+    """Model where bounds() returns identical dictionaries for all ensemble members."""
+
+    def bounds(self, ensemble_member: int):
+        bounds = super().bounds(ensemble_member)
+        bounds["x"] = (-7.7, 7.7)
+        return bounds
+
+    def path_goals(self):
+        return [EnsembleBoundsStateGoal(self)]
+
+
+class TestGoalProgrammingEnsembleBoundsAutoSetFunctionRange(TestCase):
+    def test_function_range_auto_set_correctly_on_equal_bounds_dicts(self):
+        """
+        Tests that StateGoal.function_range is automatically and correctly set
+        if ensemble_specific_bounds=True, function_range is not explicit,
+        and problem.bounds() dicts are identical for all ensemble members.
+        """
+        problem = ModelForEqualBoundsDicts()
+        problem.optimize()
+
+        # The auto-set function_range should be from problem.bounds(0).get('x')
+        function_range = problem.path_goals()[0].function_range
+
+        self.assertEqual(
+            function_range,
+            problem.bounds(0).get("x"),
+            f"Automatically set function_range is incorrect. "
+            f"Expected {problem.bounds(0).get('x')}, got {function_range}",
+        )

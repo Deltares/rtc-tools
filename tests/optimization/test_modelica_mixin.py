@@ -634,3 +634,46 @@ class TestAliasBounds(TestCase):
         bounds = problem.bounds()
         self.assertEqual(bounds["x"], (-1.0, 2.0))
         self.assertEqual(bounds["negative_alias"], (-2.0, 1.0))
+
+
+class ModelicaEnsembleBoundsModel(Model):
+    """Test model for ModelicaMixin ensemble specific parametric bounds."""
+
+    ensemble_specific_bounds = True
+
+    @property
+    def ensemble_size(self):
+        return 2
+
+    def parameters(self, ensemble_member: int):
+        params = super().parameters(ensemble_member)
+        # Note that, in the Modelica model, the upper bound of `u` is a
+        # parameter `u_max`.
+        if ensemble_member == 0:
+            params["u_max"] = 1.0
+        elif ensemble_member == 1:
+            params["u_max"] = 0.5
+        return params
+
+    def bounds(self, ensemble_member: int):
+        # NOTE: We skip Model.bounds() in the MRO chain, as it is not
+        # ensemble_member aware. We could also reimplement all logic of `Model`,
+        # but skipping it is DRYer.
+        b = super(Model, self).bounds(ensemble_member)
+        return b
+
+
+class TestModelicaMixinEnsembleSpecificBounds(TestCase):
+    def setUp(self):
+        self.problem = ModelicaEnsembleBoundsModel()
+        self.tolerance = 1e-6
+
+    def test_modelica_ensemble_bounds(self):
+        bounds_member_0 = self.problem.bounds(0)
+
+        expected_u_bounds_member_0 = (-2.0, 1.0)
+        self.assertEqual(bounds_member_0["u"], expected_u_bounds_member_0)
+
+        bounds_member_1 = self.problem.bounds(1)
+        expected_u_bounds_member_1 = (-2.0, 0.5)
+        self.assertEqual(bounds_member_1["u"], expected_u_bounds_member_1)
