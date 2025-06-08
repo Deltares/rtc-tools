@@ -2947,8 +2947,19 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             "{} & {}, {} & {}".format(max_constr_A, min_constr_A, max_constr_b, min_constr_b)
         )
 
-        maxs = [x for x in [max_constr_A, max_constr_b, max_obj_A, obj_b] if x is not None]
-        mins = [x for x in [min_constr_A, min_constr_b, min_obj_A, obj_b] if x is not None]
+        # Filter out exactly zero, as those entries do not show up in the
+        # matrix. Shut up SonarCloud warning about this exact-to-zero
+        # comparison.
+        maxs = [
+            x
+            for x in [max_constr_A, max_constr_b, max_obj_A, obj_b]
+            if x is not None and x != 0.0  # NOSONAR
+        ]
+        mins = [
+            x
+            for x in [min_constr_A, min_constr_b, min_obj_A, obj_b]
+            if x is not None and x != 0.0  # NOSONAR
+        ]
         if (maxs and max(maxs) > tol_up) or (mins and min(mins) < tol_down):
             logger.info("Jacobian matrix /constants coefficients values outside typical range!")
 
