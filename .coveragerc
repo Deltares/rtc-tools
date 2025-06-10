@@ -1,7 +1,6 @@
 [run]
 branch = True
 source = rtctools
-omit = src/rtctools/_version.py
 relative_files = True
 
 [report]
