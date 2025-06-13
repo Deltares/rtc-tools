@@ -101,6 +101,14 @@ class TestCheckMatrixCoefficients(TestCase):
             " (max > 100, min < 0.01, or max / min > 1000):",
         )
 
+    def test_matrix_coefficient_small_skipped(self):
+        self._run_test(
+            ModelMatrixCoeffSmall,
+            "INFO:rtctools:Jacobian matrix /constants coefficients values outside typical range!",
+            "assertNotIn",
+            tol_down=1e-6,
+        )
+
     def test_matrix_coefficient_row_range(self):
         self._run_test(
             ModelMatrixCoeffRowRange,
