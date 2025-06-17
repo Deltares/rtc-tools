@@ -52,4 +52,12 @@ def interpolate(ts, xs, t, equidistant, mode=0):
         mode_str = "floor"
     else:
         mode_str = "ceil"
+
+    # CasADi fails if there is just a single point. Just "extrapolate" based on
+    # that point, just as CasADi would do for entries in 't' outside the range
+    # of 'ts'.
+    if len(ts) == 1:
+        assert xs.size1() == 1
+        return ca.vertcat(*[xs] * len(t))
+
     return ca.interp1d(ts, xs, t, mode_str, equidistant)
