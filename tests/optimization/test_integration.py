@@ -292,3 +292,45 @@ class OldApiErrorTest(TestCase):
 
     def setUp(self):
         self.problem = OldApiErrorModel()
+
+
+class EmptyStatesInIntervalModel(SingleShootingBaseModel):
+    def _states_in_call(self, ensemble_member):
+        """Separate method so we can also test it on its own outside of the
+        objective function."""
+
+        times = self.times()
+        time_steps = np.diff(times)
+        # Request an "empty" range of states; we expect this to return just t0
+        # and tf.
+        s = self.states_in(
+            "x",
+            t0=times[-2] + 0.1 * time_steps[-1],
+            tf=times[-1] - 0.1 * time_steps[-1],
+            ensemble_member=ensemble_member,
+        )
+
+        return s
+
+    def objective(self, ensemble_member):
+        return self._states_in_call(ensemble_member)[1] ** 2
+
+    def interpolation_method(self, variable_name):
+        if variable_name == "x":
+            return self.INTERPOLATION_PIECEWISE_CONSTANT_BACKWARD
+        else:
+            return super().interpolation_method(variable_name)
+
+
+class TestEmptyStatesInInterval(TestCase):
+    def setUp(self):
+        self.problem = EmptyStatesInIntervalModel()
+        self.problem.optimize()
+        self.tolerance = 1e-6
+
+    def test_backwards_interpolated_empty_interval(self):
+        self.assertAlmostLessThan(abs(self.problem.objective_value), 0.0, self.tolerance)
+
+    def test_states_in_call_shape(self):
+        s = self.problem._states_in_call(0)
+        self.assertEqual(s.shape, (2, 1))
