@@ -145,50 +145,60 @@ class ControlTreeMixin(OptimizationProblem):
             # to a new branch
             available = set(branches[current_branch])
 
-            # We first select the scenario with the max distance to any other branch
-            idx = np.argmax(np.amax(distances, axis=0))
-
-            for i in range(options["k"]):
-                if idx >= 0:
-                    branches[current_branch + (i,)] = [branches[current_branch][idx]]
-
-                    available.remove(branches[current_branch][idx])
-
-                    # We select the scenario with the max min distance to the other branches
-                    min_distances = np.array(
-                        [
-                            min(
-                                [np.inf]
-                                + [
-                                    distances[j, k]
-                                    for j, member_j in enumerate(branches[current_branch])
-                                    if member_j not in available and member_k in available
-                                ]
-                            )
-                            for k, member_k in enumerate(branches[current_branch])
-                        ],
-                        dtype=np.float64,
-                    )
-                    min_distances[np.where(min_distances == np.inf)] = -np.inf
-
-                    idx = np.argmax(min_distances)
-                    if min_distances[idx] <= 0:
-                        idx = -1
-                else:
-                    branches[current_branch + (i,)] = []
-
-            # Cluster remaining ensemble members to branches
-            for member_i in available:
-                min_i = 0
-                min_distance = np.inf
+            # Special case: if k >= len(available), assign one ensemble member to each branch
+            if options["k"] >= len(available):
+                available_list = list(available)
                 for i in range(options["k"]):
-                    branch2 = branches[current_branch + (i,)]
-                    if len(branch2) > 0:
-                        distance = distances[reverse[member_i], reverse[branch2[0]]]
-                        if distance < min_distance:
-                            min_distance = distance
-                            min_i = i
-                branches[current_branch + (min_i,)].append(member_i)
+                    if i < len(available_list):
+                        branches[current_branch + (i,)] = [available_list[i]]
+                    else:
+                        branches[current_branch + (i,)] = []
+            else:
+                # Standard branching logic
+                # We first select the scenario with the max distance to any other branch
+                idx = np.argmax(np.amax(distances, axis=0))
+
+                for i in range(options["k"]):
+                    if idx >= 0:
+                        branches[current_branch + (i,)] = [branches[current_branch][idx]]
+
+                        available.remove(branches[current_branch][idx])
+
+                        # We select the scenario with the max min distance to the other branches
+                        min_distances = np.array(
+                            [
+                                min(
+                                    [np.inf]
+                                    + [
+                                        distances[j, k]
+                                        for j, member_j in enumerate(branches[current_branch])
+                                        if member_j not in available and member_k in available
+                                    ]
+                                )
+                                for k, member_k in enumerate(branches[current_branch])
+                            ],
+                            dtype=np.float64,
+                        )
+                        min_distances[np.where(min_distances == np.inf)] = -np.inf
+
+                        idx = np.argmax(min_distances)
+                        if min_distances[idx] <= 0:
+                            idx = -1
+                    else:
+                        branches[current_branch + (i,)] = []
+
+                # Cluster remaining ensemble members to branches
+                for member_i in available:
+                    min_i = 0
+                    min_distance = np.inf
+                    for i in range(options["k"]):
+                        branch2 = branches[current_branch + (i,)]
+                        if len(branch2) > 0:
+                            distance = distances[reverse[member_i], reverse[branch2[0]]]
+                            if distance < min_distance:
+                                min_distance = distance
+                                min_i = i
+                    branches[current_branch + (min_i,)].append(member_i)
 
             # Recurse
             for i in range(options["k"]):
