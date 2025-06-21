@@ -44,7 +44,7 @@ def substitute_in_external(
     if len(symbols) == 0 or all(isinstance(x, ca.DM) for x in expr):
         return expr
     else:
-        f = ca.Function("f", symbols, expr)
+        f = ca.Function("f", symbols, expr).expand()
         return f.call(values, True, False)
 
 
