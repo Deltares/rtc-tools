@@ -1,4 +1,5 @@
 import logging
+from typing import Union
 
 import casadi as ca
 
@@ -37,8 +38,13 @@ def reduce_matvec(e, v):
     return ca.reshape(ca.mtimes(A, v), e.shape)
 
 
-def substitute_in_external(expr, symbols, values):
-    if len(symbols) == 0 or all(isinstance(x, ca.DM) for x in expr):
+def substitute_in_external(
+    expr: list[ca.MX], symbols: list[ca.MX], values: list[Union[ca.MX, ca.DM, float]]
+):
+    # We expect expr to be a list of (at most) length 1
+    assert len(expr) <= 1
+
+    if not expr or len(symbols) == 0 or all(isinstance(x, ca.DM) for x in expr):
         return expr
     else:
         f = ca.Function("f", symbols, expr)
