@@ -634,3 +634,36 @@ class TestAliasBounds(TestCase):
         bounds = problem.bounds()
         self.assertEqual(bounds["x"], (-1.0, 2.0))
         self.assertEqual(bounds["negative_alias"], (-2.0, 1.0))
+
+
+class ModelWithoutInitialConstraints(Model):
+    # Test model that disables initial constraints
+    add_initial_constraints = False
+
+    def history(self, ensemble_member):
+        # Provide initial states with different values than the initial equation
+        history = super().history(ensemble_member)
+        # Set x to 0.5 instead of 1.1 (which is specified in the initial equation)
+        history["x"] = Timeseries([-1.0, 0.0], [0.5, 0.5])
+        history["w"] = Timeseries([-1.0, 0.0], [0.0, 0.0])  # w has fixed=true with start=0.0
+        return history
+
+
+class TestInitialConstraints(TestCase):
+    def test_with_initial_constraints(self):
+        # Default behavior - initial constraints are added
+        problem = Model()
+        problem.optimize()
+        results = problem.extract_results()
+        # The initial equation x = 1.1 should be enforced
+        self.assertAlmostEqual(results["x"][0], 1.1, 6)
+
+    def test_without_initial_constraints(self):
+        # Test with initial constraints disabled
+        problem = ModelWithoutInitialConstraints()
+        problem.optimize()
+        results = problem.extract_results()
+        # With initial constraints disabled, the initial value should come from history
+        # which we set to 0.5, NOT the 1.1 from the initial equation
+        self.assertAlmostEqual(results["x"][0], 0.5, 6)
+        self.assertAlmostEqual(results["w"][0], 0.0, 6)

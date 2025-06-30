@@ -44,10 +44,16 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
     :cvar check_collocation_linearity:
         If ``True``, check whether collocation constraints are linear. Default is ``True``.
+    :cvar add_initial_constraints:
+        If ``True``, add constraints for initial conditions. Default is ``True``.
+        Set to ``False`` when all initial states are provided to avoid an overdetermined system.
     """
 
     #: Check whether the collocation constraints are linear
     check_collocation_linearity = True
+
+    #: Add constraints for initial conditions
+    add_initial_constraints = True
 
     #: Whether or not the collocation constraints are linear (affine)
     linear_collocation = None
@@ -582,52 +588,62 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
             # Derivatives take a bit more effort to vectorize, as we can have
             # both constant values and elements in the state vector
-            initial_derivatives = ca.MX.zeros((n, 1))
-            init_der_variable = []
-            init_der_variable_indices = []
-            init_der_variable_nominals = []
-            init_der_constant = []
-            init_der_constant_values = []
+            if self.add_initial_constraints:
+                initial_derivatives = ca.MX.zeros((n, 1))
+                init_der_variable = []
+                init_der_variable_indices = []
+                init_der_variable_nominals = []
+                init_der_constant = []
+                init_der_constant_values = []
 
-            history = self.history(ensemble_member)
+                history = self.history(ensemble_member)
 
-            for j, variable in enumerate(integrated_variable_names + collocated_variable_names):
-                initial_state_indices[j] = self.__indices_as_lists[ensemble_member][variable][0]
+                for j, variable in enumerate(integrated_variable_names + collocated_variable_names):
+                    initial_state_indices[j] = self.__indices_as_lists[ensemble_member][variable][0]
 
-                try:
-                    i = self.__differentiated_states_map[variable]
-
-                    initial_der_name = self.__initial_derivative_names[i]
-                    init_der_variable_nominals.append(self.variable_nominal(initial_der_name))
-                    init_der_variable_indices.append(
-                        self.__indices[ensemble_member][initial_der_name]
-                    )
-                    init_der_variable.append(j)
-
-                except KeyError:
-                    # We do interpolation here instead of relying on der_at. This is faster because:
-                    # 1. We can reuse the history variable.
-                    # 2. We know that "variable" is a canonical state
-                    # 3. We know that we are only dealing with history (numeric values, not
-                    #    symbolics)
                     try:
-                        h = history[variable]
-                        if h.times[0] == t0 or len(h.values) == 1:
-                            init_der = 0.0
-                        else:
-                            assert h.times[-1] == t0
-                            init_der = (h.values[-1] - h.values[-2]) / (h.times[-1] - h.times[-2])
+                        i = self.__differentiated_states_map[variable]
+
+                        initial_der_name = self.__initial_derivative_names[i]
+                        init_der_variable_nominals.append(self.variable_nominal(initial_der_name))
+                        init_der_variable_indices.append(
+                            self.__indices[ensemble_member][initial_der_name]
+                        )
+                        init_der_variable.append(j)
+
                     except KeyError:
-                        init_der = 0.0
+                        # We do interpolation here instead of relying on der_at. This is faster
+                        # because:
+                        # 1. We can reuse the history variable.
+                        # 2. We know that "variable" is a canonical state
+                        # 3. We know that we are only dealing with history (numeric values, not
+                        #    symbolics)
+                        try:
+                            h = history[variable]
+                            if h.times[0] == t0 or len(h.values) == 1:
+                                init_der = 0.0
+                            else:
+                                assert h.times[-1] == t0
+                                init_der = (h.values[-1] - h.values[-2]) / (
+                                    h.times[-1] - h.times[-2]
+                                )
+                        except KeyError:
+                            init_der = 0.0
 
-                    init_der_constant_values.append(init_der)
-                    init_der_constant.append(j)
+                        init_der_constant_values.append(init_der)
+                        init_der_constant.append(j)
 
-            initial_derivatives[init_der_variable] = X[init_der_variable_indices] * np.array(
-                init_der_variable_nominals
-            )
-            if len(init_der_constant_values) > 0:
-                initial_derivatives[init_der_constant] = init_der_constant_values
+                initial_derivatives[init_der_variable] = X[init_der_variable_indices] * np.array(
+                    init_der_variable_nominals
+                )
+                if len(init_der_constant_values) > 0:
+                    initial_derivatives[init_der_constant] = init_der_constant_values
+            else:
+                # When add_initial_constraints is False, we don't need initial derivatives at all
+                initial_derivatives = ca.MX.zeros((n, 1))
+                # Still need to collect initial state indices
+                for j, variable in enumerate(integrated_variable_names + collocated_variable_names):
+                    initial_state_indices[j] = self.__indices_as_lists[ensemble_member][variable][0]
 
             ensemble_data["initial_state"] = X[initial_state_indices] * np.concatenate(
                 (integrated_variable_nominals, collocated_variable_nominals)
@@ -1189,51 +1205,52 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         ubg = []
 
         # Add constraints for initial conditions
-        if self.__initial_residual_with_params_fun_map is None:
-            initial_residual_with_params_fun = ca.Function(
-                "initial_residual_total",
+        if self.add_initial_constraints:
+            if self.__initial_residual_with_params_fun_map is None:
+                initial_residual_with_params_fun = ca.Function(
+                    "initial_residual_total",
+                    [
+                        symbolic_parameters,
+                        ca.vertcat(
+                            *(
+                                self.dae_variables["states"]
+                                + self.dae_variables["algebraics"]
+                                + self.dae_variables["control_inputs"]
+                                + integrated_derivatives
+                                + collocated_derivatives
+                                + self.dae_variables["constant_inputs"]
+                                + self.dae_variables["time"]
+                            )
+                        ),
+                    ],
+                    [ca.veccat(dae_residual, initial_residual)],
+                    function_options,
+                )
+                self.__initial_residual_with_params_fun_map = initial_residual_with_params_fun.map(
+                    self.ensemble_size
+                )
+            initial_residual_with_params_fun_map = self.__initial_residual_with_params_fun_map
+            [res] = initial_residual_with_params_fun_map.call(
                 [
-                    symbolic_parameters,
+                    ensemble_aggregate["parameters"],
                     ca.vertcat(
-                        *(
-                            self.dae_variables["states"]
-                            + self.dae_variables["algebraics"]
-                            + self.dae_variables["control_inputs"]
-                            + integrated_derivatives
-                            + collocated_derivatives
-                            + self.dae_variables["constant_inputs"]
-                            + self.dae_variables["time"]
-                        )
+                        *[
+                            ensemble_aggregate["initial_state"],
+                            ensemble_aggregate["initial_derivatives"],
+                            ensemble_aggregate["initial_constant_inputs"],
+                            ca.repmat([0.0], 1, self.ensemble_size),
+                        ]
                     ),
                 ],
-                [ca.veccat(dae_residual, initial_residual)],
-                function_options,
+                False,
+                True,
             )
-            self.__initial_residual_with_params_fun_map = initial_residual_with_params_fun.map(
-                self.ensemble_size
-            )
-        initial_residual_with_params_fun_map = self.__initial_residual_with_params_fun_map
-        [res] = initial_residual_with_params_fun_map.call(
-            [
-                ensemble_aggregate["parameters"],
-                ca.vertcat(
-                    *[
-                        ensemble_aggregate["initial_state"],
-                        ensemble_aggregate["initial_derivatives"],
-                        ensemble_aggregate["initial_constant_inputs"],
-                        ca.repmat([0.0], 1, self.ensemble_size),
-                    ]
-                ),
-            ],
-            False,
-            True,
-        )
 
-        res = ca.vec(res)
-        g.append(res)
-        zeros = [0.0] * res.size1()
-        lbg.extend(zeros)
-        ubg.extend(zeros)
+            res = ca.vec(res)
+            g.append(res)
+            zeros = [0.0] * res.size1()
+            lbg.extend(zeros)
+            ubg.extend(zeros)
 
         # The initial values and the interpolated mapped arguments are saved
         # such that can be reused in map_path_expression().
@@ -1308,53 +1325,54 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
             initial_derivative_constraints = []
 
-            for i, variable in enumerate(self.differentiated_states):
-                try:
-                    history_timeseries = history[variable]
-                except KeyError:
-                    pass
-                else:
-                    if len(history_timeseries.times) <= 1 or np.isnan(
-                        history_timeseries.values[-2]
-                    ):
-                        continue
-
-                    assert history_timeseries.times[-1] == t0
-
-                    if np.isnan(history_timeseries.values[-1]):
-                        t0_val = self.state_vector(variable, ensemble_member=ensemble_member)[0]
-                        t0_val *= self.variable_nominal(variable)
-
-                        val = (t0_val - history_timeseries.values[-2]) / (
-                            t0 - history_timeseries.times[-2]
-                        )
-                        sym = initial_derivatives[i]
-                        initial_derivative_constraints.append(sym - val)
+            if self.add_initial_constraints:
+                for i, variable in enumerate(self.differentiated_states):
+                    try:
+                        history_timeseries = history[variable]
+                    except KeyError:
+                        pass
                     else:
-                        interpolation_method = self.interpolation_method(variable)
+                        if len(history_timeseries.times) <= 1 or np.isnan(
+                            history_timeseries.values[-2]
+                        ):
+                            continue
 
-                        t0_val = self.interpolate(
-                            t0,
-                            history_timeseries.times,
-                            history_timeseries.values,
-                            np.nan,
-                            np.nan,
-                            interpolation_method,
-                        )
-                        initial_der_name = self.__initial_derivative_names[i]
+                        assert history_timeseries.times[-1] == t0
 
-                        val = (t0_val - history_timeseries.values[-2]) / (
-                            t0 - history_timeseries.times[-2]
-                        )
-                        val /= self.variable_nominal(initial_der_name)
+                        if np.isnan(history_timeseries.values[-1]):
+                            t0_val = self.state_vector(variable, ensemble_member=ensemble_member)[0]
+                            t0_val *= self.variable_nominal(variable)
 
-                        idx = self.__indices[ensemble_member][initial_der_name]
-                        lbx[idx] = ubx[idx] = val
+                            val = (t0_val - history_timeseries.values[-2]) / (
+                                t0 - history_timeseries.times[-2]
+                            )
+                            sym = initial_derivatives[i]
+                            initial_derivative_constraints.append(sym - val)
+                        else:
+                            interpolation_method = self.interpolation_method(variable)
 
-            if len(initial_derivative_constraints) > 0:
-                g.append(ca.vertcat(*initial_derivative_constraints))
-                lbg.append(np.zeros(len(initial_derivative_constraints)))
-                ubg.append(np.zeros(len(initial_derivative_constraints)))
+                            t0_val = self.interpolate(
+                                t0,
+                                history_timeseries.times,
+                                history_timeseries.values,
+                                np.nan,
+                                np.nan,
+                                interpolation_method,
+                            )
+                            initial_der_name = self.__initial_derivative_names[i]
+
+                            val = (t0_val - history_timeseries.values[-2]) / (
+                                t0 - history_timeseries.times[-2]
+                            )
+                            val /= self.variable_nominal(initial_der_name)
+
+                            idx = self.__indices[ensemble_member][initial_der_name]
+                            lbx[idx] = ubx[idx] = val
+
+                if len(initial_derivative_constraints) > 0:
+                    g.append(ca.vertcat(*initial_derivative_constraints))
+                    lbg.append(np.zeros(len(initial_derivative_constraints)))
+                    ubg.append(np.zeros(len(initial_derivative_constraints)))
 
             # Initial conditions for integrator
             accumulation_X0 = []
@@ -2273,7 +2291,8 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             ensemble_member_size += variable_sizes[variable]
 
         # Space for initial states and derivatives
-        ensemble_member_size += len(self.dae_variables["derivatives"])
+        if self.add_initial_constraints:
+            ensemble_member_size += len(self.dae_variables["derivatives"])
 
         # Total space requirement
         count = self.ensemble_size * ensemble_member_size
@@ -2318,10 +2337,11 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
                 offset += variable_size
 
-            for initial_der_name in self.__initial_derivative_names:
-                indices[ensemble_member][initial_der_name] = offset
+            if self.add_initial_constraints:
+                for initial_der_name in self.__initial_derivative_names:
+                    indices[ensemble_member][initial_der_name] = offset
 
-                offset += 1
+                    offset += 1
 
         discrete = self._collint_get_discrete(count, indices)
         lbx, ubx = self._collint_get_lbx_ubx(bounds, count, indices)
@@ -2369,14 +2389,15 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                 j += n
 
         # Extract initial derivatives
-        for initial_der_name in self.__initial_derivative_names:
-            inds = indices[initial_der_name]
+        if self.add_initial_constraints:
+            for initial_der_name in self.__initial_derivative_names:
+                inds = indices[initial_der_name]
 
-            try:
-                nominal = self.variable_nominal(initial_der_name)
-                results[initial_der_name] = nominal * X[inds].ravel()
-            except KeyError:
-                pass
+                try:
+                    nominal = self.variable_nominal(initial_der_name)
+                    results[initial_der_name] = nominal * X[inds].ravel()
+                except KeyError:
+                    pass
 
         # Extract all other variables
         variable_sizes = self.__variable_sizes
