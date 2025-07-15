@@ -8,7 +8,7 @@ Please follow the issue template and provide as much information as possible to 
 - **Suggesting features**: If you have any ideas or suggestions for new features or improvements, 
 please share them on our [issue tracker](https://github.com/deltares/rtc-tools/issues).
 Please use the appropriate category and tag for your topic and explain your motivation and use case clearly.
-- **Submitting pull requests**: If you want to contribute code or documentation to RTC-Tools, please  create a pull request. Before submitting, please follow the [Guidelines for creating merge requests](#guidelines-for-creating-merge-requests) below.  
+- **Submitting pull requests**: If you want to contribute code or documentation to RTC-Tools, please create a pull request. Before submitting, please follow the [Guidelines for creating merge requests](#guidelines-for-creating-merge-requests) below.  
 - **Improving documentation**: If you find any errors, typos, or inconsistencies in the documentation,
  or if you want to add more examples, tutorials, or explanations, 
  please feel free to edit the documentation files in the docs folder and submit a merge request.
@@ -21,9 +21,9 @@ please install the latest development version of RTC-Tools from the [GitHub repo
 
 ## Guidelines for creating issues
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
-2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the version of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
-4. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue. This should be the smallest amount of code and data necessary to reproduce the problem. Providing a minimal example helps maintainers quickly understand, reproduce, and address your issue.
-3. **Labels**: Use labels to categorize the issue. This helps in prioritizing and resolving issues.
+2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the versions of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
+3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue. This should be the smallest amount of code and data necessary to reproduce the problem. Providing a minimal example helps maintainers quickly understand, reproduce, and address your issue.
+4. **Labels**: Use labels to categorize the issue. This helps in prioritizing and resolving issues.
 
 ### Security Reporting
 
@@ -33,7 +33,7 @@ If you discover a security vulnerability, please report it responsibly by emaili
 1. **Identify or create an issue**: Before making any changes, open an issue following the [guidelines](#guidelines-for-creating-issues) above, or comment on an existing one in the [issue tracker](https://github.com/deltares/rtc-tools/issues) to discuss your ideas with the maintainers. This helps avoid duplication and ensures your contribution aligns with project goals.
 2. **Fork or Branch**:
     - New Contributors: Fork the repository and create a new branch in your fork.
-    - Contributors with : Create a new branch directly in the main repository.Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
+    - Committers: Create a new branch directly in the main repository.Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
 3. **Commit**: Make clear, focused commits following the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
 4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions.
 5. **Documentation**: Update documentation and add examples to the `examples` folder if necessary.
@@ -41,7 +41,7 @@ If you discover a security vulnerability, please report it responsibly by emaili
 7. **Check CI status**: Ensure all automated checks and tests pass before requesting a review.
 8. **Request review**: Ask for a code review from your peers and address any comments or suggestions.
 
-Try to keep pull requests small and focused for easier review and faster merging.
+Keep pull requests small and focused for easier review and faster merging.
 
 ## Commits and Commit Messages
 
@@ -192,10 +192,10 @@ By following this merging policy, RTC-Tools ensures a stable and predictable exp
 RTC-Tools is governed by a Technical Steering Committee (TSC), responsible for technical oversight, community norms, workflows, and project direction.  
 
 ### Governance Roles
+
 - **Contributors**: Anyone who contributes code, documentation, or other artifacts.
 - **Committers**: Contributors who have earned the ability to modify (“commit”) source code, documentation, or other technical artifacts.
 - **TSC Members**: Initially, the Project’s Committers. The TSC may update its membership and roles as documented here.
-
 
 ### Operational Roles
 
@@ -216,7 +216,8 @@ Decisions are made by consensus when possible; if a vote is required, each votin
 - Electronic votes require a majority of all voting members.
 - If a vote cannot be resolved, any voting member may refer the matter to the Series Manager for assistance.
 
-### Becoming a Committer 
+### Becoming a Committer
+
 To become a Committer, a Contributor must be approved by a majority of existing Committers. Committers may be removed by a majority of the other existing Committers.
 
 ### Open Participation
@@ -229,7 +230,6 @@ RTC-Tools follows the [LF Projects Code of Conduct](https://lfprojects.org/polic
 All participants are expected to act respectfully and professionally.
 
 For more details, see the [Technical Charter](link-to-charter-if-available).
-
 
 ## Licensing and Developer Certificate of Origin (DCO)
 
