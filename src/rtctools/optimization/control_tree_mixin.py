@@ -50,7 +50,7 @@ class ControlTreeMixin(OptimizationProblem):
         return options
 
     def discretize_control(self, variable, ensemble_member, times, offset):
-        control_indices = np.zeros(len(times), dtype=np.int16)
+        control_indices = np.zeros(len(times), dtype=np.int64)
         for branch, members in self.__branches.items():
             if ensemble_member not in members:
                 continue
