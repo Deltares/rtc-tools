@@ -1,6 +1,27 @@
+# RTC-Tools Governance
+
+## Table of Contents
+
+- [Project Governance](#project-governance)
+  - [Governance Roles](#governance-roles)
+  - [Operational Roles](#operational-roles)
+  - [TSC Voting](#tsc-voting)
+  - [Becoming a Committer](#becoming-a-committer)
+  - [Open Participation](#open-participation)
+  - [Code of Conduct](#code-of-conduct)
+- [Release Management](#release-management)
+  - [Version Numbering](#version-numbering)
+  - [Release Cycle](#release-cycle)
+  - [Branch Management](#branch-management)
+- [Documentation Standards](#documentation-standards)
+- [Merging Policy and Backwards Compatibility](#merging-policy-and-backwards-compatibility)
+  - [Review and Approval Process](#review-and-approval-process)
+  - [Linear History](#linear-history)
+  - [Backwards Compatibility](#backwards-compatibility)
+
 ## Project Governance
 
-RTC-Tools is governed by a Technical Steering Committee (TSC), responsible for technical oversight, community norms, workflows, and project direction.  
+RTC-Tools is governed by a Technical Steering Committee (TSC), responsible for technical oversight, community norms, workflows, and project direction. The TSC operates according to the rules defined in the [Technical Charter](CHARTER.md).  
 
 ### Governance Roles
 
@@ -10,13 +31,13 @@ RTC-Tools is governed by a Technical Steering Committee (TSC), responsible for t
 
 ### Operational Roles
 
-Contributors, Committers and TSC Members can assume different operational roles, depending on their expertise, interests, and availability. These roles help distribute project responsibilities and ensure smooth operations:
+Contributors, Committers, and TSC Members can assume different operational roles, depending on their expertise, interests, and availability. These roles help distribute project responsibilities and ensure smooth operations:
 
 - **Release Manager**: Coordinates releases, manages version numbering, ensures release quality, and oversees release processes.
 - **Maintainer**: Day-to-day code maintenance, pull request reviews, and issue triage.
 - **Community Manager**: Facilitates community engagement, manages communications, supports contributor onboarding, and moderates discussions.
 - **Security, Quality and DevOps Lead**: Handles security vulnerabilities, maintains testing standards, ensures code quality processes, oversees CI/CD infrastructure, and handles DevOps operations.
-- **Documentation Lead**: Maintains documentation quality, coordinates documentation efforts.
+- **Documentation Lead**: Maintains documentation quality, coordinates documentation efforts, and ensures documentation remains up-to-date with software changes.
 
 ### TSC Voting
 
@@ -25,7 +46,7 @@ Decisions are made by consensus when possible; if a vote is required, each votin
 - Quorum for TSC meetings is at least 50% of voting members.
 - Decisions at meetings require a majority of those present, provided quorum is met.
 - Electronic votes require a majority of all voting members.
-- If a vote cannot be resolved, any voting member may refer the matter to the Series Manager for assistance.
+- If a vote cannot be resolved, any voting member may refer the matter to the Series Manager for assistance, as specified in the [Technical Charter](CHARTER.md#3-tsc-voting).
 
 ### Becoming a Committer
 
@@ -33,7 +54,7 @@ To become a Committer, a Contributor must be approved by a majority of existing 
 
 ### Open Participation
 
-Participation is open to anyone, regardless of affiliation, as long as they abide by this Charter and the project's policies.
+Participation is open to anyone, regardless of affiliation, as long as they abide by the [Technical Charter](CHARTER.md) and the project's policies.
 
 ### Code of Conduct
 
@@ -98,7 +119,19 @@ we create a separate branch `maintenance/X.Y` where we add patches for X.Y.
 
 Bug fixes for previous stable versions should be submitted to the corresponding `maintenance/X.Y` branch.
 
-## Merging Policy and Backwards Compatibility
+## Documentation Standards
+
+Documentation is a critical part of the RTC-Tools project. All contributions should adhere to these standards:
+
+- **API Documentation**: All public APIs must be documented using docstrings following [PEP 257](https://peps.python.org/pep-0257/) conventions.
+- **User Documentation**: User-facing documentation should be written in clear, accessible language and maintained in the `docs` directory using Sphinx.
+- **Examples**: Code examples should be provided for key functionality and kept up-to-date with the current API.
+- **Breaking Changes**: All breaking changes must include documentation updates explaining the changes and migration paths.
+- **Release Notes**: Each release must include comprehensive release notes detailing new features, bug fixes, and any breaking changes.
+
+The Documentation Lead is responsible for ensuring documentation quality and consistency across the project.
+
+## Merging Policy
 
 All contributions to RTC-Tools are reviewed and merged according to the following policy, in line with the project's [Technical Charter](CHARTER.md):
 
@@ -117,12 +150,10 @@ We maintain a linear Git history by using git rebase instead of git merge. This 
 - Reduced complexity in the commit graph
 - Makes it straightforward to review and edit commit messages
 
-Contributors should rebase their branches on the latest main branch before submitting pull requests.
-
 ### Backwards Compatibility
 
 - CI tests and TeamCity tests are run to ensure that changes do not break existing functionality and maintain API compatibility.
-- Changes that break backwards compatibility (i.e., incompatible API changes) should only be made when necessary and must be clearly documented in the release notes.
+- Changes that break backwards compatibility (i.e., incompatible API changes) should only be made when necessary and must be clearly documented, following our [Documentation Standards](#documentation-standards).
 - Contributors are encouraged to maintain backwards compatibility whenever possible. Deprecation warnings should be provided before removing or changing public APIs.
 
 By following this merging policy, RTC-Tools ensures a stable and predictable experience for all users and contributors, in accordance with the project's [Technical Charter](CHARTER.md).

@@ -1,5 +1,20 @@
 # Contributing to RTC-Tools 2
 
+## Table of Contents
+
+- [Ways to Contribute](#ways-to-contribute)
+- [Guidelines for Creating Issues](#guidelines-for-creating-issues)
+  - [Security Reporting](#security-reporting)
+- [Guidelines for Creating Merge Requests](#guidelines-for-creating-merge-requests)
+- [Commits and Commit Messages](#commits-and-commit-messages)
+- [Code Quality Guidelines](#code-quality-guidelines)
+- [Setting up a Development Environment](#setting-up-a-development-environment)
+- [Project Governance](#project-governance)
+- [Licensing and Developer Certificate of Origin](#licensing-and-developer-certificate-of-origin-dco)
+- [Contact](#contact)
+
+## Ways to Contribute
+
 There are many ways you can contribute to RTC-Tools, such as:
 
 - **Reporting issues**: If you encounter any bugs, errors, or unexpected behavior while using RTC-Tools, 
@@ -8,7 +23,7 @@ Please follow the issue template and provide as much information as possible to 
 - **Suggesting features**: If you have any ideas or suggestions for new features or improvements, 
 please share them on our [issue tracker](https://github.com/deltares/rtc-tools/issues).
 Please use the appropriate category and tag for your topic and explain your motivation and use case clearly.
-- **Submitting pull requests**: If you want to contribute code or documentation to RTC-Tools, please create a pull request. Before submitting, please follow the [Guidelines for creating merge requests](#guidelines-for-creating-merge-requests) below.  
+- **Submitting pull requests**: If you want to contribute code or documentation to RTC-Tools, please create a pull request. Before submitting, please follow the [Guidelines for Creating Merge Requests](#guidelines-for-creating-merge-requests) below.  
 - **Improving documentation**: If you find any errors, typos, or inconsistencies in the documentation,
  or if you want to add more examples, tutorials, or explanations, 
  please feel free to edit the documentation files in the docs folder and submit a merge request.
@@ -19,7 +34,7 @@ Please follow the [Sphinx syntax and style guide](https://www.sphinx-doc.org/en/
 please install the latest development version of RTC-Tools from the [GitHub repository](https://github.com/deltares/rtc-tools)
  and report any issues or feedback on the [issue tracker](https://github.com/deltares/rtc-tools/issues).
 
-## Guidelines for creating issues
+## Guidelines for Creating Issues
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
 2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the versions of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
 3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue. This should be the smallest amount of code and data necessary to reproduce the problem. Providing a minimal example helps maintainers quickly understand, reproduce, and address your issue.
@@ -29,11 +44,11 @@ please install the latest development version of RTC-Tools from the [GitHub repo
 
 If you discover a security vulnerability, please report it responsibly by emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl) rather than opening a public issue.
 
-## Guidelines for creating merge requests
+## Guidelines for Creating Merge Requests
 1. **Identify or create an issue**: Before making any changes, open an issue following the [guidelines](#guidelines-for-creating-issues) above, or comment on an existing one in the [issue tracker](https://github.com/deltares/rtc-tools/issues) to discuss your ideas with the maintainers. This helps avoid duplication and ensures your contribution aligns with project goals and the [governance model](GOVERNANCE.md).
 2. **Fork or Branch**:
     - New Contributors: Fork the repository and create a new branch in your fork.
-    - Committers: Create a new branch directly in the main repository.Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
+    - Committers: Create a new branch directly in the main repository. Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
 3. **Commit**: Make clear, focused commits following the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
 4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions.
 5. **Documentation**: Update documentation and add examples to the `examples` folder if necessary.
@@ -41,7 +56,7 @@ If you discover a security vulnerability, please report it responsibly by emaili
 7. **Check CI status**: Ensure all automated checks and tests pass before requesting a review.
 8. **Request review**: Ask for a code review from your peers and address any comments or suggestions.
 
-Contributors should rebase their branches on the latest main branch before submitting pull requests, and maintainers will use rebase when integrating changes.
+Contributors should rebase their branches on the latest main branch before submitting pull requests. As described in our [Governance](GOVERNANCE.md#linear-history) document, we maintain a linear Git history by using rebase instead of merge commits.
 
 Keep pull requests small and focused for easier review and faster merging.
 
@@ -85,9 +100,9 @@ To maintain a high standard of code quality in RTC-Tools, please follow these gu
 - **Dependencies**: Only add new dependencies if necessary and discuss them with maintainers first.
 - **Performance**: Consider the performance impact of your changes, especially in core computation routines.
 
-By following these guidelines, you help ensure RTC-Tools remains robust, maintainable, and accessible
+By following these guidelines, you help ensure RTC-Tools remains robust, maintainable, and accessible.
 
-## Setting up a development environment
+## Setting up a Development Environment
 
 To set up your development environment, you will need:
 
@@ -107,10 +122,7 @@ Run the following command to set up the pre-commit hook:
 ```bash
 pre-commit install
 ```
-. This will
-automatically check your code for formatting and linting issues before each
-commit.
-
+This will automatically check your code for formatting and linting issues before each commit.
 
 To run the tests:
 
