@@ -1,5 +1,20 @@
 # Contributing to RTC-Tools 2
 
+## Table of Contents
+
+- [Ways to Contribute](#ways-to-contribute)
+- [Guidelines for Creating Issues](#guidelines-for-creating-issues)
+  - [Security Reporting](#security-reporting)
+- [Guidelines for Creating Merge Requests](#guidelines-for-creating-merge-requests)
+- [Commits and Commit Messages](#commits-and-commit-messages)
+- [Code Quality Guidelines](#code-quality-guidelines)
+- [Setting up a Development Environment](#setting-up-a-development-environment)
+- [Project Governance](#project-governance)
+- [Licensing and Developer Certificate of Origin](#licensing-and-developer-certificate-of-origin-dco)
+- [Contact](#contact)
+
+## Ways to Contribute
+
 There are many ways you can contribute to RTC-Tools, such as:
 
 - **Reporting issues**: If you encounter any bugs, errors, or unexpected behavior while using RTC-Tools, 
@@ -8,10 +23,7 @@ Please follow the issue template and provide as much information as possible to 
 - **Suggesting features**: If you have any ideas or suggestions for new features or improvements, 
 please share them on our [issue tracker](https://github.com/deltares/rtc-tools/issues).
 Please use the appropriate category and tag for your topic and explain your motivation and use case clearly.
-- **Submitting merge requests**: If you want to contribute code or documentation to RTC-Tools, 
-please fork the repository and create a merge request.
-Please write docstrings for your functions and classes and make sure your changes pass the tests and checks before submitting.
-Please also add a brief description of your changes and reference any related issues or discussions.
+- **Submitting pull requests**: If you want to contribute code or documentation to RTC-Tools, please create a pull request. Before submitting, please follow the [Guidelines for Creating Merge Requests](#guidelines-for-creating-merge-requests) below.  
 - **Improving documentation**: If you find any errors, typos, or inconsistencies in the documentation,
  or if you want to add more examples, tutorials, or explanations, 
  please feel free to edit the documentation files in the docs folder and submit a merge request.
@@ -22,31 +34,31 @@ Please follow the [Sphinx syntax and style guide](https://www.sphinx-doc.org/en/
 please install the latest development version of RTC-Tools from the [GitHub repository](https://github.com/deltares/rtc-tools)
  and report any issues or feedback on the [issue tracker](https://github.com/deltares/rtc-tools/issues).
 
-## Guidelines for creating issues
+## Guidelines for Creating Issues
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
-2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior.
-3. **Labels**: Use labels to categorize the issue. This helps in prioritizing and resolving issues.
-4. **Screenshots**: If applicable, add screenshots to help explain the problem.
-5. **Environment**: Mention the version of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
+2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the versions of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
+3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue. This should be the smallest amount of code and data necessary to reproduce the problem. Providing a minimal example helps maintainers quickly understand, reproduce, and address your issue.
+4. **Labels**: Use labels to categorize the issue. This helps in prioritizing and resolving issues.
 
+### Security Reporting
 
-## Guidelines for creating merge requests
-1. **Identify or create issue**: Before making any changes,
-please open an issue following the guidelines above,
-or comment on an existing one in the
-[issue tracker](https://github.com/deltares/rtc-tools/issues)
-to discuss your ideas with the maintainers.
-This will help us avoid duplication of work
-and ensure that your contribution aligns with the goals of the project.
-2. **Branch**: Create a new branch for each merge request. The branch name should be descriptive and reflect the changes being made.
-3. **Commit**: Please make your commits following the guidelines in the [Commits and Commit Messages](#commits-and-commit-messages) section below.
-4. **Write tests**: If possible, write tests that cover your changes, and add them to the `tests` folder.
-This will help ensure that your changes result in the desired behavior and that functionalities will not accidently break in the future.
-5. **Documentation**: Please also update the documentation if necessary and add examples to the `examples` folder.
-6. **Create merge request**: Mention the corresponding issue from the [issue tracker](https://github.com/deltares/rtc-tools/issues).
-Describe what changes you've made, why you've made them, and how they address the issue at hand.
-7. **Code review**: Request code review from your peers. Address any comments or suggestions they might have.
+If you discover a security vulnerability, please report it responsibly by emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl) rather than opening a public issue.
 
+## Guidelines for Creating Merge Requests
+1. **Identify or create an issue**: Before making any changes, open an issue following the [guidelines](#guidelines-for-creating-issues) above, or comment on an existing one in the [issue tracker](https://github.com/deltares/rtc-tools/issues) to discuss your ideas with the maintainers. This helps avoid duplication and ensures your contribution aligns with project goals and the [governance model](GOVERNANCE.md).
+2. **Fork or Branch**:
+    - New Contributors: Fork the repository and create a new branch in your fork.
+    - Committers: Create a new branch directly in the main repository. Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
+3. **Commit**: Make clear, focused commits following the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
+4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions.
+5. **Documentation**: Update documentation and add examples to the `examples` folder if necessary.
+6. **Create a pull request**: Reference the corresponding issue in your PR description. Clearly describe what changes you've made, why, and any relevant context.
+7. **Check CI status**: Ensure all automated checks and tests pass before requesting a review.
+8. **Request review**: Ask for a code review from your peers and address any comments or suggestions.
+
+Contributors should rebase their branches on the latest main branch before submitting pull requests. As described in our [Governance](GOVERNANCE.md#linear-history) document, we maintain a linear Git history by using rebase instead of merge commits.
+
+Keep pull requests small and focused for easier review and faster merging.
 
 ## Commits and Commit Messages
 
@@ -73,7 +85,24 @@ Commit messages should have the following structure:
     This can take up multiple paragraphs.
 
 
-## Setting up a development environment
+## Code Quality Guidelines
+
+To maintain a high standard of code quality in RTC-Tools, please follow these guidelines when contributing:
+
+- **Type Annotations**: Use [PEP 484](https://peps.python.org/pep-0484/) type hints where appropriate to improve code clarity and enable static analysis.
+- **Docstrings**: Add clear and concise docstrings to all public modules, classes, functions, and methods. Use [PEP 257](https://peps.python.org/pep-0257/) conventions.
+- **Pre-commit Hooks**: Use the provided pre-commit configuration by running `pre-commit install` to automatically check formatting and linting before each commit.
+- **Follow PEP 8 and address SonarQube feedback**: Write Python code that adheres to [PEP 8](https://peps.python.org/pep-0008/) style guidelines. All code is analyzed by SonarQube for code quality and security issues—please review and address any issues or recommendations reported by SonarQube before submitting your pull request.
+- **Code coverage**: Ensure a code coverage of at least 80% to comply with SonarQube requirements.
+- **Avoid Code Duplication**: Reuse existing utilities and functions where possible. Refactor code to eliminate duplication.
+- **Readability**: Write code that is easy to read and understand. Use meaningful variable and function names.
+- **Error Handling**: Handle exceptions gracefully and provide informative error messages.
+- **Dependencies**: Only add new dependencies if necessary and discuss them with maintainers first.
+- **Performance**: Consider the performance impact of your changes, especially in core computation routines.
+
+By following these guidelines, you help ensure RTC-Tools remains robust, maintainable, and accessible.
+
+## Setting up a Development Environment
 
 To set up your development environment, you will need:
 
@@ -93,10 +122,7 @@ Run the following command to set up the pre-commit hook:
 ```bash
 pre-commit install
 ```
-. This will
-automatically check your code for formatting and linting issues before each
-commit.
-
+This will automatically check your code for formatting and linting issues before each commit.
 
 To run the tests:
 
@@ -111,59 +137,35 @@ cd doc
 make html
 ```
 
-## Version numbering and release cycle
+## Project Governance
 
-For version numbers we use the guidelines described in <https://semver.org>:
+RTC-Tools is governed according to the [Technical Charter](CHARTER.md) and detailed in the [Governance](GOVERNANCE.md) document, which together establish:
 
-> Given a version number MAJOR.MINOR.PATCH, increment the:
-> 
-> 1. MAJOR version when you make incompatible API changes
-> 2. MINOR version when you add functionality in a backward compatible manner
-> 3. PATCH version when you make backward compatible bug fixes
-> 
-> Additional labels for pre-release and build metadata are available
-> as extensions to the MAJOR.MINOR.PATCH format.
+- The project structure and roles
+- Decision-making processes
+- Contribution guidelines
+- Code of conduct requirements
 
-The development of a new MINOR version in RTC-Tools consists of four stages:
+All contributors are expected to follow the governance model outlined in the [Technical Charter](CHARTER.md) and [Governance](GOVERNANCE.md) documents.
 
-1. Alpha (a): Version that is not yet feature complete and may contain bugs.
-    Each alpha release can either fix bugs or add new features.
-2. Beta (b): Version that is feature complete but is likely to contain bugs.
-    After a beta version has been created, no new features can be added anymore.
-    A beta version is tested more thoroughly.
-3. Release candidate (rc): Version that has been tested through the beta versions releases
-    and can now be tested as if it were the stable release.
-    If bugs still pop up, new RC versions can be created to fix them.
-    Additions are allowed but should be code-unrelated,
-    such as changes to the documentation required for the release.
-4. Stable release: Final version that has passed all tests.
+## Licensing and Developer Certificate of Origin (DCO)
 
-There can be multiple alpha-, beta-, and rc-versions,
-but we should not go back to a previous stage.
+- **Code contributions**: All code must be contributed under the GNU Lesser General Public License v3.0 (LGPL-3.0).  
+  See [COPYING](https://github.com/Deltares/rtc-tools/blob/master/COPYING) for details.
+- **Documentation contributions**: All documentation is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+- **SPDX Identifiers**: Please include appropriate SPDX license identifiers in new files.
 
-An example of a release sequence is:
+All contributions must also be signed off using the [Developer Certificate of Origin (DCO)](https://developercertificate.org/):
 
-- 2.6.0a1 Add a feature.
-- 2.6.0a2 Add another feature and fix a bug.
-- 2.6.0b1 First beta release.
-- 2.6.0b2 Fixed a bug.
-- 2.6.0b3 Fixed another bug.
-- 2.6.0rc1 First release candidate after having tested thoroughly.
-- 2.6.0rc2 Fixed a bug that did not show up in the standard tests.
-- 2.6.0 **Stable release**.
-    No changes were made after last release candidate.
-- 2.6.1 Fixed a bug.
-- 2.6.2 Fixed another bug.
+```text
+Signed-off-by: Your Name <your.email@example.com>
+```
 
-If we start with a new release cycle for X.Y+1,
-and still want to fix a bug for the previous version X.Y,
-we create a separate branch `maintenance/X.Y` where we add patches for X.Y.
+You can add this automatically with:
 
-## Release Notes
-
-Before creating a release, make sure that the release notes are updated in
-[RELEASE_NOTES.md](RELEASE_NOTES.md).
-
+```bash
+git commit -s
+```
 
 ## Contact
 
