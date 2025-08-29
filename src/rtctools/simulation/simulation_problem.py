@@ -684,6 +684,7 @@ class SimulationProblem(DataStoreAccessor):
 
         # Construct guess
         guess = ca.vertcat(*np.nan_to_num(self.__state_vector[: self.__n_states]))
+        guess = guess + 1
 
         # Find initial state
         initial_state = solver(x0=guess, lbx=self.__lbx, ubx=self.__ubx, lbg=lbg, ubg=ubg)
