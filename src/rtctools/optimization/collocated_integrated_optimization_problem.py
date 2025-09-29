@@ -45,10 +45,16 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
     :cvar check_collocation_linearity:
         If ``True``, check whether collocation constraints are linear. Default is ``True``.
+    :cvar inline_delay_expressions:
+        If ``True``, delay expressions are inlined into constraints and objectives instead of
+        being added as separate equality constraints. Default is ``False``.
     """
 
     #: Check whether the collocation constraints are linear
     check_collocation_linearity = True
+
+    #: Inline delay expressions instead of adding them as separate equality constraints
+    inline_delay_expressions = False
 
     #: Whether or not the collocation constraints are linear (affine)
     linear_collocation = None
@@ -1789,6 +1795,12 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     + [constant_inputs[v.name()] for v in self.dae_variables["constant_inputs"]]
                 )
 
+                # If inlining delay expressions, prepare for the single call to ca.substitute()
+                # at the end
+                if self.inline_delay_expressions:
+                    delayed_feedback_variable_replacement = ca.MX.zeros(X.numel())
+                    delayed_feedback_variable_replacement[:] = X
+
                 for i in range(len(delayed_feedback_expressions)):
                     in_variable_name = delayed_feedback_states[i]
                     expression = delayed_feedback_expressions[i]
@@ -1855,10 +1867,38 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
                     nominal = nominal_delayed_feedback[i]
 
-                    g.append((x_in - x_out_delayed) / nominal)
-                    zeros = np.zeros(n_collocation_times)
-                    lbg.extend(zeros)
-                    ubg.extend(zeros)
+                    if self.inline_delay_expressions:
+                        # Get the indices for the delayed feedback variable in the optimization
+                        # vector
+                        indices = self.__indices[ensemble_member][in_canonical]
+
+                        # Insert replacement values into appropriate slot
+                        delayed_feedback_variable_replacement[indices] = (
+                            x_out_delayed / in_nominal / in_sign
+                        )
+
+                        # Equate delayed feedback variable to zero so that the numerical solver can
+                        # remove it from the problem.
+                        #
+                        # Note: The alternative approach would be to shrink self.solver_input=X,
+                        # self.__indices, and any other variables that directly or indirectly
+                        # depend on the size and order of 'X'.  This would be a complex operation,
+                        # which would however be redundant for solvers that (like Ipopt) already
+                        # automatically detect and remove variables where lbx==ubx.
+                        lbx[indices] = 0.0
+                        ubx[indices] = 0.0
+                    else:
+                        # Default behavior: add delay expressions as equality constraints
+                        g.append((x_in - x_out_delayed) / nominal)
+                        zeros = np.zeros(n_collocation_times)
+                        lbg.extend(zeros)
+                        ubg.extend(zeros)
+
+            # If inlining delay expressions, carry out the single call to ca.substitute()
+            # A single call is more efficient as it constructs a single ca.Function internally,
+            # rather than one for each element of the list.
+            if self.inline_delay_expressions:
+                g = [ca.substitute(ca.vertcat(*g), X, delayed_feedback_variable_replacement)]
 
             # Objective
             f_member = self.objective(ensemble_member)
