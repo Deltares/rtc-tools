@@ -23,6 +23,7 @@ runs:
         version: ${{ inputs.uv-version }}
         enable-cache: true
         cache-dependency-glob: "uv.lock"
+        # Used only for API rate limiting, not for authentication (see security documentation)
         github-token: ${{ github.token }}
 
     - name: Install dependencies
