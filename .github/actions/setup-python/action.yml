@@ -15,11 +15,15 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      # Pinned to commit SHA for security (v7.1.0)
+      # Deltares GitHub FAQ: https://publicwiki.deltares.nl/spaces/GIT/pages/279642305/GitHub#Pages-FAQ
+      # Vetted: 2025-01-14 | Update regularly and review changelog
+      uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d
       with:
         version: ${{ inputs.uv-version }}
         enable-cache: true
         cache-dependency-glob: "uv.lock"
+        github-token: ${{ github.token }}
 
     - name: Install dependencies
       shell: bash
