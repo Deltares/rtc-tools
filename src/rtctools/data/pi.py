@@ -499,7 +499,7 @@ class Timeseries:
                     # The union of all timeseries covers all the run-period (e.g.history)
                     times_of_timeseries = [self.__parse_date_time(e) for e in events]
                     times_set = times_set.union(set(times_of_timeseries))
-                self.__times = sorted(list(times_set))
+                self.__times = sorted(times_set)
             # Check if the time steps of all series match the time steps of the global
             # time range.
             if pi_validate_times:
