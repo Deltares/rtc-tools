@@ -37,12 +37,24 @@ please install the latest development version of RTC-Tools from the [GitHub repo
 ## Guidelines for Creating Issues
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
 2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the versions of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
-3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue. This should be the smallest amount of code and data necessary to reproduce the problem. Providing a minimal example helps maintainers quickly understand, reproduce, and address your issue.
+3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue.
+    - The example should use the smallest amount of code and data necessary to reproduce the problem.
+    - If you cannot create a minimal example, simplify your model and remove unnecessary data as much as possible while still reproducing the issue.
+    - Safe data formats that can be shared publicly include CSV, JSON, or small XML files.
+    - If you do not want to make your data publicly available in the issue tracker, please report your issue by emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl).
 4. **Labels**: Use labels to categorize the issue. This helps in prioritizing and resolving issues.
 
 ### Security Reporting
 
-If you discover a security vulnerability, please report it responsibly by emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl) rather than opening a public issue.
+If you discover a security vulnerability, please report it responsibly by emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl) rather than opening a public issue. We will assess the vulnerability and keep you updated on progress and next steps.
+
+**What qualifies as a security vulnerability?**
+- Compromised or malicious dependencies
+- Code execution vulnerabilities or insufficient input sanitization
+- Exposure of sensitive data or credentials
+- Input data (known or crafted) that causes crashes or data corruption
+
+
 
 ## Guidelines for Creating Merge Requests
 1. **Identify or create an issue**: Before making any changes, open an issue following the [guidelines](#guidelines-for-creating-issues) above, or comment on an existing one in the [issue tracker](https://github.com/deltares/rtc-tools/issues) to discuss your ideas with the maintainers. This helps avoid duplication and ensures your contribution aligns with project goals and the [governance model](GOVERNANCE.md).
@@ -50,15 +62,17 @@ If you discover a security vulnerability, please report it responsibly by emaili
     - New Contributors: Fork the repository and create a new branch in your fork.
     - Committers: Create a new branch directly in the main repository. Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
 3. **Commit**: Make clear, focused commits following the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
-4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions.
+4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions. For tests requiring data:
+    - Use existing test datasets from the `tests/data` directory when applicable.
+    - For new functionality requiring specific test data, include minimal test datasets with your contribution. Keep test data files small and focused.
 5. **Documentation**: Update documentation and add examples to the `examples` folder if necessary.
 6. **Create a pull request**: Reference the corresponding issue in your PR description. Clearly describe what changes you've made, why, and any relevant context.
 7. **Check CI status**: Ensure all automated checks and tests pass before requesting a review.
-8. **Request review**: Ask for a code review from your peers and address any comments or suggestions.
+8. **Request review**: Request a code review from a maintainer or committer (see [Governance Roles](GOVERNANCE.md#governance-roles) and [Operational Roles](GOVERNANCE.md#operational-roles)) and address any comments or suggestions.
 
-Contributors should rebase their branches on the latest main branch before submitting pull requests. As described in our [Governance](GOVERNANCE.md#linear-history) document, we maintain a linear Git history by using rebase instead of merge commits.
+Contributors should rebase their branches on the latest main branch before submitting pull requests. As described in our [Governance](GOVERNANCE.md#linear-history) document, we maintain a linear Git history instead of using merge commits. To keep the history clean, use `git commit --amend` or `git rebase -i` to amend commits for small changes (typos, linting, formatting) rather than creating separate fixup commits.
 
-Keep pull requests small and focused for easier review and faster merging.
+Keep pull requests small and focused for easier review and faster merging. A focused PR addresses a single concern (e.g., one bug fix, one feature, or one refactoring). While there's no strict limit on lines of code or number of commits, both the overall changeset and individual commits should be reviewable. Each commit should follow the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
 
 ## Commits and Commit Messages
 
@@ -67,19 +81,27 @@ Each commit ideally satisfies the following:
 - Each commit has a clear and single purpose.
 - After each commit, all unit tests should still pass.
 
+We recommend using the [Conventional Commits](https://www.conventionalcommits.org/) format for commit messages. This enables automatic changelog generation and better tooling support.
+
 Commit messages should have the following structure:
 
 ```text
-<scope>: <short description>
+<type>(<scope>): <short description>
 
 <complete description>
 ```
 
-- scope: explains which part of the code is affected, e.g.:
-    - optimization (only affects the optimization part)
-    - homotopy_mixin (only affects the homotopy_mixin module)
-    - tests (only affects the tests)
-    - doc (only affects the documentation)
+- type: the kind of change, e.g.:
+    - `feat`: new feature
+    - `fix`: bug fix
+    - `docs`: documentation changes
+    - `test`: adding or updating tests
+    - `refactor`: code refactoring
+    - `perf`: performance improvements
+    - `chore`: maintenance tasks
+- scope: which part of the code is affected, e.g.:
+    - `optimization`: only affects the optimization part
+    - `homotopy_mixin`: only affects the homotopy_mixin module
 - short description: describes what is changed in the commit with a single sentence.
 - complete description: explain in detail what is done in the commit and why.
     This can take up multiple paragraphs.
@@ -89,7 +111,15 @@ Commit messages should have the following structure:
 
 To maintain a high standard of code quality in RTC-Tools, please follow these guidelines when contributing:
 
-- **Type Annotations**: Use [PEP 484](https://peps.python.org/pep-0484/) type hints where appropriate to improve code clarity and enable static analysis.
+- **Type Annotations**: Use [PEP 484](https://peps.python.org/pep-0484/) type hints where appropriate to improve code clarity and enable static analysis. Since RTC-Tools supports Python 3.9+, use Python 3.9-compatible syntax. For example:
+  ```python
+  from typing import Optional
+  x: Optional[str]
+  ```
+  instead of:
+  ```python
+  x: str | None
+  ```
 - **Docstrings**: Add clear and concise docstrings to all public modules, classes, functions, and methods. Use [PEP 257](https://peps.python.org/pep-0257/) conventions.
 - **Pre-commit Hooks**: Use the provided pre-commit configuration by running `pre-commit install` to automatically check formatting and linting before each commit.
 - **Follow PEP 8 and address SonarQube feedback**: Write Python code that adheres to [PEP 8](https://peps.python.org/pep-0008/) style guidelines. All code is analyzed by SonarQube for code quality and security issues—please review and address any issues or recommendations reported by SonarQube before submitting your pull request.

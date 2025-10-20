@@ -50,7 +50,13 @@ Decisions are made by consensus when possible; if a vote is required, each votin
 
 ### Becoming a Committer
 
-To become a Committer, a Contributor must be approved by a majority of existing Committers. Committers may be removed by a majority of the other existing Committers.
+Anyone can contribute to RTC-Tools by following the [Guidelines for Creating Merge Requests](CONTRIBUTING.md#guidelines-for-creating-merge-requests). Contributors who have demonstrated sustained commitment to the project may be nominated to become Committers. The path typically involves:
+
+1. **Building a track record**: Make regular, high-quality contributions as described in [Ways to Contribute](CONTRIBUTING.md#ways-to-contribute).
+2. **Nomination**: Any existing Committer can nominate a Contributor, or Contributors can express interest by contacting an existing Committer or emailing [rtctools@deltares.nl](mailto:rtctools@deltares.nl).
+3. **Review and approval**: The nomination is discussed among existing Committers and must be approved by a majority vote.
+
+Committers may be removed by a majority vote of the other existing Committers, following the same voting procedures described in [TSC Voting](#tsc-voting).
 
 ### Open Participation
 
@@ -92,7 +98,7 @@ The development of a new MINOR version in RTC-Tools consists of four stages:
     If bugs still pop up, new RC versions can be created to fix them.
     Additions are allowed but should be code-unrelated,
     such as changes to the documentation required for the release.
-4. Stable release: Final version that has passed all tests.
+4. Stable release: Final version that has passed all tests. See [Support Policy](#support-policy) for information on how long stable versions are supported and what support users can expect.
 
 There can be multiple alpha-, beta-, and rc-versions,
 but we should not go back to a previous stage.
@@ -119,6 +125,17 @@ we create a separate branch `maintenance/X.Y` where we add patches for X.Y.
 
 Bug fixes for previous stable versions should be submitted to the corresponding `maintenance/X.Y` branch.
 
+
+### Support Policy
+
+- **Active Support**: The latest stable MINOR version (X.Y.0) receives bug fixes via PATCH releases (X.Y.Z). Active support continues until the next MINOR version is released.
+
+- **Security Fixes**: Critical security vulnerabilities in the current MINOR version are addressed promptly. Previous MINOR versions may receive security patches at the TSC's discretion.
+
+- **Maintenance Branches**: Bug fixes for previous stable versions are maintained in `maintenance/X.Y` branches as described in [Branch Management](#branch-management).
+
+- **End-of-Life**: When a new MINOR version is released, the previous version enters maintenance mode. The TSC determines the end-of-life timeline based on community needs and resource availability.
+
 ## Documentation Standards
 
 Documentation is a critical part of the RTC-Tools project. All contributions should adhere to these standards:
@@ -129,7 +146,7 @@ Documentation is a critical part of the RTC-Tools project. All contributions sho
 - **Breaking Changes**: All breaking changes must include documentation updates explaining the changes and migration paths.
 - **Release Notes**: Each release must include comprehensive release notes detailing new features, bug fixes, and any breaking changes.
 
-The Documentation Lead is responsible for ensuring documentation quality and consistency across the project.
+The [Documentation Lead](#operational-roles) is responsible for ensuring documentation quality and consistency across the project.
 
 ## Merging Policy
 
@@ -140,7 +157,7 @@ All contributions to RTC-Tools are reviewed and merged according to the followin
 - **Review Requirements**: All pull requests must be reviewed by at least one maintainer or committer before being merged. The Technical Steering Committee (TSC) may require additional reviews for significant or controversial changes.
 - **Consensus and Voting**: The project aims to operate by consensus. If consensus cannot be reached, the TSC may call a vote as described in the [Technical Charter](CHARTER.md).
 - **Documentation**: All breaking changes must be accompanied by updates to the documentation and clear migration instructions for users.
-- **Release Approval**: The TSC is responsible for approving releases, especially those that include major or backwards-incompatible changes.
+- **Release Approval**: The TSC approves releases containing MAJOR version changes or backwards-incompatible changes before the first release candidate (rc1). The Release Manager coordinates approval following [TSC Voting](#tsc-voting) procedures. MINOR and PATCH releases may proceed without TSC approval unless backwards-incompatible.
 
 ### Linear History
 
