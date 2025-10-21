@@ -17,13 +17,14 @@ logger.setLevel(logging.DEBUG)
 
 
 class Model(ModelicaMixin, CollocatedIntegratedOptimizationProblem):
-    def __init__(self):
+    def __init__(self, inline_delay_expressions=False):
         super().__init__(
             input_folder=data_path(),
             output_folder=data_path(),
             model_name="ModelDelay",
             model_folder=data_path(),
         )
+        self.inline_delay_expressions = inline_delay_expressions
 
     def times(self, variable=None):
         # Collocation points
@@ -63,7 +64,8 @@ class ModelCompleteHistory(Model):
 
 class TestDelayHistoryWarnings(TestCase, unittest.TestCase):
     def test_no_history(self):
-        problem = ModelNoHistory()
+        # Test default mode
+        problem = ModelNoHistory(inline_delay_expressions=False)
         with self.assertLogs(logger, level="WARN") as cm:
             problem.optimize()
             self.assertEqual(
@@ -75,6 +77,31 @@ class TestDelayHistoryWarnings(TestCase, unittest.TestCase):
                     "Extrapolating t0 value backwards in time.",
                 ],
             )
+        results = problem.extract_results()
+
+        # Test inline mode
+        problem_inline = ModelNoHistory(inline_delay_expressions=True)
+        with self.assertLogs(logger, level="WARN") as cm:
+            problem_inline.optimize()
+            self.assertEqual(
+                cm.output,
+                [
+                    "WARNING:rtctools:Incomplete history for delayed expression x. "
+                    "Extrapolating t0 value backwards in time.",
+                    "WARNING:rtctools:Incomplete history for delayed expression w. "
+                    "Extrapolating t0 value backwards in time.",
+                ],
+            )
+        results_inline = problem_inline.extract_results()
+
+        # Check that the results align
+        self.assertAlmostEqual(results["x"], results_inline["x"], 1e-6)
+        self.assertAlmostEqual(results["w"], results_inline["w"], 1e-6)
+
+        # Check that the inline results has fewer constraints
+        self.assertLess(
+            len(problem_inline.transcribed_problem["lbg"]), len(problem.transcribed_problem["lbg"])
+        )
 
     def test_partial_history(self):
         problem = ModelPartialHistory()
