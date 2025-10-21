@@ -76,11 +76,11 @@ For more details, see the [Technical Charter](CHARTER.md).
 For version numbers we use the guidelines described in <https://semver.org>:
 
 > Given a version number MAJOR.MINOR.PATCH, increment the:
-> 
+>
 > 1. MAJOR version when you make incompatible API changes
 > 2. MINOR version when you add functionality in a backward compatible manner
 > 3. PATCH version when you make backward compatible bug fixes
-> 
+>
 > Additional labels for pre-release and build metadata are available
 > as extensions to the MAJOR.MINOR.PATCH format.
 
@@ -125,7 +125,6 @@ we create a separate branch `maintenance/X.Y` where we add patches for X.Y.
 
 Bug fixes for previous stable versions should be submitted to the corresponding `maintenance/X.Y` branch.
 
-
 ### Support Policy
 
 - **Active Support**: The latest stable MINOR version (X.Y.0) receives bug fixes via PATCH releases (X.Y.Z). Active support continues until the next MINOR version is released.
@@ -156,7 +155,6 @@ All contributions to RTC-Tools are reviewed and merged according to the followin
 
 - **Review Requirements**: All pull requests must be reviewed by at least one maintainer or committer before being merged. The Technical Steering Committee (TSC) may require additional reviews for significant or controversial changes.
 - **Consensus and Voting**: The project aims to operate by consensus. If consensus cannot be reached, the TSC may call a vote as described in the [Technical Charter](CHARTER.md).
-- **Documentation**: All breaking changes must be accompanied by updates to the documentation and clear migration instructions for users.
 - **Release Approval**: The TSC approves releases containing MAJOR version changes or backwards-incompatible changes before the first release candidate (rc1). The Release Manager coordinates approval following [TSC Voting](#tsc-voting) procedures. MINOR and PATCH releases may proceed without TSC approval unless backwards-incompatible.
 
 ### Linear History
@@ -167,10 +165,34 @@ We maintain a linear Git history by using git rebase instead of git merge. This 
 - Reduced complexity in the commit graph
 - Makes it straightforward to review and edit commit messages
 
+The GitHub repository is configured to automatically rebase pull requests when merging to master. Contributors should rebase their branches on the latest main branch before submitting pull requests and use `git commit --amend` or `git rebase -i` to keep commits clean.
+
+**Resources for learning Git rebase and amend:**
+- [Git Documentation: git-rebase](https://git-scm.com/docs/git-rebase)
+- [Atlassian Git Tutorial: Rewriting History](https://www.atlassian.com/git/tutorials/rewriting-history)
+- [GitHub Docs: About Git rebase](https://docs.github.com/en/get-started/using-git/about-git-rebase)
+
 ### Backwards Compatibility
 
-- CI tests and TeamCity tests are run to ensure that changes do not break existing functionality and maintain API compatibility.
+- CI tests are run to ensure that changes do not break existing functionality and maintain API compatibility. Deltares maintains an additional test bench in an internal TeamCity environment with test models that are not open to the public. Though it is not publically available, this will be used to report regressions and possible bugs back upstream at the earliest possibility.
 - Changes that break backwards compatibility (i.e., incompatible API changes) should only be made when necessary and must be clearly documented, following our [Documentation Standards](#documentation-standards).
 - Contributors are encouraged to maintain backwards compatibility whenever possible. Deprecation warnings should be provided before removing or changing public APIs.
 
 By following this merging policy, RTC-Tools ensures a stable and predictable experience for all users and contributors, in accordance with the project's [Technical Charter](CHARTER.md).
+
+#### Edge Cases: What Constitutes a Breaking Change
+
+To clarify common edge cases specific to RTC-Tools, the following are **breaking changes** requiring a MAJOR version increment:
+
+- Changing class variable defaults (e.g., `csv_delimiter` from `","` to `";"`, or `csv_ensemble_mode` from `False` to `True`) if existing user models rely on the current default behavior
+- Changing method signatures that users override (e.g., adding a required parameter to `objective()`, removing a parameter, or changing parameter types)
+- Changing expected data formats (e.g., renaming columns in CSV files, changing Modelica variable naming conventions, or modifying file structure requirements)
+- Removing or renaming public class variables, methods, or attributes that users may access
+
+The following are **not breaking changes** and require only a MINOR version increment:
+
+- Adding optional method parameters with sensible defaults that maintain backwards compatibility
+- Adding new class variables with defaults that preserve existing behavior
+- Adding new public methods or attributes that don't affect existing functionality
+
+When in doubt, treat a change as breaking if it could reasonably cause existing user code or models to fail or behave differently.

@@ -35,6 +35,7 @@ please install the latest development version of RTC-Tools from the [GitHub repo
  and report any issues or feedback on the [issue tracker](https://github.com/deltares/rtc-tools/issues).
 
 ## Guidelines for Creating Issues
+
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
 2. **Description**: Describe the issue in detail. Include steps to reproduce the issue, expected behavior, and actual behavior. Mention the versions of RTC-Tools, Python and external packages you're using (CasADi, Pymoca, numpy), along with relevant details about your operating system.
 3. **Minimal reproducible example**: Whenever possible, include a minimal reproducible example that demonstrates the issue.
@@ -54,13 +55,12 @@ If you discover a security vulnerability, please report it responsibly by emaili
 - Exposure of sensitive data or credentials
 - Input data (known or crafted) that causes crashes or data corruption
 
-
-
 ## Guidelines for Creating Merge Requests
+
 1. **Identify or create an issue**: Before making any changes, open an issue following the [guidelines](#guidelines-for-creating-issues) above, or comment on an existing one in the [issue tracker](https://github.com/deltares/rtc-tools/issues) to discuss your ideas with the maintainers. This helps avoid duplication and ensures your contribution aligns with project goals and the [governance model](GOVERNANCE.md).
 2. **Fork or Branch**:
     - New Contributors: Fork the repository and create a new branch in your fork.
-    - Committers: Create a new branch directly in the main repository. Use a descriptive branch name, such as `feature/short-description`, `bugfix/issue-123`, or `docs/update-readme`.
+    - Committers: Create a new branch directly in the main repository. Use a descriptive branch name, such as `feat/short-description`, `fix/issue-123`, or `docs/update-readme`.
 3. **Commit**: Make clear, focused commits following the [Commits and Commit Messages](#commits-and-commit-messages) guidelines.
 4. **Write tests**: If possible, write tests that cover your changes and add them to the `tests` folder. This helps ensure your changes work as intended and prevent regressions. For tests requiring data:
     - Use existing test datasets from the `tests/data` directory when applicable.
@@ -111,14 +111,14 @@ Commit messages should have the following structure:
 
 To maintain a high standard of code quality in RTC-Tools, please follow these guidelines when contributing:
 
-- **Type Annotations**: Use [PEP 484](https://peps.python.org/pep-0484/) type hints where appropriate to improve code clarity and enable static analysis. Since RTC-Tools supports Python 3.9+, use Python 3.9-compatible syntax. For example:
+- **Type Annotations**: Use [PEP 484](https://peps.python.org/pep-0484/) type hints where appropriate to improve code clarity and enable static analysis. For union types, prefer the modern syntax available in Python 3.10+:
   ```python
-  from typing import Optional
-  x: Optional[str]
+  x: str | None
   ```
   instead of:
   ```python
-  x: str | None
+  from typing import Optional
+  x: Optional[str]
   ```
 - **Docstrings**: Add clear and concise docstrings to all public modules, classes, functions, and methods. Use [PEP 257](https://peps.python.org/pep-0257/) conventions.
 - **Pre-commit Hooks**: Use the provided pre-commit configuration by running `pre-commit install` to automatically check formatting and linting before each commit.
@@ -137,6 +137,7 @@ By following these guidelines, you help ensure RTC-Tools remains robust, maintai
 To set up your development environment, you will need:
 
 - Python 3.9 or higher (up to 3.13)
+  - **Note**: Python 3.9 reaches end-of-life on October 31, 2025. Support for Python 3.9 will be dropped in a future release. We recommend using Python 3.10 or higher for new development.
 - Git
 
 You can clone the repository and install it from source:
