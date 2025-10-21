@@ -100,11 +100,7 @@ jobs:
         with:
           name: coverage-report
       - name: SonarQube Scan
-        # Pinned to commit SHA for security (v6.0.0)
-        # v6.0.0 addresses command injection vulnerabilities present in v4-v5.3.0
-        # Deltares GitHub FAQ: https://publicwiki.deltares.nl/spaces/GIT/pages/279642305/GitHub#Pages-FAQ
-        # Vetted: 2025-01-15 | Update regularly and review changelog
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
