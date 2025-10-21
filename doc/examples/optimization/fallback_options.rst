@@ -84,7 +84,7 @@ To implement this, we need the following:
 * Overwrite the ``solver_options`` method of your main optimization problem class,
   to select the correct solver options for the current ``solver``.
 
-The ``MultiRunMixin`` class, can look somethling like this:
+The ``MultiRunMixin`` class, can look something like this:
 
 .. literalinclude:: ../../../examples/fallback_option/src/example_with_gp.py
   :language: python
