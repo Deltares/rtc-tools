@@ -170,7 +170,7 @@ We maintain a linear Git history by using git rebase instead of git merge. This 
 ### Backwards Compatibility
 
 - CI tests and TeamCity tests are run to ensure that changes do not break existing functionality and maintain API compatibility.
-- Changes that break backwards compatibility (i.e., incompatible API changes) should only be made when necessary and must be clearly documented, following our [Documentation Standards](#documentation-standards).
+- Changes that break backwards compatibility (i.e., incompatible API changes) should only be made when necessary and must be clearly documented, following our [Documentation Standards](#documentation-standards), and released under a new major version.
 - Contributors are encouraged to maintain backwards compatibility whenever possible. Deprecation warnings should be provided before removing or changing public APIs.
 
 By following this merging policy, RTC-Tools ensures a stable and predictable experience for all users and contributors, in accordance with the project's [Technical Charter](CHARTER.md).
