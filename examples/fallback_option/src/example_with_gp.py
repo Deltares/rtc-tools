@@ -67,7 +67,7 @@ class MultiRunMixin(OptimizationProblem):
 
 
 class DummyGoal(Goal):
-    """ "Goal to illustrate the fallback option during goal programming."""
+    """Goal to illustrate the fallback option during goal programming."""
 
     def __init__(self, priority):
         super().__init__()
