@@ -29,7 +29,7 @@ class DummySolver(OptimizationProblem):
         postprocessing: bool = True,
         log_solver_failure_as_error: bool = True,
     ) -> bool:
-        # Call the optimize method and pretend it is only succesful when using the 'highs' solver.
+        # Call the optimize method and pretend it is only successful when using the 'highs' solver.
         super().optimize(preprocessing, postprocessing, log_solver_failure_as_error)
         solver = self.solver_options()["solver"]
         success = solver == "highs"
