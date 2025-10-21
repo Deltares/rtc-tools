@@ -392,7 +392,9 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             ):
                 parameter_values = nullvertcat(*parameter_values)
                 [parameter_values] = substitute_in_external(
-                    [parameter_values], self.dae_variables["parameters"], parameter_values
+                    [parameter_values],
+                    self.dae_variables["parameters"],
+                    ca.vertsplit(parameter_values),
                 )
             else:
                 parameter_values = nullvertcat(*parameter_values)

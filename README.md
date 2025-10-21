@@ -16,13 +16,11 @@ RTC-Tools offers the following functionalities:
 
 - **Model building using extensible libraries**: Build complex system models using extensible libraries of model components. Modelers can also implement their custom modeling components, for instance, using the [Modelica language](https://modelica.org/language/) or Python script.
 
-    RTC-Tools can be used with the following libraries and packages for specific applications:
+    RTC-Tools can be used with the following libraries and packages for specific applications. Please note that this list is not exhaustive. Users can also create libraries for other types of applications.
     - [rtc-tools-channel-flow](https://gitlab.com/deltares/rtc-tools-channel-flow): water system models
     - [rtc-tools-hydraulic-structures](https://gitlab.com/deltares/rtc-tools-channel-flow): hydraulic assets, such as weirs and pumps
     - [rtc-tools-heat-network](https://github.com/Nieuwe-Warmte-Nu/rtc-tools-heat-network): heat networks
-
-Please note that this list is not exhaustive. Users can also create libraries for other types of applications.
-
+            
 - **Running simulations**: Simulate a given model.
 
 - **Specifying and solving optimization problems**: Define optimization goals, constraints and decision variables to specify the optimization problem for a given model. RTC-Tools supports both open-source solvers (CBC, HiGHS, Ipopt) and commercial solvers (Gurobi, CPLEX) for solving several types of optimization problems:
