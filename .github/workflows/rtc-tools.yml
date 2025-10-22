@@ -11,6 +11,9 @@ concurrency:
 #   PYPI_PASSWORD: "${{ secrets.PYPI_PASSWORD }}"
 #   CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN}}"
 
+permissions:
+  contents: read
+
 jobs:
   style:
     runs-on: ubuntu-latest
@@ -107,7 +110,7 @@ jobs:
         with:
           name: coverage-report
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
