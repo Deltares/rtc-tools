@@ -478,9 +478,7 @@ class Timeseries:
             if len(ensemble_indexes) > 1:
                 # check if ids are zero-based and increasing by 1
                 sorted_ensemble_indexes = sorted(ensemble_indexes)
-                if not all(
-                    sorted_ensemble_indexes[i] == i for i in range(len(sorted_ensemble_indexes))
-                ):
+                if sorted_ensemble_indexes != list(range(len(sorted_ensemble_indexes))):
                     raise ValueError(
                         "PI: Ensemble ids must be zero-based and increasing by 1 when more than one"
                         " ensemble member is present."
