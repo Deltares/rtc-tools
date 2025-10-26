@@ -66,6 +66,7 @@ class ModelPathGoals:
         self._state_vectors = []
         self._solver_outputs = []
         self._constraints = []
+        self._initial_seed = None
 
     def times(self, variable=None):
         # Collocation points
@@ -83,6 +84,11 @@ class ModelPathGoals:
             np.hstack(([1.0], np.linspace(1.0, 0.0, 21))),
         )
         return constant_inputs
+
+    def seed(self, ensemble_member):
+        if self._initial_seed is None:
+            self._initial_seed = super().seed(ensemble_member)
+        return self._initial_seed
 
     def bounds(self):
         bounds = super().bounds()
@@ -216,6 +222,17 @@ class TestSinglePassGoalProgramming(TestCase):
         np.testing.assert_array_equal(
             self.problem_update._seeds[-1], self.problem_update._solver_outputs[-2]
         )
+
+    def test_initial_seed(self):
+        """
+        Every goal's epsilon variable should be present in the initial seed, and
+        should be set to one.
+        """
+        n_goals = len(self.problem_append.path_goals()) + len(self.problem_append.goals())
+        self.assertEqual(len(self.problem_append._initial_seed.keys()), n_goals)
+
+        for ts in self.problem_append._initial_seed.values():
+            np.testing.assert_equal(ts.values, 1.0)
 
 
 class ModelSinglePassGoalProgrammingCachingQPSol(ModelSinglePassGoalProgrammingAppend):

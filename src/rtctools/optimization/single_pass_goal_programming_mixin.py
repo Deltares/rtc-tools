@@ -143,7 +143,26 @@ class SinglePassGoalProgrammingMixin(_GoalProgrammingMixinBase):
 
     def seed(self, ensemble_member):
         assert self._gp_first_run
-        return super().seed(ensemble_member)
+
+        seed = super().seed(ensemble_member)
+
+        # Seed epsilons of current priority
+        for epsilon in self.__problem_epsilons:
+            eps_size = epsilon.size1()
+            if eps_size > 1:
+                seed[epsilon.name()] = np.ones(eps_size)
+            else:
+                seed[epsilon.name()] = 1.0
+
+        times = self.times()
+        for epsilon in self.__problem_path_epsilons:
+            eps_size = epsilon.size1()
+            if eps_size > 1:
+                seed[epsilon.name()] = Timeseries(times, np.ones((eps_size, len(times))))
+            else:
+                seed[epsilon.name()] = Timeseries(times, np.ones(len(times)))
+
+        return seed
 
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member)
