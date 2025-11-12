@@ -1259,6 +1259,12 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         # Integrators are saved for result extraction later on
         self.__integrators = []
 
+        # If inlining delay expressions, prepare for the single call to ca.substitute()
+        # at the end
+        if self.inline_delay_expressions:
+            delayed_feedback_variable_replacement = ca.MX.zeros(X.numel())
+            delayed_feedback_variable_replacement[:] = X
+
         # Process the objectives and constraints for each ensemble member separately.
         # Note that we don't use map here for the moment, so as to allow each ensemble member to
         # define its own constraints and objectives. Path constraints are applied for all ensemble
@@ -1801,12 +1807,6 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     + [constant_inputs[v.name()] for v in self.dae_variables["constant_inputs"]]
                 )
 
-                # If inlining delay expressions, prepare for the single call to ca.substitute()
-                # at the end
-                if self.inline_delay_expressions:
-                    delayed_feedback_variable_replacement = ca.MX.zeros(X.numel())
-                    delayed_feedback_variable_replacement[:] = X
-
                 for i in range(len(delayed_feedback_expressions)):
                     in_variable_name = delayed_feedback_states[i]
                     expression = delayed_feedback_expressions[i]
@@ -1899,12 +1899,6 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                         zeros = np.zeros(n_collocation_times)
                         lbg.extend(zeros)
                         ubg.extend(zeros)
-
-            # If inlining delay expressions, carry out the single call to ca.substitute()
-            # A single call is more efficient as it constructs a single ca.Function internally,
-            # rather than one for each element of the list.
-            if self.inline_delay_expressions:
-                g = [ca.substitute(ca.vertcat(*g), X, delayed_feedback_variable_replacement)]
 
             # Objective
             f_member = self.objective(ensemble_member)
@@ -2027,6 +2021,14 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
 
                 lbg.extend(lbg_path_constraints.transpose().ravel())
                 ubg.extend(ubg_path_constraints.transpose().ravel())
+
+        # If inlining delay expressions, carry out the single call to ca.substitute()
+        # A single call is more efficient as it constructs a single ca.Function internally,
+        # rather than one for each element of the list. Also note that we do this _outside_
+        # the ensemble member loop for speed reasons, as each substitute() roughly takes the
+        # same amount of time regardless how many expressions we are replacing.
+        if self.inline_delay_expressions:
+            g = [ca.substitute(ca.vertcat(*g), X, delayed_feedback_variable_replacement)]
 
         # NLP function
         logger.info("Creating NLP dictionary")
