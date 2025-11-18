@@ -49,12 +49,19 @@ jobs:
       TOXENV: py
     strategy:
       matrix:
-        version:  # Also update sonar-project.properties when updating the python versions.
-        - '3.9'
-        - '3.10'
-        - '3.11'
-        - '3.12'
-        - '3.13'
+        include:
+          - version: '3.9'
+          - version: '3.10'
+          - version: '3.11'
+          - version: '3.12'
+          - version: '3.13'
+          # Lowest and highest resolution modes to test oldest and newest dependencies.
+          - version: '3.9'
+            resolution_mode: 'lowest'
+            label: ' (Oldest Dependencies)'
+          - version: '3.13'
+            resolution_mode: 'highest'
+            label: ' (Newest Dependencies)'
     steps:
     - uses: actions/checkout@v4
     - run: pip install tox
@@ -79,22 +86,6 @@ jobs:
   #       name: coverage-report
   #       retention-days: 7
   #       path: coverage.xml
-
-  # sonar:
-  #   needs: [coverage]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis.
-  #     - name: Download coverage report
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: coverage-report
-  #     - name: SonarQube Scan
-  #       uses: SonarSource/sonarqube-scan-action@v5
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   examples-linux:
     needs: build
