@@ -3,10 +3,10 @@
 There are many ways you can contribute to RTC-Tools, such as:
 
 - **Reporting issues**: If you encounter any bugs, errors, or unexpected behavior while using RTC-Tools, 
-please report them on our [issue tracker](https://github.com/deltares/rtc-tools/issues).
+please report them on our [issue tracker](https://github.com/rtc-tools/rtc-tools/issues).
 Please follow the issue template and provide as much information as possible to help us reproduce and fix the issue.
 - **Suggesting features**: If you have any ideas or suggestions for new features or improvements, 
-please share them on our [issue tracker](https://github.com/deltares/rtc-tools/issues).
+please share them on our [issue tracker](https://github.com/rtc-tools/rtc-tools/issues).
 Please use the appropriate category and tag for your topic and explain your motivation and use case clearly.
 - **Submitting merge requests**: If you want to contribute code or documentation to RTC-Tools, 
 please fork the repository and create a merge request.
@@ -19,8 +19,8 @@ Please follow the [Sphinx syntax and style guide](https://www.sphinx-doc.org/en/
 - **Reviewing merge requests**: If you are familiar with RTC-Tools and want to help us maintain the quality and consistency of the code and documentation,
  please review the open merge requests and provide constructive feedback and suggestions.
 - **Testing new releases**: If you want to help us test the new features and bug fixes before they are officially released, 
-please install the latest development version of RTC-Tools from the [GitHub repository](https://github.com/deltares/rtc-tools)
- and report any issues or feedback on the [issue tracker](https://github.com/deltares/rtc-tools/issues).
+please install the latest development version of RTC-Tools from the [GitHub repository](https://github.com/rtc-tools/rtc-tools)
+ and report any issues or feedback on the [issue tracker](https://github.com/rtc-tools/rtc-tools/issues).
 
 ## Guidelines for creating issues
 1. **Title**: Provide a concise and informative title. The title should summarize the problem.
@@ -34,7 +34,7 @@ please install the latest development version of RTC-Tools from the [GitHub repo
 1. **Identify or create issue**: Before making any changes,
 please open an issue following the guidelines above,
 or comment on an existing one in the
-[issue tracker](https://github.com/deltares/rtc-tools/issues)
+[issue tracker](https://github.com/rtc-tools/rtc-tools/issues)
 to discuss your ideas with the maintainers.
 This will help us avoid duplication of work
 and ensure that your contribution aligns with the goals of the project.
@@ -43,7 +43,7 @@ and ensure that your contribution aligns with the goals of the project.
 4. **Write tests**: If possible, write tests that cover your changes, and add them to the `tests` folder.
 This will help ensure that your changes result in the desired behavior and that functionalities will not accidently break in the future.
 5. **Documentation**: Please also update the documentation if necessary and add examples to the `examples` folder.
-6. **Create merge request**: Mention the corresponding issue from the [issue tracker](https://github.com/deltares/rtc-tools/issues).
+6. **Create merge request**: Mention the corresponding issue from the [issue tracker](https://github.com/rtc-tools/rtc-tools/issues).
 Describe what changes you've made, why you've made them, and how they address the issue at hand.
 7. **Code review**: Request code review from your peers. Address any comments or suggestions they might have.
 
@@ -83,7 +83,7 @@ To set up your development environment, you will need:
 You can clone the repository and install it from source:
 
 ```bash
-git clone https://github.com/Deltares/RTC-Tools.git
+git clone https://github.com/rtc-tools/RTC-Tools.git
 cd RTC-Tools
 uv sync
 ```

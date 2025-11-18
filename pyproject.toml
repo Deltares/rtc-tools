@@ -72,7 +72,7 @@ tests = [
 
 [project.urls]
 Homepage = "https://oss.deltares.nl/web/rtc-tools/home"
-Download = "http://github.com/deltares/rtc-tools/"
+Download = "http://github.com/rtc-tools/rtc-tools/"
 
 [project.scripts]
 rtc-tools-download-examples = "rtctools.rtctoolsapp:download_examples"

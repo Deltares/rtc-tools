@@ -1,7 +1,7 @@
 # Deltares RTC-Tools
 
-[![Pipeline](https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml/badge.svg)](
-    https://github.com/deltares/rtc-tools/actions/workflows/rtc-tools.yml
+[![Pipeline](https://github.com/rtc-tools/rtc-tools/actions/workflows/rtc-tools.yml/badge.svg)](
+    https://github.com/rtc-tools/rtc-tools/actions/workflows/rtc-tools.yml
 )
 [![Coverage](
     https://sonarcloud.io/api/project_badges/measure?project=Deltares_rtc-tools&metric=coverage
@@ -51,15 +51,15 @@ Documentation and examples can be found on [readthedocs](https://rtc-tools.readt
 
 ## Migration from GitLab
 
-The rtc-tools repository has been migrated from gitlab (https://gitlab.com/deltares/rtc-tools)
+The rtc-tools repository has been migrated from gitlab (https://gitlab.com/rtc-tools/rtc-tools)
 to here.
 To change the git remote url, run
 
-`git remote set-url origin https://github.com/Deltares/rtc-tools.git`
+`git remote set-url origin https://github.com/rtc-tools/rtc-tools.git`
 
 and
 
-`git remote set-url --push origin https://github.com/Deltares/rtc-tools.git`.
+`git remote set-url --push origin https://github.com/rtc-tools/rtc-tools.git`.
 
 
 ## License
@@ -71,4 +71,4 @@ and can be used free of charge. Deltares offers support packages for users who r
 If you use RTC-Tools in your work, please acknowledge it in any resulting publications.
 You can do this by citing RTC-Tools and providing a link to our
 [website](https://oss.deltares.nl/web/rtc-tools/home) or
-[GitHub repository](https://github.com/deltares/rtc-tools).
+[GitHub repository](https://github.com/rtc-tools/rtc-tools).

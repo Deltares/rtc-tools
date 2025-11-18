@@ -27,7 +27,7 @@ From Source
 The latest RTC-Tools source can be downloaded using git::
 
     # Get RTC-Tools source
-    git clone https://github.com/deltares/rtc-tools.git
+    git clone https://github.com/rtc-tools/rtc-tools.git
 
 Then you can install this latest version as follows::
 
