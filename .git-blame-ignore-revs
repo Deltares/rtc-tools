@@ -17,7 +17,7 @@
 #   Do not add new revision just because it feels unimportant
 # - Add a link to the relevant issue/MR
 
-# START https://github.com/Deltares/rtc-tools/issues/1536
+# START https://github.com/rtc-tools/rtc-tools/issues/1536
 2503c49901bc4a7a3dc86d46b234e8973ed2feb5
 476aeb27d164cebe3781de7f9a40b04b839a5220
 cf540b1ad8fc39909e6e05e7656901e26daefb62
@@ -27,9 +27,9 @@ cef7507e09c0f187ad209e949575a04b7204cbe9
 8929d6eac903af87ef982566cb07f45369eedda1
 ee870e42deda8974e482e96995c5c136a8cfe07c
 7908178e50ababa32534d205d62d525049b60dc3
-# END https://github.com/Deltares/rtc-tools/issues/1536
+# END https://github.com/rtc-tools/rtc-tools/issues/1536
 
-# START https://github.com/Deltares/rtc-tools/pull/1652
+# START https://github.com/rtc-tools/rtc-tools/pull/1652
 3df9a9ed5dfcbb6855ee8f4a0d22c4dec9f77507
 c4e20c6c8debaa886eba596c468ee5a438bf73dd
-# END https://github.com/Deltares/rtc-tools/pull/1652
+# END https://github.com/rtc-tools/rtc-tools/pull/1652
