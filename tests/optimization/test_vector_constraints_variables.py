@@ -77,7 +77,7 @@ class ModelConstraintsVector(ModelConstraints):
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member)
 
-        g, lbg, ubg = zip(*constraints, strict=False)
+        g, lbg, ubg = zip(*constraints, strict=True)
 
         constraint = (ca.vertcat(*g), np.array(lbg), np.array(ubg))
         return [constraint]
@@ -97,7 +97,7 @@ class ModelPathConstraintsSimpleVector(ModelPathConstraintsSimple):
     def path_constraints(self, ensemble_member):
         constraints = super().path_constraints(ensemble_member)
 
-        g, lbg, ubg = zip(*constraints, strict=False)
+        g, lbg, ubg = zip(*constraints, strict=True)
 
         constraint = (ca.vertcat(*g), np.array(lbg), np.array(ubg))
 
@@ -159,7 +159,7 @@ class ModelAdditionalVariables(Model):
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member).copy()
 
-        for sym, t in zip(self._additional_vars, self.times(), strict=False):
+        for sym, t in zip(self._additional_vars, self.times(), strict=True):
             x_sym = self.extra_variable(sym.name(), ensemble_member)
             constraints.append((x_sym - self.state_at("u", t) ** 2, 0, np.inf))
 
@@ -289,7 +289,7 @@ class ModelParameters(Model):
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member)
 
-        for t_sym, p_name in zip(self._additional_vars, self._param_vars, strict=False):
+        for t_sym, p_name in zip(self._additional_vars, self._param_vars, strict=True):
             t = self.extra_variable(t_sym.name(), ensemble_member)
             p = self.parameters(ensemble_member)[p_name]
 
@@ -454,7 +454,7 @@ class ModelConstantInputs(Model):
     def path_constraints(self, ensemble_member):
         constraints = super().path_constraints(ensemble_member)
 
-        for t, p in zip(self._additional_vars, self._input_vars, strict=False):
+        for t, p in zip(self._additional_vars, self._input_vars, strict=True):
             constraints.append((self.state(t.name()) - self.state(p.name()) ** 2, 0.0, 0.0))
 
         return constraints

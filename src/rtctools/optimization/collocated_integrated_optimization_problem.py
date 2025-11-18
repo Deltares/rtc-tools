@@ -265,12 +265,12 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
             self.__variable_sizes[variable] = 1
 
         for mx_symbol, variable in zip(
-            self.path_variables, self.__path_variable_names, strict=False
+            self.path_variables, self.__path_variable_names, strict=True
         ):
             self.__variable_sizes[variable] = mx_symbol.size1()
 
         for mx_symbol, variable in zip(
-            self.extra_variables, self.__extra_variable_names, strict=False
+            self.extra_variables, self.__extra_variable_names, strict=True
         ):
             self.__variable_sizes[variable] = mx_symbol.size1()
 
@@ -279,7 +279,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         self.__initial_derivative_nominals = {}
         history_0 = self.history(0)
         for variable, initial_der_name in zip(
-            self.__differentiated_states, self.__initial_derivative_names, strict=False
+            self.__differentiated_states, self.__initial_derivative_names, strict=True
         ):
             times = self.times(variable)
             default_time_step_size = 0
@@ -562,7 +562,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         delayed_feedback = self.delayed_feedback()
         if delayed_feedback:
             delayed_feedback_expressions, delayed_feedback_states, delayed_feedback_durations = zip(
-                *delayed_feedback, strict=False
+                *delayed_feedback, strict=True
             )
         # Make sure the original data cannot be used anymore, because it will
         # become incorrect/stale with the inlining of constant parameters.
@@ -1932,14 +1932,14 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                     logger.debug("Adding constraint {}, {}, {}".format(*constraint))
 
             if constraints:
-                g_constraint, lbg_constraint, ubg_constraint = list(zip(*constraints, strict=False))
+                g_constraint, lbg_constraint, ubg_constraint = list(zip(*constraints, strict=True))
 
                 lbg_constraint = list(lbg_constraint)
                 ubg_constraint = list(ubg_constraint)
 
                 # Broadcast lbg/ubg if it's a vector constraint
                 for i, (g_i, lbg_i, ubg_i) in enumerate(
-                    zip(g_constraint, lbg_constraint, ubg_constraint, strict=False)
+                    zip(g_constraint, lbg_constraint, ubg_constraint, strict=True)
                 ):
                     s = g_i.size1()
                     if s > 1:
@@ -3141,7 +3141,7 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
         max_range_found = 1.0
 
         exceedences = []
-        for c, d in zip(A_obj.col, A_obj.data, strict=False):
+        for c, d in zip(A_obj.col, A_obj.data, strict=True):
             cofc = coeffs[c]
 
             if cofc is None:
