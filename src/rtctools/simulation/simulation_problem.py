@@ -3,16 +3,9 @@ import importlib.resources
 import itertools
 import logging
 import math
-import sys
 from collections import OrderedDict
+from importlib import metadata as importlib_metadata
 from typing import List, Union
-
-# Python 3.9's importlib.metadata does not support the "group" parameter to
-# entry_points yet.
-if sys.version_info < (3, 10):
-    import importlib_metadata
-else:
-    from importlib import metadata as importlib_metadata
 
 import casadi as ca
 import numpy as np

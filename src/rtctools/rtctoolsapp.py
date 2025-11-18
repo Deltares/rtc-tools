@@ -3,14 +3,8 @@ import logging
 import os
 import shutil
 import sys
+from importlib import metadata as importlib_metadata
 from pathlib import Path
-
-# Python 3.9's importlib.metadata does not support the "group" parameter to
-# entry_points yet.
-if sys.version_info < (3, 10):
-    import importlib_metadata
-else:
-    from importlib import metadata as importlib_metadata
 
 import rtctools
 
