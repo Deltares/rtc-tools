@@ -74,7 +74,7 @@ def variable_from_alias(alias):
 def create_expectation_list(files, expected_values):
     return {
         key_to_file(_file): _expected_value
-        for (_file, _expected_value) in zip(files, expected_values, strict=False)
+        for (_file, _expected_value) in zip(files, expected_values, strict=True)
     }
 
 
@@ -100,13 +100,13 @@ class TestInputDataset_requirements(TestCase):
         self._dimensions[0] = ["time", "station", "realization"]
         self._variables[0] = ["time", "station", "ensemble"]
         self._variable_associated_dimensions[0] = {
-            var: [pd] for (var, pd) in zip(self._variables[0], self._dimensions[0], strict=False)
+            var: [pd] for (var, pd) in zip(self._variables[0], self._dimensions[0], strict=True)
         }
         self._variable_associated_attribute_requirements[0] = dict(
             zip(
                 self._variables[0],
                 ({"axis": "T", "standard_name": "time"}, {"cf_role": "timeseries_id"}, None),
-                strict=False,
+                strict=True,
             )
         )
 
@@ -140,7 +140,7 @@ class TestInputDataset_requirements(TestCase):
         if self._variables[rl]:
             for _variable_name, _variable_data in self.dataset.variables.items():
                 for _variable, _variable_alias in zip(
-                    self._variables[rl], aliases_of_interest, strict=False
+                    self._variables[rl], aliases_of_interest, strict=True
                 ):
                     if _variable_name == _variable_alias:
                         self.variable_found[_variable] = True
@@ -148,7 +148,7 @@ class TestInputDataset_requirements(TestCase):
 
             # check for existence of variable of interest (ensemble is not required)
             for _variable, _variable_alias in zip(
-                self._variables[rl], aliases_of_interest, strict=False
+                self._variables[rl], aliases_of_interest, strict=True
             ):
                 if _variable != "ensemble":
                     self.assertTrue(
@@ -329,7 +329,7 @@ class TestImportDataset(TestCase):
         datetimes = self.dataset.read_import_times()
         time_diffs = [
             (x - y).total_seconds()
-            for (x, y) in zip(datetimes, self.expected_datetimes[file_key], strict=False)
+            for (x, y) in zip(datetimes, self.expected_datetimes[file_key], strict=True)
         ]
         # TODO: can this check be made precise?
         diff_tol = 10**-4
@@ -394,7 +394,7 @@ class TestExportDataset(TestCase):
             os.remove(export_path)
 
     def check_attributes(self, _variable, _attributes, _attribute_values):
-        for _attribute, _attribute_value in zip(_attributes, _attribute_values, strict=False):
+        for _attribute, _attribute_value in zip(_attributes, _attribute_values, strict=True):
             self.assertIn(
                 _attribute,
                 self.dataset.variables[_variable].ncattrs(),
@@ -410,7 +410,7 @@ class TestExportDataset(TestCase):
 
     def check_associated_dimensions(self, _variables, _expected_variable_associated_dimensions):
         for _variable, _expected_dimensions in zip(
-            _variables, _expected_variable_associated_dimensions, strict=False
+            _variables, _expected_variable_associated_dimensions, strict=True
         ):
             _variable_associated_dimensions = self.dataset.variables[_variable].dimensions
             self.assertEqual(

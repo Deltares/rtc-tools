@@ -130,7 +130,7 @@ class NetCDFMixin(IOMixin):
         output_variables = [sym.name() for sym in self.output_variables]
 
         output_station_ids, output_parameter_ids = zip(
-            *(self.netcdf_id_from_variable(var_name) for var_name in output_variables), strict=False
+            *(self.netcdf_id_from_variable(var_name) for var_name in output_variables), strict=True
         )
 
         # Make sure that output_station_ids and output_parameter_ids are
@@ -147,7 +147,7 @@ class NetCDFMixin(IOMixin):
             results = self.extract_results(ensemble_member)
 
             for var_name, station_id, parameter_id in zip(
-                output_variables, output_station_ids, output_parameter_ids, strict=False
+                output_variables, output_station_ids, output_parameter_ids, strict=True
             ):
                 # determine the output values
                 try:

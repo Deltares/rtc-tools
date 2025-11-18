@@ -264,6 +264,6 @@ class TestCachingQPSol(TestCase):
         self.assertEqual(len(self.problem._solver_outputs), 3)
 
         for a, b in zip(
-            self.problem._solver_outputs, self.problem_cache._solver_outputs, strict=False
+            self.problem._solver_outputs, self.problem_cache._solver_outputs, strict=True
         ):
             np.testing.assert_array_equal(a, b)

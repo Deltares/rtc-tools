@@ -326,7 +326,7 @@ class SimulationProblem(DataStoreAccessor):
         """
         delay_expression_states = []
         for delay_state, delay_time in zip(
-            self.__pymoca_model.delay_states, self.__delay_times, strict=False
+            self.__pymoca_model.delay_states, self.__delay_times, strict=True
         ):
             if delay_time > 0:
                 n_previous_values = int(np.ceil(delay_time / self.get_time_step()))
@@ -408,7 +408,7 @@ class SimulationProblem(DataStoreAccessor):
 
         evaluated_nominals = np.array(evaluated_nominals).ravel()
 
-        nominal_dict = dict(zip(nominal_vars, evaluated_nominals, strict=False))
+        nominal_dict = dict(zip(nominal_vars, evaluated_nominals, strict=True))
 
         self.__nominals.update(nominal_dict)
 
@@ -544,7 +544,7 @@ class SimulationProblem(DataStoreAccessor):
 
         # Residuals for initial values for the delay states / expressions.
         for delay_state, delay_argument in zip(
-            model.delay_states, model.delay_arguments, strict=False
+            model.delay_states, model.delay_arguments, strict=True
         ):
             expression_state = delay_state + "_expr"
             i_delay_state, _ = self.__indices[delay_state]
@@ -746,7 +746,7 @@ class SimulationProblem(DataStoreAccessor):
             model.delay_states,
             model.delay_arguments,
             self.__delay_times,
-            strict=False,
+            strict=True,
         ):
             expression_state = delay_state + "_expr"
             i_delay_state, _ = self.__indices[delay_state]
