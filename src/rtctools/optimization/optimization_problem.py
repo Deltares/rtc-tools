@@ -1118,7 +1118,11 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     @abstractmethod
     def states_in(
-        self, variable: str, t0: float = None, tf: float = None, ensemble_member: int = 0
+        self,
+        variable: str,
+        t0: float | None = None,
+        tf: float | None = None,
+        ensemble_member: int = 0,
     ) -> Iterator[ca.MX]:
         """
         Iterates over symbols for states in the interval [t0, tf].
