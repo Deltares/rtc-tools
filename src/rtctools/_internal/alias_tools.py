@@ -126,7 +126,7 @@ class AliasDict(Generic[KT, VT]):
         else:
             self.__d[var] = -val if sign < 0 else val
 
-    def __getitem__(self, key: KT):
+    def __getitem__(self, key: KT) -> VT:
         var, sign = self.__canonical_signed(key)
         val = self.__d[var]
         if isinstance(val, tuple):
