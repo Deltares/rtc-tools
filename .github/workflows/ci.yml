@@ -1,4 +1,4 @@
-name: deltares/rtc-tools
+name: Tests & Release
 
 on:
   push:
