@@ -67,7 +67,7 @@ class LinearizedOrderGoal(Goal):
 
         a = (ys[1:] - ys[:-1]) / (xs[1:] - xs[:-1])
         b = ys[1:] - a * xs[1:]
-        lines = list(zip(a, b))
+        lines = list(zip(a, b, strict=False))
 
         cls._linear_coefficients.setdefault(eps, {})[order] = lines
 

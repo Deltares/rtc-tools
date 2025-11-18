@@ -494,7 +494,7 @@ class SinglePassGoalProgrammingMixin(_GoalProgrammingMixinBase):
 
             # Objectives
             for subproblem_objectives, subproblem_path_objectives in zip(
-                self.__objectives_per_priority, self.__path_objectives_per_priority
+                self.__objectives_per_priority, self.__path_objectives_per_priority, strict=False
             ):
                 self.__objectives.append(
                     _objective_func(subproblem_objectives, subproblem_path_objectives)
@@ -534,7 +534,7 @@ class SinglePassGoalProgrammingMixin(_GoalProgrammingMixinBase):
         nlp = nlp.copy()
 
         if self.__additional_constraints:
-            g_extra, lbg_extra, ubg_extra = zip(*self.__additional_constraints)
+            g_extra, lbg_extra, ubg_extra = zip(*self.__additional_constraints, strict=False)
 
             g = ca.vertcat(nlp["g"], *g_extra)
             lbg = [*lbg.copy(), *lbg_extra]

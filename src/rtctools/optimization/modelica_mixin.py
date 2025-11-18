@@ -226,7 +226,7 @@ class ModelicaMixin(OptimizationProblem):
 
         # Create delayed feedback
         for delay_state, delay_argument in zip(
-            self.__pymoca_model.delay_states, self.__pymoca_model.delay_arguments
+            self.__pymoca_model.delay_states, self.__pymoca_model.delay_arguments, strict=False
         ):
             delayed_feedback.append((delay_argument.expr, delay_state, delay_argument.duration))
         return delayed_feedback
