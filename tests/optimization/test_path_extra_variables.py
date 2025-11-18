@@ -81,7 +81,7 @@ class ModelExtraVars(Model):
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member).copy()
 
-        for sym, t in zip(self._additional_vars, self.times()):
+        for sym, t in zip(self._additional_vars, self.times(), strict=False):
             x_sym = self.extra_variable(sym.name(), ensemble_member)
             constraints.append((x_sym - self.state_at("u", t) ** 2, 0, np.inf))
 

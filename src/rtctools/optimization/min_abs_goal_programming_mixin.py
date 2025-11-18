@@ -339,12 +339,16 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
                 priorities = []
 
         for p in priorities:
-            for a, b in zip(self.__problem_constraints, self.__subproblem_constraints[p]):
+            for a, b in zip(
+                self.__problem_constraints, self.__subproblem_constraints[p], strict=False
+            ):
                 a.extend(b)
 
             self.__problem_vars.extend(self.__subproblem_vars[p])
 
-            for a, b in zip(self.__problem_path_constraints, self.__subproblem_path_constraints[p]):
+            for a, b in zip(
+                self.__problem_path_constraints, self.__subproblem_path_constraints[p], strict=False
+            ):
                 a.extend(b)
 
             self.__problem_path_vars.extend(self.__subproblem_path_vars[p])
