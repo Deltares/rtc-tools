@@ -26,7 +26,7 @@ jobs:
     needs: [style]
     runs-on: ubuntu-latest
     container:
-      image: python:3.9
+      image: python:3.10
     timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4.1.0
@@ -53,16 +53,16 @@ jobs:
     strategy:
       matrix:
         include:
-          - version: '3.9'
           - version: '3.10'
           - version: '3.11'
           - version: '3.12'
           - version: '3.13'
+          - version: '3.14'
           # Lowest and highest resolution modes to test oldest and newest dependencies.
-          - version: '3.9'
+          - version: '3.10'
             resolution_mode: 'lowest'
             label: ' (Oldest Dependencies)'
-          - version: '3.13'
+          - version: '3.14'
             resolution_mode: 'highest'
             label: ' (Newest Dependencies)'
     steps:
@@ -77,7 +77,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     container:
-      image: python:3.9
+      image: python:3.10
     timeout-minutes: 30
     env:
       TOXENV: coverage
@@ -107,11 +107,11 @@ jobs:
     strategy:
       matrix:
         version:
-        - '3.9'
         - '3.10'
         - '3.11'
         - '3.12'
         - '3.13'
+        - '3.14'
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: ./.github/actions/setup-python
