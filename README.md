@@ -1,7 +1,7 @@
 # Deltares RTC-Tools
 
-[![Pipeline](https://github.com/rtc-tools/rtc-tools/actions/workflows/rtc-tools.yml/badge.svg)](
-    https://github.com/rtc-tools/rtc-tools/actions/workflows/rtc-tools.yml
+[![Pipeline](https://github.com/rtc-tools/rtc-tools/actions/workflows/ci.yml/badge.svg)](
+    https://github.com/rtc-tools/rtc-tools/actions/workflows/ci.yml
 )
 [![Coverage](
     https://sonarcloud.io/api/project_badges/measure?project=Deltares_rtc-tools&metric=coverage
