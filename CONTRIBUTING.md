@@ -83,8 +83,8 @@ To set up your development environment, you will need:
 You can clone the repository and install it from source:
 
 ```bash
-git clone https://github.com/rtc-tools/RTC-Tools.git
-cd RTC-Tools
+git clone https://github.com/rtc-tools/rtc-tools.git
+cd rtc-tools
 uv sync
 ```
 
