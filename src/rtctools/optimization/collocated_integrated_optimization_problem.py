@@ -1643,13 +1643,13 @@ class CollocatedIntegratedOptimizationProblem(OptimizationProblem, metaclass=ABC
                         states_and_algebraics_and_controls,
                         states_and_algebraics_and_controls_derivatives,
                         *[
-                            ca.horzcat(*constant_inputs[variable][1:])
+                            ca.MX(constant_inputs[variable][1:]).T
                             for variable in dae_constant_inputs_names
                         ],
-                        ca.horzcat(*collocation_times[1:]),
+                        ca.MX(collocation_times[1:]).T,
                         path_variables.T if path_variables.numel() > 0 else ca.MX(),
                         *[
-                            ca.horzcat(*extra_constant_inputs[variable][1:])
+                            ca.MX(extra_constant_inputs[variable][1:]).T
                             for (variable, _) in extra_constant_inputs_name_and_size
                         ],
                     ),
