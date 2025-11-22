@@ -411,6 +411,7 @@ class Timeseries:
             self.__forecast_index = None
             self.__contains_ensemble = False
             self.__ensemble_size = 1
+            ensemble_indexes = set()
             for series in self.__xml_root.findall("pi:series", ns):
                 header = series.find("pi:header", ns)
 
@@ -471,14 +472,23 @@ class Timeseries:
 
                 el = header.find("pi:ensembleMemberIndex", ns)
                 if el is not None:
-                    contains_ensemble = True
-                    if int(el.text) > self.__ensemble_size - 1:  # Assume zero-based
-                        self.__ensemble_size = int(el.text) + 1
-                else:
-                    contains_ensemble = False
-                if self.__contains_ensemble is False:
-                    # Only overwrite when _contains_ensemble was False before
-                    self.__contains_ensemble = contains_ensemble
+                    ensemble_indexes.add(int(el.text))
+
+            # We assume the ensemble ids are zero-based and increasing by 1
+            if len(ensemble_indexes) > 1:
+                # check if ids are zero-based and increasing by 1
+                sorted_ensemble_indexes = sorted(ensemble_indexes)
+                if sorted_ensemble_indexes != list(range(len(sorted_ensemble_indexes))):
+                    raise ValueError(
+                        "PI: Ensemble ids must be zero-based and increasing by 1 when more than one"
+                        " ensemble member is present."
+                    )
+                self.__contains_ensemble = True
+                self.__ensemble_size = len(ensemble_indexes)
+            else:
+                # There are no ensemble members, or a single ensemble member of arbitrary id
+                self.__contains_ensemble = False
+                self.__ensemble_size = 1
 
             # Define the times, and floor the global forecast_datetime to the
             # global time step to get its index
@@ -538,24 +548,27 @@ class Timeseries:
                 end_datetime = self.__parse_date_time(header.find("pi:endDate", ns))
 
                 make_virtual_ensemble = False
-                el = header.find("pi:ensembleMemberIndex", ns)
-                if el is not None:
-                    ensemble_member = int(el.text)
-                    while ensemble_member >= len(self.__values):
-                        self.__values.append({})
-                    while ensemble_member >= len(self.__units):
-                        self.__units.append({})
+                if self.__contains_ensemble:
+                    el = header.find("pi:ensembleMemberIndex", ns)
+                    if el is not None:
+                        ensemble_member = int(el.text)
+                        while ensemble_member >= len(self.__values):
+                            self.__values.append({})
+                        while ensemble_member >= len(self.__units):
+                            self.__units.append({})
+                    else:
+                        ensemble_member = 0
+                    if el is None:
+                        # Expand values dict to accommodate referencing of (virtual)
+                        # ensemble series to the input values. This is e.g. needed
+                        # for initial states that have a single historical values.
+                        while self.ensemble_size > len(self.__values):
+                            self.__values.append({})
+                        while self.ensemble_size > len(self.__units):
+                            self.__units.append({})
+                        make_virtual_ensemble = True
                 else:
                     ensemble_member = 0
-                if el is None and self.contains_ensemble is True:
-                    # Expand values dict to accommodate referencing of (virtual)
-                    # ensemble series to the input values. This is e.g. needed
-                    # for initial states that have a single historical values.
-                    while self.ensemble_size > len(self.__values):
-                        self.__values.append({})
-                    while self.ensemble_size > len(self.__units):
-                        self.__units.append({})
-                    make_virtual_ensemble = True
 
                 if self.__dt:
                     n_values = int(
