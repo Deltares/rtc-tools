@@ -1,6 +1,6 @@
 import logging
 from abc import ABCMeta, abstractmethod, abstractproperty
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, overload
 
 import casadi as ca
 import numpy as np
@@ -1116,10 +1116,38 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         pass
 
+    @overload
+    def states_in(
+        self,
+        variable: str,
+        t0: float | None = ...,
+        tf: float | None = ...,
+        ensemble_member: int = ...,
+        *,
+        return_times: Literal[False] = ...,
+    ) -> ca.MX: ...
+
+    @overload
+    def states_in(
+        self,
+        variable: str,
+        t0: float | None = ...,
+        tf: float | None = ...,
+        ensemble_member: int = ...,
+        *,
+        return_times: Literal[True],
+    ) -> tuple[ca.DM, ca.MX]: ...
+
     @abstractmethod
     def states_in(
-        self, variable: str, t0: float = None, tf: float = None, ensemble_member: int = 0
-    ) -> Iterator[ca.MX]:
+        self,
+        variable: str,
+        t0: float | None = None,
+        tf: float | None = None,
+        ensemble_member: int = 0,
+        *,
+        return_times: bool = False,
+    ) -> ca.MX | tuple[ca.DM, ca.MX]:
         """
         Iterates over symbols for states in the interval [t0, tf].
 
