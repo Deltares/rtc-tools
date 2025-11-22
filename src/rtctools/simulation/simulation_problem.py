@@ -3,16 +3,9 @@ import importlib.resources
 import itertools
 import logging
 import math
-import sys
 from collections import OrderedDict
+from importlib import metadata as importlib_metadata
 from typing import List, Union
-
-# Python 3.9's importlib.metadata does not support the "group" parameter to
-# entry_points yet.
-if sys.version_info < (3, 10):
-    import importlib_metadata
-else:
-    from importlib import metadata as importlib_metadata
 
 import casadi as ca
 import numpy as np
@@ -325,7 +318,9 @@ class SimulationProblem(DataStoreAccessor):
         then its previous value is :math:`5 * y` at :math:`t - 2 * dt`).
         """
         delay_expression_states = []
-        for delay_state, delay_time in zip(self.__pymoca_model.delay_states, self.__delay_times):
+        for delay_state, delay_time in zip(
+            self.__pymoca_model.delay_states, self.__delay_times, strict=True
+        ):
             if delay_time > 0:
                 n_previous_values = int(np.ceil(delay_time / self.get_time_step()))
             else:
@@ -406,7 +401,7 @@ class SimulationProblem(DataStoreAccessor):
 
         evaluated_nominals = np.array(evaluated_nominals).ravel()
 
-        nominal_dict = dict(zip(nominal_vars, evaluated_nominals))
+        nominal_dict = dict(zip(nominal_vars, evaluated_nominals, strict=True))
 
         self.__nominals.update(nominal_dict)
 
@@ -541,7 +536,9 @@ class SimulationProblem(DataStoreAccessor):
             self.set_var(der_var.name(), 0.0)
 
         # Residuals for initial values for the delay states / expressions.
-        for delay_state, delay_argument in zip(model.delay_states, model.delay_arguments):
+        for delay_state, delay_argument in zip(
+            model.delay_states, model.delay_arguments, strict=True
+        ):
             expression_state = delay_state + "_expr"
             i_delay_state, _ = self.__indices[delay_state]
             i_expr_start, _ = self.__i_start[expression_state]
@@ -742,6 +739,7 @@ class SimulationProblem(DataStoreAccessor):
             model.delay_states,
             model.delay_arguments,
             self.__delay_times,
+            strict=True,
         ):
             expression_state = delay_state + "_expr"
             i_delay_state, _ = self.__indices[delay_state]
@@ -1061,7 +1059,7 @@ class SimulationProblem(DataStoreAccessor):
         """
         value_is_nan = np.isnan(self.__state_vector)
         if any(value_is_nan):
-            for sym, isnan in zip(self.__sym_list, value_is_nan):
+            for sym, isnan in zip(self.__sym_list, value_is_nan, strict=True):
                 if isnan:
                     logger.warning("Variable {} has no value.".format(sym))
 
