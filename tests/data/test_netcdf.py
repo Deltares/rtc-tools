@@ -575,7 +575,7 @@ class TestExportDataset(TestCase):
             [
                 ["time", "station"],
             ]
-            * 7,
+            * 6,
         )
 
         # TODO: check fill_value
