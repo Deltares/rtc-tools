@@ -1,0 +1,373 @@
+<ns0:TimeSeries xmlns:ns0="http://www.wldelft.nl/fews/PI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="http://www.wldelft.nl/fews/PI ../../xsd/pi_timeseries.xsd">
+	<ns0:timeZone>0.0</ns0:timeZone>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Controls</ns0:locationId>
+			<ns0:parameterId>U_Min</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>10</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="-2.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="-2.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Controls</ns0:locationId>
+			<ns0:parameterId>U_Max</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>10</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="2.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="2.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>States</ns0:locationId>
+			<ns0:parameterId>X</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>10</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="1.02" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="0.03" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="0.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>States</ns0:locationId>
+			<ns0:parameterId>W</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>10</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="0.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="0.03" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="0.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Inputs</ns0:locationId>
+			<ns0:parameterId>I</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>10</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="1.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="1.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Controls</ns0:locationId>
+			<ns0:parameterId>U_Min</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble12</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>12</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="-2.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="-2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="-2.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Controls</ns0:locationId>
+			<ns0:parameterId>U_Max</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble12</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>12</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="2.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="2.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="2.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>States</ns0:locationId>
+			<ns0:parameterId>X</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble12</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>12</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="1.02" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="0.03" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="0.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>States</ns0:locationId>
+			<ns0:parameterId>W</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble12</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>12</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="0.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="0.03" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="0.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="0.0" />
+	</ns0:series>
+	<ns0:series>
+		<ns0:header>
+			<ns0:type>instantaneous</ns0:type>
+			<ns0:locationId>Inputs</ns0:locationId>
+			<ns0:parameterId>I</ns0:parameterId>
+			<ns0:ensembleId>test_ensemble12</ns0:ensembleId>
+			<ns0:ensembleMemberIndex>12</ns0:ensembleMemberIndex>
+			<ns0:timeStep multiplier="3600" unit="second" />
+			<ns0:startDate date="2013-05-19" time="22:00:00" />
+			<ns0:forecastDate date="2013-05-19" time="22:00:00" />
+			<ns0:endDate date="2013-05-20" time="19:00:00" />
+			<ns0:missVal>-999.0</ns0:missVal>
+			<ns0:units>m3/s</ns0:units>
+		</ns0:header>
+		<ns0:event date="2013-05-19" flag="0" time="22:00:00" value="1.0" />
+		<ns0:event date="2013-05-19" flag="0" time="23:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="00:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="01:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="02:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="03:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="04:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="05:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="06:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="07:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="08:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="09:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="10:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="11:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="12:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="13:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="14:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="15:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="16:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="17:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="18:00:00" value="1.0" />
+		<ns0:event date="2013-05-20" flag="0" time="19:00:00" value="1.0" />
+	</ns0:series>
+</ns0:TimeSeries>

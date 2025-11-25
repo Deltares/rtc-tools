@@ -1,4 +1,5 @@
 import bisect
+import os
 
 import numpy as np
 
@@ -19,12 +20,14 @@ class Model(PIMixin, ModelicaMixin, CollocatedIntegratedOptimizationProblem):
     pi_binary_timeseries = False
     pi_validate_timeseries = False
 
-    def __init__(self):
+    def __init__(self, model_data_path=None):
+        if model_data_path is None:
+            model_data_path = data_path()
         super().__init__(
-            input_folder=data_path(),
-            output_folder=data_path(),
+            input_folder=model_data_path,
+            output_folder=model_data_path,
             model_name="Model",
-            model_folder=data_path(),
+            model_folder=model_data_path,
         )
 
     def objective(self, ensemble_member):
@@ -106,3 +109,19 @@ class TestPIMixin(TestCase):
             + self.problem.get_timeseries("x", 0).values[t_idx + 2]
         ) / 2
         self.assertAlmostEqual(self.problem.timeseries_at("x", t), x_ref, self.tolerance)
+
+    def test_ensemble_member_indexes(self):
+        # we expect a value error when ensembele member indexes are not zero-based and
+        # increasing by one
+        with self.assertRaises(ValueError):
+            print(os.path.join(data_path(), "non_zero_indexed_ensembles"))
+            self.problem0 = Model(
+                model_data_path=os.path.join(data_path(), "non_zero_indexed_ensembles"),
+            )
+            self.problem0.optimize()
+        # We expect no error when there is only one ensemble member (with a non-zero
+        # index)
+        self.problem1 = Model(
+            model_data_path=os.path.join(data_path(), "single_non_zero_ensemble_index"),
+        )
+        self.problem1.optimize()
