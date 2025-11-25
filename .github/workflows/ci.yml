@@ -11,6 +11,9 @@ concurrency:
 #   PYPI_PASSWORD: "${{ secrets.PYPI_PASSWORD }}"
 #   CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN}}"
 
+permissions:
+  contents: read
+
 jobs:
   style:
     runs-on: ubuntu-latest
