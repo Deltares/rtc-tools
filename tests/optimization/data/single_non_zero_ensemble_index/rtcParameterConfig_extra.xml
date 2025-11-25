@@ -1,0 +1,22 @@
+<ns0:parameters xmlns:ns0="http://www.wldelft.nl/fews/PI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.5" xsi:schemaLocation="http://www.wldelft.nl/fews/PI http://fews.wldelft.nl/schemas/version1.0/pi-schemas/pi_modelparameters.xsd">
+	<ns0:group id="parameters" name="parameters" readonly="false">
+		<ns0:parameter id="j">
+			<ns0:dblValue>12.01</ns0:dblValue>
+		</ns0:parameter>
+		<ns0:parameter id="b">
+			<ns0:dblValue>13.01</ns0:dblValue>
+		</ns0:parameter>
+	</ns0:group>
+	<ns0:group id="states" name="states" readonly="false">
+		<ns0:parameter id="y">
+			<ns0:dblValue>12.02</ns0:dblValue>
+		</ns0:parameter>
+	</ns0:group>
+	<ns0:group id="nested" readonly="false">
+		<ns0:locationId>H</ns0:locationId>
+		<ns0:model>SV</ns0:model>
+		<ns0:parameter id="y">
+			<ns0:dblValue>22.02</ns0:dblValue>
+		</ns0:parameter>
+	</ns0:group>
+</ns0:parameters>
