@@ -1066,9 +1066,11 @@ class SimulationProblem(DataStoreAccessor):
         """
         value_is_nan = np.isnan(self.__state_vector)
         if any(value_is_nan):
-            for sym, isnan in zip(self.__sym_list, value_is_nan, strict=False):
-                if isnan:
-                    logger.warning("Variable {} has no value.".format(sym))
+            for name in self.__sym_dict:
+                i_start, _ = self.__i_start[name]
+                i_end, _ = self.__i_end[name]
+                if any(value_is_nan[i_start:i_end]):
+                    logger.warning(f"Variable {name} has no value.")
 
     def set_time_step(self, dt):
         """
