@@ -2,26 +2,29 @@ Related Projects
 ================
 
 RTC-Tools offers extensible libraries for building complex system models.
-The following modelling extensions are available:
+The following modeling libraries are available (this list is non-exhaustive):
 
 Water Systems
 -------------
 
-`rtc-tools-channel-flow <https://gitlab.com/deltares/rtc-tools-channel-flow>`_
-    Water system models for simulating and optimizing channel flow dynamics.
+`RTC-Tools Channel Flow <https://github.com/Deltares/rtc-tools-channel-flow>`_
+    Hydraulic channel flow and water level dynamics.
 
-`rtc-tools-hydraulic-structures <https://gitlab.com/deltares/rtc-tools-channel-flow>`_
-    Hydraulic assets such as weirs and pumps.
+`RTC-Tools Hydraulic Structures <https://rtc-tools-hydraulic-structures.readthedocs.io/en/latest/>`_
+    Hydraulic assets such as weirs, pumps, and other control structures.
 
-Heat Networks
--------------
+`RTC-Tools Simulation <https://rtc-tools-simulation.readthedocs.io/en/latest/>`_
+    Reservoir and system simulation workflows.
 
-`rtc-tools-heat-network <https://github.com/Nieuwe-Warmte-Nu/rtc-tools-heat-network>`_
-    Models for optimizing heat networks.
+Multi-Energy Systems
+--------------------
+
+`Mesido <https://github.com/Multi-Energy-Systems-Optimization/mesido/pulls>`_
+    Heat network design and multi-energy system optimization.
 
 Energy Trading
 --------------
 
 `BESS Trading Examples <https://portfolioenergy-bess-demo.readthedocs.io/en/latest/>`_
-    Basic Battery Energy Storage Systems (BESS) trading examples for NEM (Australia),
-    ERCOT (Texas) and EU-style markets.
+    Battery energy storage trading formulations for NEM (Australia), ERCOT
+    (Texas), and EU-style markets.

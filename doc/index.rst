@@ -12,33 +12,65 @@
 RTC-Tools documentation
 =======================
 
-RTC-Tools is an open-source platform for the operational optimization of
-portfolios of assets, in particular storage assets such as hydropower
-reservoirs and battery energy storage systems (BESS). RTC-Tools is part of
-`LF Energy <https://lfenergy.org/>`_.
+RTC-Tools is an open-source Python framework designed to model, simulate,
+and optimize time-dependent systems with interconnected components. It is
+part of `LF Energy <https://lfenergy.org/>`_.
 
-In water management, RTC-Tools is used for model-predictive control of water
-systems including turbines, pumps, weirs, and reservoirs.
+RTC-Tools provides a modular and extensible platform for operational
+optimization and control of complex systems across multiple domains, with a
+primary focus on water management and energy systems. Originally initiated at
+`Deltares <https://www.deltares.nl/>`_ in 2015, RTC-Tools is deployed for
+water and power trading applications across the globe, across North and South
+America, Europe, Asia, and Australia.
 
-In power trading, the RTC-Tools project aims to move the field of trading
-optimization towards increased transparency, increased code-reuse, and
-higher trading value capture.
+Application domains include:
 
-The RTC-Tools project was originally initiated at `Deltares <https://www.deltares.nl/>`_
-and is deployed for water and power trading applications across the globe,
-across North and South America, Europe, Asia, and Australia.
+- **Water Management**: Model-predictive control of canals, polders,
+  reservoirs, hydropower scheduling, and pumped storage systems, including
+  turbines, pumps, weirs, and other hydraulic structures.
+- **Energy Systems**: Battery energy storage system (BESS) optimization,
+  power trading, and multi-energy system planning.
 
-For applications in water management, `Deltares <https://www.deltares.nl/>`_ offers
-commercial support.
+Community Support
+-----------------
 
-For applications in power trading, `PortfolioEnergy <https://www.portfolioenergy.com/>`_
+For questions, issues, and discussions, please use:
+
+- `GitHub Issues <https://github.com/rtc-tools/rtc-tools/issues>`_ for bug
+  reports and feature requests
+- `GitHub Discussions <https://github.com/rtc-tools/rtc-tools/discussions>`_
+  for questions and community discussions
+
+Commercial Support
+------------------
+
+For applications in water management, `Deltares <https://www.deltares.nl/>`_
 offers commercial support.
 
-This first chapter of this documentation covers getting the software running on your
-computer.  The subsequent two chapters describe the RTC-Tools Python API.  The fourth
-and final chapter discusses several illustrative examples, including the use of goal
-programming for multi-objective optimization, as well as the use of forecast
-ensembles.
+For applications in power trading and battery energy storage systems (BESS),
+`PortfolioEnergy <https://www.portfolioenergy.com/>`_ offers commercial
+support.
+
+Governance & Roadmap
+--------------------
+
+RTC-Tools development follows an open governance model. To learn more about
+the project roadmap and contribute to future development:
+
+- Review the `roadmap discussion <https://github.com/rtc-tools/rtc-tools/discussions/1725>`_
+- Check `project milestones <https://github.com/rtc-tools/rtc-tools/milestones>`_
+- Watch the `feature overview video <https://www.youtube.com/watch?v=GAuQ5ft8vr4>`_
+
+Documentation Overview
+----------------------
+
+This first chapter of this documentation covers getting the software running
+on your computer. The subsequent chapters describe the RTC-Tools Python API
+for optimization and simulation. The examples chapter illustrates several key
+features, including multi-objective optimization using weighting and
+lexicographic goal programming methods, as well as optimization under
+uncertainty using ensemble forecasts and scenario tree reduction and
+aggregation.
 
 
 Contents
