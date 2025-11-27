@@ -2,7 +2,6 @@ import bisect
 import logging
 import warnings
 from abc import ABCMeta, abstractmethod
-from typing import Optional
 
 import casadi as ca
 import numpy as np
@@ -101,10 +100,9 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
         if isinstance(timeseries, Timeseries):
             if len(timeseries.values) != len(timeseries.times):
                 raise ValueError(
-                    "IOMixin: Trying to set timeseries {} with times and values that are of "
-                    "different length (lengths of {} and {}, respectively).".format(
-                        variable, len(timeseries.times), len(timeseries.values)
-                    )
+                    f"IOMixin: Trying to set timeseries {variable} with times and values that "
+                    f"are of different length (lengths of {len(timeseries.times)} and "
+                    f"{len(timeseries.values)}, respectively)."
                 )
 
             timeseries_times_sec = self.io.times_sec
@@ -113,10 +111,10 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
                 if check_consistency:
                     if not set(timeseries_times_sec).issuperset(timeseries.times):
                         raise ValueError(
-                            "IOMixin: Trying to set timeseries {} with different times "
+                            f"IOMixin: Trying to set timeseries {variable} with different times "
                             "(in seconds) than the imported timeseries. Please make sure the "
                             "timeseries covers all timesteps of the longest "
-                            "imported timeseries.".format(variable)
+                            "imported timeseries."
                         )
 
                 # Determine position of first times of added timeseries within the
@@ -136,17 +134,15 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
             if check_consistency:
                 if len(self.times()) != len(timeseries):
                     raise ValueError(
-                        "IOMixin: Trying to set values for {} with a different "
-                        "length ({}) than the forecast length ({}).".format(
-                            variable, len(timeseries), len(self.times())
-                        )
+                        f"IOMixin: Trying to set values for {variable} with a different length "
+                        f"({len(timeseries)}) than the forecast length ({len(self.times())})."
                     )
                 elif not set(timeseries_times_sec).issuperset(self.times()):
                     raise ValueError(
-                        "IOMixin: Trying to set timeseries {} with different times "
+                        f"IOMixin: Trying to set timeseries {variable} with different times "
                         "(in seconds) than the imported timeseries. Please make sure the "
                         "timeseries covers all timesteps of the longest "
-                        "imported timeseries.".format(variable)
+                        "imported timeseries."
                     )
 
             # If times is not supplied with the timeseries, we add the
@@ -177,7 +173,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
 
     @cached
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: Optional[int] = None):
+    def bounds(self, ensemble_member: int | None = None):
         bounds = (
             super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
         )
@@ -201,7 +197,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
                 pass
             else:
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("Read lower bound for variable {}".format(variable_name))
+                    logger.debug(f"Read lower bound for variable {variable_name}")
 
             timeseries_id = self.max_timeseries_id(variable_name)
             try:
@@ -211,7 +207,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
                 pass
             else:
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("Read upper bound for variable {}".format(variable_name))
+                    logger.debug(f"Read upper bound for variable {variable_name}")
 
             # Replace NaN with +/- inf, and create Timeseries objects
             if m is not None:
@@ -249,7 +245,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
                 pass
             else:
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("IOMixin: Read history for state {}".format(variable))
+                    logger.debug(f"IOMixin: Read history for state {variable}")
         return history
 
     @cached
@@ -266,7 +262,7 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
                 pass
             else:
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("IOMixin: Seeded free variable {}".format(variable))
+                    logger.debug(f"IOMixin: Seeded free variable {variable}")
                 # A seeding of NaN means no seeding
                 s.values[np.isnan(s.values)] = 0.0
                 seed[variable] = s
@@ -298,10 +294,10 @@ class IOMixin(OptimizationProblem, metaclass=ABCMeta):
             else:
                 inds = timeseries.times >= self.initial_time
                 if np.any(np.isnan(timeseries.values[inds])):
-                    raise Exception("IOMixin: Constant input {} contains NaN".format(variable))
+                    raise Exception(f"IOMixin: Constant input {variable} contains NaN")
                 constant_inputs[variable] = timeseries
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("IOMixin: Read constant input {}".format(variable))
+                    logger.debug(f"IOMixin: Read constant input {variable}")
         return constant_inputs
 
     def timeseries_at(self, variable, t, ensemble_member=0):

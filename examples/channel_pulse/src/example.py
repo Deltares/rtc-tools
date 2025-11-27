@@ -29,7 +29,7 @@ class Example(HomotopyMixin, CSVMixin, ModelicaMixin, CollocatedIntegratedOptimi
 
         # To Mimic HEC-RAS behaviour, enforce steady state both at t0 and at t1.
         for i in range(n_level_nodes):
-            state = "Channel.H[{}]".format(i + 1)
+            state = f"Channel.H[{i + 1}]"
             constraints.append(
                 (self.state_at(state, times[0]) - self.state_at(state, times[1]), 0, 0)
             )

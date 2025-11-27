@@ -79,7 +79,7 @@ class NetCDFModel(NetCDFMixin, ModelicaMixin, CollocatedIntegratedOptimizationPr
         ]
 
         if (station_id, parameter) in unused_variables:
-            variable_name = "{}__{}".format(station_id, parameter)
+            variable_name = f"{station_id}__{parameter}"
         else:
             variable_name = parameter
 

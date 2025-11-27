@@ -37,7 +37,7 @@ class Model(ModelicaMixin, CollocatedIntegratedOptimizationProblem):
     def constant_inputs(self, ensemble_member):
         constant_inputs = super().constant_inputs(ensemble_member)
         constant_inputs["constant_input"] = Timeseries(
-            np.hstack(([self.initial_time, self.times()])),
+            np.hstack([self.initial_time, self.times()]),
             np.hstack(([1.0], np.linspace(1.0, 0.0, 21))),
         )
         return constant_inputs
@@ -75,7 +75,7 @@ class ModelExtraVars(Model):
         self._additional_vars = []
 
         for i in range(len(self.times())):
-            sym = ca.MX.sym("u2_t{}".format(i))
+            sym = ca.MX.sym(f"u2_t{i}")
             self._additional_vars.append(sym)
 
     def constraints(self, ensemble_member):

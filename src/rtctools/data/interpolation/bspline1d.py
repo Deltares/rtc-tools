@@ -163,7 +163,7 @@ class BSpline1D(BSpline):
         stats = solver.stats()
         return_status = stats["return_status"]
         if return_status not in ["Solve_Succeeded", "Solved_To_Acceptable_Level", "SUCCESS"]:
-            raise Exception("Spline fitting failed with status {}".format(return_status))
+            raise Exception(f"Spline fitting failed with status {return_status}")
 
         # Return the new tck tuple
         return (t, np.array(sol["x"]).ravel(), k)

@@ -77,9 +77,8 @@ class TestMultipleIOMixins(TestCase):
                     np.testing.assert_array_equal(
                         output,
                         expected_output[ensemble_member],
-                        "class permutation = {}, ensemble member = {}".format(
-                            [x.__name__ for x in permut], ensemble_member
-                        ),
+                        f"class permutation = {[x.__name__ for x in permut]}, "
+                        f"ensemble member = {ensemble_member}",
                     )
 
     def test_differences_in_parameters(self):
@@ -104,9 +103,8 @@ class TestMultipleIOMixins(TestCase):
                 self.assertEqual(
                     output,
                     expected_output[ensemble_member],
-                    "class permutation = {}, ensemble member = {}".format(
-                        [x.__name__ for x in permut], ensemble_member
-                    ),
+                    f"class permutation = {[x.__name__ for x in permut]}, "
+                    f"ensemble member = {ensemble_member}",
                 )
 
     def test_differences_in_ensemble_sizes(self):
@@ -136,7 +134,7 @@ class TestMultipleIOMixins(TestCase):
                 self.assertEqual(
                     problem.ensemble_size,
                     expected_size,
-                    "class permutation = {}".format([x.__name__ for x in permut]),
+                    f"class permutation = {[x.__name__ for x in permut]}",
                 )
 
                 # Construct reference output for this permutation
@@ -154,9 +152,8 @@ class TestMultipleIOMixins(TestCase):
                     np.testing.assert_array_equal(
                         output,
                         expected_output[ensemble_member],
-                        "class permutation = {}, ensemble member = {}".format(
-                            [x.__name__ for x in permut], ensemble_member
-                        ),
+                        f"class permutation = {[x.__name__ for x in permut]}, "
+                        f"ensemble member = {ensemble_member}",
                     )
 
     def test_differences_in_initial_dates(self):

@@ -1,7 +1,6 @@
 import itertools
 import logging
 from collections import OrderedDict
-from typing import Dict, Optional, Union
 
 import casadi as ca
 import numpy as np
@@ -67,7 +66,7 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
         return self.__problem_path_epsilons + self.__subproblem_path_epsilons
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: Optional[int] = None):
+    def bounds(self, ensemble_member: int | None = None):
         bounds = (
             super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
         )
@@ -227,7 +226,7 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
 
         return options
 
-    def goal_programming_options(self) -> Dict[str, Union[float, bool]]:
+    def goal_programming_options(self) -> dict[str, float | bool]:
         """
         Returns a dictionary of options controlling the goal programming process.
 
@@ -693,15 +692,15 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
         self.__original_constant_input_keys = {}
         self.__original_parameter_keys = {}
         for i, (priority, goals, path_goals) in enumerate(subproblems):
-            logger.info("Solving goals at priority {}".format(priority))
+            logger.info(f"Solving goals at priority {priority}")
 
             # Call the pre priority hook
             self.priority_started(priority)
 
             if self.skip_priority:
                 logger.info(
-                    "priority {} was removed in priority_started. No optimization problem "
-                    "is solved at this priority.".format(priority)
+                    f"priority {priority} was removed in priority_started. No optimization problem "
+                    "is solved at this priority."
                 )
                 continue
 

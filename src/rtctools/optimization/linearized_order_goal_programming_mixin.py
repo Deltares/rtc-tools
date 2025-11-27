@@ -40,7 +40,7 @@ class LinearizedOrderGoal(Goal):
         elif kind == "abs":
             f = x**order - eps - (a * x + b)
         else:
-            raise Exception("Unknown error approximation strategy '{}'".format(kind))
+            raise Exception(f"Unknown error approximation strategy '{kind}'")
 
         res_vals = ca.Function("res_vals", [x, ca.vertcat(a, b)], [f])
 
@@ -118,7 +118,7 @@ class LinearizedOrderGoalProgrammingMixin(_GoalProgrammingMixinBase):
                 if not goal.has_target_bounds and goal.order > 1:
                     raise Exception(
                         "Higher order minimization goals not allowed with "
-                        "`linearize_goal_order` for goal {}".format(goal)
+                        f"`linearize_goal_order` for goal {goal}"
                     )
 
         super()._gp_validate_goals(goals, is_path_goal)
@@ -154,9 +154,7 @@ class LinearizedOrderGoalProgrammingMixin(_GoalProgrammingMixinBase):
             # Make a linear epsilon, and constraints relating the linear
             # variable to the original objective function
             path_prefix = "path_" if is_path_goal else ""
-            linear_variable = ca.MX.sym(
-                path_prefix + "lineps_{}_{}".format(sym_index, j), goal.size
-            )
+            linear_variable = ca.MX.sym(path_prefix + f"lineps_{sym_index}_{j}", goal.size)
 
             lo_epsilons.append(linear_variable)
 
@@ -165,7 +163,7 @@ class LinearizedOrderGoalProgrammingMixin(_GoalProgrammingMixinBase):
             else:
                 coeffs = LinearizedOrderGoal._get_linear_coefficients(goal.order)
 
-            epsilon_name = path_prefix + "eps_{}_{}".format(sym_index, j)
+            epsilon_name = path_prefix + f"eps_{sym_index}_{j}"
 
             for a, b in coeffs:
                 # We add to soft constraints, as these constraints are no longer valid when

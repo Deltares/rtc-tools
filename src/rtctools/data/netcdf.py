@@ -1,7 +1,7 @@
 import os
 from collections import OrderedDict
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Iterable, List, Union
 
 try:
     from netCDF4 import Dataset, Variable, chartostring
@@ -105,7 +105,7 @@ class ImportDataset:
     def __str__(self):
         return self.__filename
 
-    def __find_time_variable(self) -> Union[Variable, None]:
+    def __find_time_variable(self) -> Variable | None:
         """
         Find the variable containing the times in the given Dataset.
 
@@ -123,7 +123,7 @@ class ImportDataset:
 
         return None
 
-    def __find_ensemble_member_variable(self) -> Union[Variable, None]:
+    def __find_ensemble_member_variable(self) -> Variable | None:
         """
         Find the variable containing the ensemble member index in the given Dataset.
 
@@ -137,7 +137,7 @@ class ImportDataset:
 
         return None
 
-    def __find_station_variable(self) -> Union[Variable, None]:
+    def __find_station_variable(self) -> Variable | None:
         """
         Find the variable containing station id's  (location id's) in the given Dataset.
 
@@ -169,7 +169,7 @@ class ImportDataset:
     def read_station_data(self) -> Stations:
         return Stations(self.__dataset, self.__station_variable)
 
-    def find_timeseries_variables(self) -> List[str]:
+    def find_timeseries_variables(self) -> list[str]:
         """
         Find the keys of all 2-D or 3-D variables with dimensions {station, time} or {station, time,
         realization} where station is the dimension of the station_variable, time the dimension of
@@ -293,7 +293,7 @@ class ExportDataset:
         self.__dataset.title = "RTC-Tools Output Data"
         self.__dataset.institution = "Deltares"
         self.__dataset.source = "RTC-Tools"
-        self.__dataset.history = "Generated on {}".format(datetime.now())
+        self.__dataset.history = f"Generated on {datetime.now()}"
         self.__dataset.Conventions = "CF-1.6"
         self.__dataset.featureType = "timeseries"
 
@@ -334,7 +334,7 @@ class ExportDataset:
 
         time_var = self.__dataset.createVariable("time", "f8", ("time",))
         time_var.standard_name = "time"
-        time_var.units = "seconds since {}".format(reference_date)
+        time_var.units = f"seconds since {reference_date}"
         time_var.axis = "T"
         time_var[:] = times
 
@@ -350,7 +350,7 @@ class ExportDataset:
             ensemble_member_var.long_name = "Index of an ensemble member within an ensemble"
             ensemble_member_var.units = 1
 
-    def write_station_data(self, stations: Stations, output_station_ids: List[str]) -> None:
+    def write_station_data(self, stations: Stations, output_station_ids: list[str]) -> None:
         """
         Writes the station ids and additional station information to the given dataset.
 
@@ -389,7 +389,7 @@ class ExportDataset:
                     station_index = self.__station_id_to_index_mapping[station_id]
                     variable[station_index] = stations.attributes[station_id][var_name]
 
-    def create_variables(self, variable_names: List[str], ensemble_size: int) -> None:
+    def create_variables(self, variable_names: list[str], ensemble_size: int) -> None:
         """
         Creates variables in the dataset for each of the provided parameter ids.
         The write_times and write_station_data methods must be called first, to ensure the necessary

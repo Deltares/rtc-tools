@@ -59,11 +59,11 @@ class IOMixin(SimulationProblem, metaclass=ABCMeta):
 
         parameter_variables = set(self.get_parameter_variables())
 
-        logger.debug("Model parameters are {}".format(parameter_variables))
+        logger.debug(f"Model parameters are {parameter_variables}")
 
         for parameter, value in self.io.parameters().items():
             if parameter in parameter_variables:
-                logger.debug("IOMixin: Setting parameter {} = {}".format(parameter, value))
+                logger.debug(f"IOMixin: Setting parameter {parameter} = {value}")
                 self.set_var(parameter, value)
 
         # Load input variable names
@@ -73,7 +73,7 @@ class IOMixin(SimulationProblem, metaclass=ABCMeta):
         t_idx = bisect.bisect_left(timeseries_import_times, 0.0)
         self.__set_input_variables(t_idx)
 
-        logger.debug("Model inputs are {}".format(self.__input_variables))
+        logger.debug(f"Model inputs are {self.__input_variables}")
 
         # Set first timestep
         self._simulation_times.append(self.get_current_time())
@@ -105,8 +105,8 @@ class IOMixin(SimulationProblem, metaclass=ABCMeta):
                 self.set_var(variable, value)
             else:
                 logger.debug(
-                    "IOMixin: Found bad value {} at index [{}] "
-                    "in timeseries aliased to input {}".format(value, t_idx, variable)
+                    f"IOMixin: Found bad value {value} at index [{t_idx}] "
+                    f"in timeseries aliased to input {variable}"
                 )
 
     def update(self, dt):
@@ -161,7 +161,7 @@ class IOMixin(SimulationProblem, metaclass=ABCMeta):
 
         if logger.getEffectiveLevel() == logging.DEBUG:
             for parameter_name in self.io.parameters().keys():
-                logger.debug("IOMixin: Read parameter {}".format(parameter_name))
+                logger.debug(f"IOMixin: Read parameter {parameter_name}")
 
         return parameters
 

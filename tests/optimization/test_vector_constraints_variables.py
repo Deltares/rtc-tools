@@ -38,7 +38,7 @@ class Model(ModelicaMixin, CollocatedIntegratedOptimizationProblem):
     def constant_inputs(self, ensemble_member):
         constant_inputs = super().constant_inputs(ensemble_member)
         constant_inputs["constant_input"] = Timeseries(
-            np.hstack(([self.initial_time, self.times()])),
+            np.hstack([self.initial_time, self.times()]),
             np.hstack(([1.0], np.linspace(1.0, 0.0, 21))),
         )
         return constant_inputs
@@ -153,7 +153,7 @@ class ModelAdditionalVariables(Model):
         self._additional_vars = []
 
         for i in range(len(self.times())):
-            sym = ca.MX.sym("u2_t{}".format(i))
+            sym = ca.MX.sym(f"u2_t{i}")
             self._additional_vars.append(sym)
 
     def constraints(self, ensemble_member):
@@ -283,8 +283,8 @@ class ModelParameters(Model):
     def pre(self):
         super().pre()
 
-        self._param_vars = ["par_{}".format(i) for i in range(5)]
-        self._additional_vars = [ca.MX.sym("par2_{}".format(i)) for i in range(5)]
+        self._param_vars = [f"par_{i}" for i in range(5)]
+        self._additional_vars = [ca.MX.sym(f"par2_{i}") for i in range(5)]
 
     def constraints(self, ensemble_member):
         constraints = super().constraints(ensemble_member)
@@ -448,8 +448,8 @@ class ModelConstantInputs(Model):
     def pre(self):
         super().pre()
 
-        self._input_vars = [ca.MX.sym("ci_{}".format(i)) for i in range(3)]
-        self._additional_vars = [ca.MX.sym("ci2_{}".format(i)) for i in range(3)]
+        self._input_vars = [ca.MX.sym(f"ci_{i}") for i in range(3)]
+        self._additional_vars = [ca.MX.sym(f"ci2_{i}") for i in range(3)]
 
     def path_constraints(self, ensemble_member):
         constraints = super().path_constraints(ensemble_member)

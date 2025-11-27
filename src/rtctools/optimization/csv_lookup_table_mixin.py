@@ -2,7 +2,7 @@ import configparser
 import glob
 import logging
 import os
-from typing import Iterable, List, Tuple, Union
+from collections.abc import Iterable
 
 import casadi as ca
 import numpy as np
@@ -26,7 +26,7 @@ class LookupTable(LookupTableBase):
     Lookup table.
     """
 
-    def __init__(self, inputs: List[ca.MX], function: ca.Function, tck: Tuple = None):
+    def __init__(self, inputs: list[ca.MX], function: ca.Function, tck: tuple = None):
         """
         Create a new lookup table object.
 
@@ -48,7 +48,7 @@ class LookupTable(LookupTableBase):
 
     @property
     @cached
-    def domain(self) -> Tuple:
+    def domain(self) -> tuple:
         t = self.__t
         if t is None:
             raise AttributeError(
@@ -64,11 +64,11 @@ class LookupTable(LookupTableBase):
 
     @property
     @cached
-    def range(self) -> Tuple:
+    def range(self) -> tuple:
         return self(self.domain[0]), self(self.domain[1])
 
     @property
-    def inputs(self) -> List[ca.MX]:
+    def inputs(self) -> list[ca.MX]:
         """
         List of lookup table input variables.
         """
@@ -88,9 +88,7 @@ class LookupTable(LookupTableBase):
             lambda *args: np.nan if np.any(np.isnan(args)) else float(self.function(*args))
         )
 
-    def __call__(
-        self, *args: Union[float, Iterable, Timeseries]
-    ) -> Union[float, np.ndarray, Timeseries]:
+    def __call__(self, *args: float | Iterable | Timeseries) -> float | np.ndarray | Timeseries:
         """
         Evaluate the lookup table.
 
@@ -131,10 +129,10 @@ class LookupTable(LookupTableBase):
 
     def reverse_call(
         self,
-        y: Union[float, Iterable, Timeseries],
-        domain: Tuple[float, float] = (None, None),
+        y: float | Iterable | Timeseries,
+        domain: tuple[float, float] = (None, None),
         detect_range_error: bool = True,
-    ) -> Union[float, np.ndarray, Timeseries]:
+    ) -> float | np.ndarray | Timeseries:
         """Do an inverted call on this LookupTable
 
         Uses SciPy brentq optimizer to simulate a reversed call.
@@ -168,9 +166,7 @@ class LookupTable(LookupTableBase):
             ub_viol = y_array_not_nan > u_r
             all_viol = y_array_not_nan[lb_viol | ub_viol]
             if all_viol.size > 0:
-                raise ValueError(
-                    "Values {} are not in lookup table range ({}, {})".format(all_viol, l_r, u_r)
-                )
+                raise ValueError(f"Values {all_viol} are not in lookup table range ({l_r}, {u_r})")
 
         # Construct function to do inverse evaluation
         evaluator = self.__numeric_function_evaluator
@@ -259,7 +255,7 @@ class CSVLookupTableMixin(OptimizationProblem):
             ini_config = configparser.RawConfigParser()
             ini_config.read(ini_path)
             no_curvefit_options = False
-        except IOError:
+        except OSError:
             logger.info(
                 "CSVLookupTableMixin: No curvefit_options.ini file found. Using default values."
             )
@@ -280,8 +276,8 @@ class CSVLookupTableMixin(OptimizationProblem):
                     prop = 0
                 except ValueError:
                     raise Exception(
-                        "CSVLookupTableMixin: Invalid {0} constraint for {1}. {0} should "
-                        "be either -1, 0, or 1.".format(prop_name, curve_name)
+                        f"CSVLookupTableMixin: Invalid {prop_name} constraint for {curve_name}. "
+                        f"{prop_name} should be either -1, 0, or 1."
                     )
                 return prop
 
@@ -298,16 +294,15 @@ class CSVLookupTableMixin(OptimizationProblem):
         def check_lookup_table(lookup_table):
             if lookup_table in self.__lookup_tables:
                 raise Exception(
-                    "Cannot add lookup table {},since there is already one with this name.".format(
-                        lookup_table
-                    )
+                    f"Cannot add lookup table {lookup_table}, "
+                    "since there is already one with this name."
                 )
 
         # Read CSV files
         logger.info("CSVLookupTableMixin: Generating Splines from lookup table data.")
         self.__lookup_tables = {}
         for filename in glob.glob(os.path.join(self.__lookup_table_folder, "*.csv")):
-            logger.debug("CSVLookupTableMixin: Reading lookup table from {}".format(filename))
+            logger.debug(f"CSVLookupTableMixin: Reading lookup table from {filename}")
 
             csvinput = csv.load(filename, delimiter=self.csv_delimiter)
             output = csvinput.dtype.names[0]
@@ -316,7 +311,7 @@ class CSVLookupTableMixin(OptimizationProblem):
             # Get monotonicity and curvature from ini file
             mono, mono2, curv = get_curvefit_options(output)
 
-            logger.debug("CSVLookupTableMixin: Output is {}, inputs are {}.".format(output, inputs))
+            logger.debug(f"CSVLookupTableMixin: Output is {output}, inputs are {inputs}.")
 
             tck = None
             function = None
@@ -334,9 +329,7 @@ class CSVLookupTableMixin(OptimizationProblem):
                     ) and (os.path.getmtime(ini_path) < os.path.getmtime(tck_filename))
                 if valid_cache:
                     logger.debug(
-                        "CSVLookupTableMixin: Attempting to use cached tck values for {}".format(
-                            output
-                        )
+                        f"CSVLookupTableMixin: Attempting to use cached tck values for {output}"
                     )
                     try:
                         with np.load(filename.replace(".csv", ".npz")) as data:
@@ -346,7 +339,7 @@ class CSVLookupTableMixin(OptimizationProblem):
                         valid_cache = False
 
             if not valid_cache:
-                logger.info("CSVLookupTableMixin: Recalculating tck values for {}".format(output))
+                logger.info(f"CSVLookupTableMixin: Recalculating tck values for {output}")
 
             if len(csvinput.dtype.names) == 2:
                 if not valid_cache:
@@ -363,8 +356,8 @@ class CSVLookupTableMixin(OptimizationProblem):
                         )
                     else:
                         raise Exception(
-                            "CSVLookupTableMixin: Too few data points in {} to do spline fitting. "
-                            "Need at least {} points.".format(filename, k + 1)
+                            f"CSVLookupTableMixin: Too few data points in {filename} "
+                            f"to do spline fitting. Need at least {k + 1} points."
                         )
 
                 if self.csv_lookup_table_debug:
@@ -410,8 +403,8 @@ class CSVLookupTableMixin(OptimizationProblem):
                         )
                     else:
                         raise Exception(
-                            "CSVLookupTableMixin: Too few data points in {} to do spline fitting. "
-                            "Need at least {} points.".format(filename, (kx + 1) * (ky + 1))
+                            f"CSVLookupTableMixin: Too few data points in {filename} "
+                            f"to do spline fitting. Need at least {(kx + 1) * (ky + 1)} points."
                         )
 
                 if self.csv_lookup_table_debug:
@@ -443,9 +436,8 @@ class CSVLookupTableMixin(OptimizationProblem):
 
             else:
                 raise Exception(
-                    "CSVLookupTableMixin: {}-dimensional lookup tables not implemented yet.".format(
-                        len(csvinput.dtype.names)
-                    )
+                    f"CSVLookupTableMixin: {len(csvinput.dtype.names)}-dimensional "
+                    "lookup tables not implemented yet."
                 )
 
             if not valid_cache:

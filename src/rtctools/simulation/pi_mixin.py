@@ -68,9 +68,7 @@ class PIMixin(IOMixin):
                 )
         except FileNotFoundError:
             raise FileNotFoundError(
-                "PIMixin: {}.xml not found in {}.".format(
-                    pi_parameter_config_basename, self._input_folder
-                )
+                f"PIMixin: {pi_parameter_config_basename}.xml not found in {self._input_folder}."
             )
 
         # Make a parameters dict for later access
@@ -92,9 +90,7 @@ class PIMixin(IOMixin):
             )
         except FileNotFoundError:
             raise FileNotFoundError(
-                "PIMixin: {}.xml not found in {}".format(
-                    self.timeseries_import_basename, self._input_folder
-                )
+                f"PIMixin: {self.timeseries_import_basename}.xml not found in {self._input_folder}"
             )
 
         self.__timeseries_export = pi.Timeseries(
@@ -121,11 +117,9 @@ class PIMixin(IOMixin):
             for i in range(len(timeseries_import_times) - 1):
                 if timeseries_import_times[i + 1] - timeseries_import_times[i] != dt:
                     raise ValueError(
-                        "PIMixin: Expecting equidistant timeseries, the time step "
-                        "towards {} is not the same as the time step(s) before. Set "
-                        "unit to nonequidistant if this is intended.".format(
-                            timeseries_import_times[i + 1]
-                        )
+                        "PIMixin: Expecting equidistant timeseries, the time step towards "
+                        f"{timeseries_import_times[i + 1]} is not the same as the time step(s) "
+                        "before. Set unit to nonequidistant if this is intended."
                     )
 
         # Stick timeseries into an AliasDict
@@ -135,9 +129,7 @@ class PIMixin(IOMixin):
         for variable, values in self.__timeseries_import.items(self.pi_ensemble_member):
             self.io.set_timeseries(variable, timeseries_import_times, values)
             if debug and variable in self.get_variables():
-                logger.debug(
-                    "PIMixin: Timeseries {} replaced another aliased timeseries.".format(variable)
-                )
+                logger.debug(f"PIMixin: Timeseries {variable} replaced another aliased timeseries.")
 
     def write(self):
         # Call parent class first for default behaviour.
@@ -173,8 +165,8 @@ class PIMixin(IOMixin):
                 self.__data_config.pi_variable_ids(variable)
             except KeyError:
                 logger.debug(
-                    "PIMixin: variable {} has no mapping defined in rtcDataConfig "
-                    "so cannot be added to the output file.".format(variable)
+                    f"PIMixin: variable {variable} has no mapping defined in rtcDataConfig "
+                    "so cannot be added to the output file."
                 )
                 continue
 
@@ -213,11 +205,9 @@ class PIMixin(IOMixin):
         if check_consistency:
             if len(self.times()) != len(values):
                 raise ValueError(
-                    "PIMixin: Trying to set/append values {} with a different "
-                    "length than the forecast length. Please make sure the "
-                    "values cover forecastDate through endDate with timestep {}.".format(
-                        variable, self.__timeseries_import.dt
-                    )
+                    f"PIMixin: Trying to set/append values {variable} with a different "
+                    "length than the forecast length. Please make sure the values cover "
+                    f"forecastDate through endDate with timestep {self.__timeseries_import.dt}."
                 )
 
         if unit is None:
@@ -228,8 +218,8 @@ class PIMixin(IOMixin):
                 self.__data_config.pi_variable_ids(variable)
             except KeyError:
                 logger.debug(
-                    "PIMixin: variable {} has no mapping defined in rtcDataConfig "
-                    "so cannot be added to the output file.".format(variable)
+                    f"PIMixin: variable {variable} has no mapping defined in rtcDataConfig "
+                    "so cannot be added to the output file."
                 )
             else:
                 self.__timeseries_export.set(variable, values, unit=unit)

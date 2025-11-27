@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # RTC-Tools documentation build configuration file, created by
 # sphinx-quickstart on Wed Jul 13 15:02:02 2016.
@@ -382,7 +381,7 @@ for example in MODELICA_EXAMPLES:
     mo_in = os.path.join(MODELICA_EXAMPLE_BASE_FOLDER, example, "model", "Example.mo")
     mo_out = os.path.join(MODELICA_STRIPPED_EXAMPLE_FOLDER, example + ".mo")
 
-    with open(mo_in, "r") as f_in:
+    with open(mo_in) as f_in:
         with open(mo_out, "w") as f_out:
             s = f_in.read()
             s = re.sub(r"[\r\n]+[ \t]*annotation\(.*\);([\r\n]+)", r"\1", s)

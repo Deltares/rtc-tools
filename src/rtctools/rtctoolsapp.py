@@ -23,7 +23,7 @@ def copy_libraries(*args):
         path = args[0]
 
     if not os.path.exists(path):
-        sys.exit("Folder '{}' does not exist".format(path))
+        sys.exit(f"Folder '{path}' does not exist")
 
     def _copytree(src, dst, symlinks=False, ignore=None):
         if not os.path.exists(dst):
@@ -40,15 +40,11 @@ def copy_libraries(*args):
                     # Pick the largest one, assuming that all plugin packages
                     # to not provide a meaningful package.mo
                     if os.stat(s).st_size > os.stat(d).st_size:
-                        logger.warning(
-                            "Overwriting '{}' with '{}' as the latter is larger.".format(d, s)
-                        )
+                        logger.warning(f"Overwriting '{d}' with '{s}' as the latter is larger.")
                         os.remove(d)
                         shutil.copy2(s, d)
                     else:
-                        logger.warning(
-                            "Not copying '{}' to '{}' as the latter is larger.".format(s, d)
-                        )
+                        logger.warning(f"Not copying '{s}' to '{d}' as the latter is larger.")
                 else:
                     raise OSError("Could not combine two folders")
 
@@ -68,15 +64,15 @@ def copy_libraries(*args):
 
     for tld, paths in tlds.items():
         if Path(tld).exists():
-            sys.exit("Library with name '{}'' already exists".format(tld))
+            sys.exit(f"Library with name '{tld}'' already exists")
 
         try:
             for p in paths:
                 _copytree(p, dst / p.name)
         except OSError:
-            sys.exit("Failed merging the libraries in package '{}'".format(tld))
+            sys.exit(f"Failed merging the libraries in package '{tld}'")
 
-    sys.exit("Succesfully copied all library folders to '{}'".format(dst.resolve()))
+    sys.exit(f"Succesfully copied all library folders to '{dst.resolve()}'")
 
 
 def download_examples(*args):
@@ -89,7 +85,7 @@ def download_examples(*args):
         path = args[0]
 
     if not os.path.exists(path):
-        sys.exit("Folder '{}' does not exist".format(path))
+        sys.exit(f"Folder '{path}' does not exist")
 
     path = Path(path)
 
@@ -99,14 +95,14 @@ def download_examples(*args):
 
     version = rtctools.__version__
     try:
-        url = "https://github.com/rtc-tools/rtc-tools/zipball/{}".format(version)
+        url = f"https://github.com/rtc-tools/rtc-tools/zipball/{version}"
 
         opener = urllib.request.build_opener()
         urllib.request.install_opener(opener)
         # The security warning can be dismissed as the url variable is hardcoded to a remote.
         local_filename, _ = urllib.request.urlretrieve(url)  # nosec
     except HTTPError:
-        sys.exit("Could not found examples for RTC-Tools version {}.".format(version))
+        sys.exit(f"Could not found examples for RTC-Tools version {version}.")
 
     with ZipFile(local_filename, "r") as z:
         target = path / "rtc-tools-examples"
@@ -117,7 +113,7 @@ def download_examples(*args):
         shutil.move(prefix, target)
         shutil.rmtree(zip_folder_name)
 
-        sys.exit("Succesfully downloaded the RTC-Tools examples to '{}'".format(target.resolve()))
+        sys.exit(f"Succesfully downloaded the RTC-Tools examples to '{target.resolve()}'")
 
     try:
         os.remove(local_filename)

@@ -118,15 +118,13 @@ class Example(
     def post(self):
         super().post()
         for e_m in range(self.ensemble_size):
-            print("\n\nResults for Ensemble Member {}:".format(e_m))
+            print(f"\n\nResults for Ensemble Member {e_m}:")
             for priority, n_level_satisfied, q_release_integral in self.intermediate_results[e_m]:
-                print("\nAfter finishing goals of priority {}:".format(priority))
+                print(f"\nAfter finishing goals of priority {priority}:")
                 print(
-                    "Level goal satisfied at {} of {} time steps".format(
-                        n_level_satisfied, len(self.times())
-                    )
+                    f"Level goal satisfied at {n_level_satisfied} of {len(self.times())} time steps"
                 )
-                print("Integral of Q_release = {:.2f}".format(q_release_integral))
+                print(f"Integral of Q_release = {q_release_integral:.2f}")
 
     # Any solver options can be set here
     def solver_options(self):

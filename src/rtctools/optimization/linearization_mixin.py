@@ -1,5 +1,3 @@
-from typing import Dict
-
 from .optimization_problem import OptimizationProblem
 
 
@@ -25,7 +23,7 @@ class LinearizationMixin(OptimizationProblem):
 
         return parameters
 
-    def linearization_parameters(self) -> Dict[str, str]:
+    def linearization_parameters(self) -> dict[str, str]:
         """
         :returns: A dictionary of parameter names mapping to time series identifiers.
         """

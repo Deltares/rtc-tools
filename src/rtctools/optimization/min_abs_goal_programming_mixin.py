@@ -1,6 +1,5 @@
 import functools
 import itertools
-from typing import List, Optional
 
 import casadi as ca
 import numpy as np
@@ -89,7 +88,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
         return super().path_variables + self.__problem_path_vars
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: Optional[int] = None):
+    def bounds(self, ensemble_member: int | None = None):
         bounds = (
             super().bounds(ensemble_member) if self.ensemble_specific_bounds else super().bounds()
         )
@@ -133,25 +132,21 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
 
         for goal in goals:
             if not isinstance(goal, MinAbsGoal):
-                raise Exception(
-                    "Absolute goal not an instance of MinAbsGoal for goal {}".format(goal)
-                )
+                raise Exception(f"Absolute goal not an instance of MinAbsGoal for goal {goal}")
 
             if goal.function_range != (np.nan, np.nan):
                 raise Exception(
-                    "Absolute goal function is only allowed for minimization for goal {}".format(
-                        goal
-                    )
+                    f"Absolute goal function is only allowed for minimization for goal {goal}"
                 )
 
             if goal.order != 1:
                 raise Exception(
-                    "Absolute goal function is only allowed for order = 1 for goal {}".format(goal)
+                    f"Absolute goal function is only allowed for order = 1 for goal {goal}"
                 )
 
             if goal.weight <= 0:
                 raise Exception(
-                    "Absolute goal function is only allowed for weight > 0 for goal {}".format(goal)
+                    f"Absolute goal function is only allowed for weight > 0 for goal {goal}"
                 )
 
     @staticmethod
@@ -169,7 +164,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
         for j, goal in enumerate(goals):
             assert isinstance(goal, MinAbsGoal)
 
-            abs_variable_name = "abs_{}_{}".format(sym_index, j)
+            abs_variable_name = f"abs_{sym_index}_{j}"
             if is_path_goal:
                 abs_variable_name = "path_" + abs_variable_name
 
@@ -364,7 +359,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
 
         self.__first_run = False
 
-    def min_abs_goals(self) -> List[MinAbsGoal]:
+    def min_abs_goals(self) -> list[MinAbsGoal]:
         """
         User problem returns list of :py:class:`MinAbsGoal` objects.
 
@@ -379,7 +374,7 @@ class MinAbsGoalProgrammingMixin(_GoalProgrammingMixinBase):
         except AttributeError:
             return goals
 
-    def min_abs_path_goals(self) -> List[MinAbsGoal]:
+    def min_abs_path_goals(self) -> list[MinAbsGoal]:
         """
         User problem returns list of :py:class:`MinAbsGoal` objects.
 
