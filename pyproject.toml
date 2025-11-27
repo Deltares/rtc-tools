@@ -101,5 +101,6 @@ lint.select = [
     "E", # default / pycodestyle
     "F", # default / pyflakes
     "I", # isort
+    "UP", # pyupgrade
     "W", # pycodestyle
 ]

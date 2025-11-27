@@ -1,7 +1,6 @@
 import logging
 import sys
 from datetime import datetime
-from typing import Union
 
 import numpy as np
 
@@ -32,7 +31,7 @@ def _boolean_to_nan(data, fname):
     if convert_to_nan:
         logger.warning(
             "Column(s) {} were detected as boolean in '{}'; converting to NaN".format(
-                ", ".join(["'{}'".format(name) for name in convert_to_nan]), fname
+                ", ".join([f"'{name}'" for name in convert_to_nan]), fname
             )
         )
         data = data.astype(dtypes_out)
@@ -42,14 +41,14 @@ def _boolean_to_nan(data, fname):
     return data
 
 
-def _string_to_datetime(string: Union[str, bytes]) -> datetime:
+def _string_to_datetime(string: str | bytes) -> datetime:
     """Convert a string to a datetime object."""
     if isinstance(string, bytes):
         string = string.decode("utf-8")
     return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
 
 
-def _string_to_float(string: Union[str, bytes]) -> float:
+def _string_to_float(string: str | bytes) -> float:
     """Convert a string to a float."""
     if isinstance(string, bytes):
         string = string.decode("utf-8")
@@ -103,12 +102,10 @@ def load(fname, delimiter=",", with_time=False):
                 np.lib._iotools.ConverterError
             ):  # value does not conform to expected date-time format
                 type, value, traceback = sys.exc_info()
-                logger.error(
-                    "CSVMixin: converter of csv reader failed on {}: {}".format(fname, value)
-                )
+                logger.error(f"CSVMixin: converter of csv reader failed on {fname}: {value}")
                 raise ValueError(
-                    "CSVMixin: wrong date time or value format in {}. "
-                    "Should be %Y-%m-%d %H:%M:%S and numerical values everywhere.".format(fname)
+                    f"CSVMixin: wrong date time or value format in {fname}. "
+                    "Should be %Y-%m-%d %H:%M:%S and numerical values everywhere."
                 )
         else:
             data = np.genfromtxt(fname, delimiter=delimiter, deletechars="", dtype=None, names=True)
@@ -117,11 +114,11 @@ def load(fname, delimiter=",", with_time=False):
         # can occur when delimiter changes after first 1024 bytes of file,
         # or delimiter is not , or ;
         type, value, traceback = sys.exc_info()
-        logger.error("CSV: Value reader of csv reader failed on {}: {}".format(fname, value))
+        logger.error(f"CSV: Value reader of csv reader failed on {fname}: {value}")
         raise ValueError(
-            "CSV: could not read all values from {}. Used delimiter '{}'. "
+            f"CSV: could not read all values from {fname}. Used delimiter '{delimiter}'. "
             "Please check delimiter (should be ',' or ';' throughout the file) "
-            "and if all values are numbers.".format(fname, delimiter)
+            "and if all values are numbers."
         )
 
 

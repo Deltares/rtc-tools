@@ -13,7 +13,7 @@ def cached(f):
             return call()
         cache_name = "__" + f.__name__
         if ensemble_member is not None:
-            cache_name = "{}[{}]".format(cache_name, ensemble_member)
+            cache_name = f"{cache_name}[{ensemble_member}]"
         if hasattr(self, cache_name):
             return getattr(self, cache_name)
         setattr(self, call_in_progress, True)

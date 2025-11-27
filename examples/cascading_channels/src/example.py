@@ -47,16 +47,15 @@ class Example(
         # Generate handy tuples to iterate over
         self.channel_node_indices = tuple(range(1, self.channel_n_level_nodes + 1))
         self.channel_level_nodes = tuple(
-            "{}.H[{}]".format(c, n)
-            for c, n in itertools.product(self.channels, self.channel_node_indices)
+            f"{c}.H[{n}]" for c, n in itertools.product(self.channels, self.channel_node_indices)
         )
         # Expand channel water level goals to all nodes
         for channel in self.channels:
             channel_max = self.get_timeseries(channel + "_max")
             channel_min = self.get_timeseries(channel + "_min")
             for i in self.channel_node_indices:
-                self.set_timeseries("{}.H[{}]_max".format(channel, i), channel_max)
-                self.set_timeseries("{}.H[{}]_min".format(channel, i), channel_min)
+                self.set_timeseries(f"{channel}.H[{i}]_max", channel_max)
+                self.set_timeseries(f"{channel}.H[{i}]_min", channel_min)
         # Make input series appear in output csv
         self.set_timeseries("Inflow_Q", self.get_timeseries("Inflow_Q"))
         self.set_timeseries(

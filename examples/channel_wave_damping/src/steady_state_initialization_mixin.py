@@ -8,7 +8,7 @@ class SteadyStateInitializationMixin(OptimizationProblem):
         parameters = self.parameters(ensemble_member)
         # Force steady-state initialization at t0 and at t1.
         for reach in ["upstream", "middle", "downstream"]:
-            for i in range(int(parameters["{}.n_level_nodes".format(reach)]) + 1):
-                state = "{}.Q[{}]".format(reach, i + 1)
+            for i in range(int(parameters[f"{reach}.n_level_nodes"]) + 1):
+                state = f"{reach}.Q[{i + 1}]"
                 c.append((self.der_at(state, times[0]), 0, 0))
         return c

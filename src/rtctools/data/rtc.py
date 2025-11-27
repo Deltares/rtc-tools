@@ -48,15 +48,15 @@ class DataConfig:
                     if internal_id in self.__location_parameter_ids:
                         message = (
                             "Found more than one external timeseries "
-                            "mapped to internal id {} in {}."
-                        ).format(internal_id, path)
+                            f"mapped to internal id {internal_id} in {path}."
+                        )
                         logger.error(message)
                         raise Exception(message)
                     elif external_id in self.__variable_map:
                         message = (
                             "Found more than one internal timeseries "
-                            "mapped to external id {} in {}."
-                        ).format(external_id, path)
+                            f"mapped to external id {external_id} in {path}."
+                        )
                         logger.error(message)
                         raise Exception(message)
                     else:
@@ -66,9 +66,9 @@ class DataConfig:
                         self.__variable_map[external_id] = internal_id
 
             for k in ["import", "export"]:
-                res = root.find("./fews:%s/fews:PITimeSeriesFile/fews:timeSeriesFile" % k, ns)
+                res = root.find(f"./fews:{k}/fews:PITimeSeriesFile/fews:timeSeriesFile", ns)
                 if res is not None:
-                    setattr(self, "basename_%s" % k, os.path.splitext(res.text)[0])
+                    setattr(self, f"basename_{k}", os.path.splitext(res.text)[0])
 
             parameters = root.findall("./fews:parameter", ns)
             if parameters is not None:
@@ -81,19 +81,16 @@ class DataConfig:
                         if internal_id in self.__model_parameter_ids:
                             message = (
                                 "Found more than one external parameter mapped "
-                                "to internal id {} in {}."
-                            ).format(internal_id, path)
+                                f"to internal id {internal_id} in {path}."
+                            )
                             logger.error(message)
                             raise Exception(message)
                         if external_id in self.__parameter_map:
                             message = (
                                 "Found more than one interal parameter mapped to external "
-                                "modelId {}, locationId {}, parameterId {} in {}."
-                            ).format(
-                                external_id.model_id,
-                                external_id.location_id,
-                                external_id.parameter_id,
-                                path,
+                                f"modelId {external_id.model_id}, "
+                                f"locationId {external_id.location_id}, "
+                                f"parameterId {external_id.parameter_id} in {path}."
                             )
                             logger.error(message)
                             raise Exception(message)
@@ -103,8 +100,8 @@ class DataConfig:
                             )
                             self.__parameter_map[external_id] = internal_id
 
-        except IOError:
-            logger.error('No rtcDataConfig.xml file was found in "{}".'.format(folder))
+        except OSError:
+            logger.error(f'No rtcDataConfig.xml file was found in "{folder}".')
             raise
 
     def __pi_timeseries_id(self, el, namespace):

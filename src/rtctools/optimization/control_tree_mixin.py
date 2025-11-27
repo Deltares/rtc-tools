@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, List, Tuple, Union
 
 import numpy as np
 
@@ -18,7 +17,7 @@ class ControlTreeMixin(OptimizationProblem):
 
         self.__branches = {}
 
-    def control_tree_options(self) -> Dict[str, Union[List[str], List[float], int]]:
+    def control_tree_options(self) -> dict[str, list[str] | list[float] | int]:
         """
         Returns a dictionary of options controlling the creation of a k-ary stochastic tree.
 
@@ -102,7 +101,7 @@ class ControlTreeMixin(OptimizationProblem):
         # with branching time t1.
         branches = {}
 
-        def branch(current_branch: Tuple[int]):
+        def branch(current_branch: tuple[int]):
             if len(current_branch) >= n_branching_times:
                 return
 
@@ -209,7 +208,7 @@ class ControlTreeMixin(OptimizationProblem):
         return super().discretize_controls(resolved_bounds)
 
     @property
-    def control_tree_branches(self) -> Dict[Tuple[int], List[int]]:
+    def control_tree_branches(self) -> dict[tuple[int], list[int]]:
         """
         Returns a dictionary mapping the branch id (a Tuple of ints) to a list
         of ensemble members in said branch.

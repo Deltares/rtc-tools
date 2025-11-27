@@ -5,7 +5,6 @@ import logging
 import math
 from collections import OrderedDict
 from importlib import metadata as importlib_metadata
-from typing import List, Union
 
 import casadi as ca
 import numpy as np
@@ -71,7 +70,7 @@ class SimulationProblem(DataStoreAccessor):
         assert "model_folder" in kwargs
 
         # Log pymoca version
-        logger.debug("Using pymoca {}.".format(pymoca.__version__))
+        logger.debug(f"Using pymoca {pymoca.__version__}.")
 
         # Transfer model from the Modelica .mo file to CasADi using pymoca
         if "model_name" in kwargs:
@@ -202,13 +201,12 @@ class SimulationProblem(DataStoreAccessor):
                 continue
             else:
                 if ca.MX(v.nominal).size1() != 1:
-                    logger.error("Vector Nominals not supported yet. ({})".format(sym_name))
+                    logger.error(f"Vector Nominals not supported yet. ({sym_name})")
                 self.__nominals[sym_name] = ca.fabs(v.nominal)
                 if logger.getEffectiveLevel() == logging.DEBUG:
                     logger.debug(
-                        "SimulationProblem: Setting nominal value for variable {} to {}".format(
-                            sym_name, self.__nominals[sym_name]
-                        )
+                        f"SimulationProblem: Setting nominal value for variable {sym_name} "
+                        f"to {self.__nominals[sym_name]}"
                     )
 
         for v in self.__extra_variables:
@@ -263,7 +261,7 @@ class SimulationProblem(DataStoreAccessor):
         self.__parameters_set_var = True
 
         # Construct a dict to look up symbols by name (or iterate over)
-        self.__sym_dict = OrderedDict(((sym.name(), sym) for sym in self.__sym_list))
+        self.__sym_dict = OrderedDict((sym.name(), sym) for sym in self.__sym_list)
 
         # Generate a dictionary that we can use to lookup the index in the state vector.
         # To avoid repeated and relatively expensive `canonical_signed` calls, we
@@ -378,9 +376,7 @@ class SimulationProblem(DataStoreAccessor):
                 # If val is finite, we set it
                 if np.isfinite(val):
                     logger.debug(
-                        "SimulationProblem: Setting parameter {} = {}".format(
-                            var.symbol.name(), val
-                        )
+                        f"SimulationProblem: Setting parameter {var.symbol.name()} = {val}"
                     )
                     self.set_var(var.symbol.name(), val)
 
@@ -484,10 +480,8 @@ class SimulationProblem(DataStoreAccessor):
             numeric_start_val = start_val if start_is_numeric else 0.0
             if len(start_values) > 1:
                 logger.warning(
-                    "Initialize: Multiple initial values for {} are provided: {}.".format(
-                        var_name, start_values
-                    )
-                    + " Value from {} will be used to continue.".format(source_description)
+                    f"Initialize: Multiple initial values for {var_name} are provided: "
+                    f"{start_values}. Value from {source_description} will be used to continue."
                 )
 
             # Attempt to set start_val in the state vector. Default to zero if unknown.
@@ -495,9 +489,8 @@ class SimulationProblem(DataStoreAccessor):
                 self.set_var(var_name, numeric_start_val)
             except KeyError:
                 logger.warning(
-                    "Initialize: {} not found in state vector. Initial value of {} not set.".format(
-                        var_name, numeric_start_val
-                    )
+                    f"Initialize: {var_name} not found in state vector. "
+                    f"Initial value of {numeric_start_val} not set."
                 )
 
             # Add a residual for the difference between the state and its starting expression
@@ -509,8 +502,8 @@ class SimulationProblem(DataStoreAccessor):
                 # turn the decision variable into a parameter.
                 if min_is_symbolic or max_is_symbolic or var.min != -np.inf or var.max != np.inf:
                     logger.info(
-                        "Initialize: bounds of {} will be overwritten".format(var_name)
-                        + " by the start value given by {}.".format(source_description)
+                        f"Initialize: bounds of {var_name} will be overwritten"
+                        + f" by the start value given by {source_description}."
                     )
                 var.min = start_expr
                 var.max = start_expr
@@ -553,7 +546,7 @@ class SimulationProblem(DataStoreAccessor):
         if getattr(self, "encourage_steady_state_initial_conditions", False):
             # add penalty for der(var) != 0.0
             for d in self.__mx["derivatives"]:
-                logger.debug("Added {} to the minimized residuals.".format(d.name()))
+                logger.debug(f"Added {d.name()} to the minimized residuals.")
                 minimized_residuals.append(d)
 
         # Make minimized_residuals into a single symbolic object
@@ -690,12 +683,12 @@ class SimulationProblem(DataStoreAccessor):
         if return_status not in {"Solve_Succeeded", "Solved_To_Acceptable_Level"}:
             if return_status == "Infeasible_Problem_Detected":
                 message = (
-                    "Initialization Failed with return status: {}. ".format(return_status)
+                    f"Initialization Failed with return status: {return_status}. "
                     + "This means no initial state could be found "
                     + "that satisfies all equations and constraints."
                 )
             else:
-                message = "Initialization Failed with return status: {}. ".format(return_status)
+                message = f"Initialization Failed with return status: {return_status}. "
             raise Exception(message)
 
         # Update state vector with initial conditions
@@ -780,8 +773,8 @@ class SimulationProblem(DataStoreAccessor):
 
         if X.size1() != dae_residual.size1():
             logger.error(
-                "Formulation Error: Number of states ({}) "
-                "does not equal number of equations ({})".format(X.size1(), dae_residual.size1())
+                f"Formulation Error: Number of states ({X.size1()}) "
+                f"does not equal number of equations ({dae_residual.size1()})"
             )
 
         # Construct a function res_vals that returns the numerical residuals of a numerical state
@@ -843,7 +836,7 @@ class SimulationProblem(DataStoreAccessor):
             self.set_time_step(dt)
         dt = self.get_time_step()
 
-        logger.debug("Taking a step at {} with size {}".format(self.get_current_time(), dt))
+        logger.debug(f"Taking a step at {self.get_current_time()} with size {dt}")
 
         # increment time
         self.set_var("time", self.get_current_time() + dt)
@@ -892,7 +885,7 @@ class SimulationProblem(DataStoreAccessor):
                     next_state, self.__dt, self.__state_vector[: -len(self.__mx["parameters"])]
                 )
             )
-            logger.debug("Residual maximum magnitude: {:.2E}".format(float(largest_res)))
+            logger.debug(f"Residual maximum magnitude: {float(largest_res):.2E}")
 
         # Update state vector
         self.__state_vector[: self.__n_states] = next_state.toarray().ravel()
@@ -1164,7 +1157,7 @@ class SimulationProblem(DataStoreAccessor):
             },
         }
 
-    def get_variable_nominal(self, variable) -> Union[float, ca.MX]:
+    def get_variable_nominal(self, variable) -> float | ca.MX:
         """
         Get the value of the nominal attribute of a variable
 
@@ -1201,7 +1194,7 @@ class SimulationProblem(DataStoreAccessor):
                 pass
             else:
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("Read intial state for {}".format(variable))
+                    logger.debug(f"Read intial state for {variable}")
 
         return initial_state_dict
 
@@ -1227,10 +1220,10 @@ class SimulationProblem(DataStoreAccessor):
 
         return parameters
 
-    def extra_variables(self) -> List[Variable]:
+    def extra_variables(self) -> list[Variable]:
         return []
 
-    def extra_equations(self) -> List[ca.MX]:
+    def extra_equations(self) -> list[ca.MX]:
         return []
 
     @property

@@ -79,7 +79,7 @@ def run_optimization_problem(
 
     # Add stream handler if it does not already exist.
     if not logger.hasHandlers() and not any(
-        (isinstance(h, logging.StreamHandler) for h in logger.handlers)
+        isinstance(h, logging.StreamHandler) for h in logger.handlers
     ):
         handler = logging.StreamHandler()
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
@@ -88,7 +88,7 @@ def run_optimization_problem(
 
     # Add pi.DiagHandler, if using PIMixin. Only add it if it does not already exist.
     if issubclass(optimization_problem_class, OptimizationPIMixin) and not any(
-        (isinstance(h, pi.DiagHandler) for h in logger.handlers)
+        isinstance(h, pi.DiagHandler) for h in logger.handlers
     ):
         handler = pi.DiagHandler(output_folder)
         logger.addHandler(handler)
@@ -97,8 +97,8 @@ def run_optimization_problem(
     logger.setLevel(log_level)
 
     # Log version info
-    logger.info("Using RTC-Tools {}.".format(__version__))
-    logger.debug("Using CasADi {}.".format(casadi.__version__))
+    logger.info(f"Using RTC-Tools {__version__}.")
+    logger.debug(f"Using CasADi {casadi.__version__}.")
 
     # Check for some common mistakes in inheritance order
     suggested_order = OrderedSet(
@@ -120,8 +120,9 @@ def run_optimization_problem(
     )
     base_names = OrderedSet([b.__name__ for b in optimization_problem_class.__bases__])
     if suggested_order & base_names != base_names & suggested_order:
-        msg = "Please inherit from base classes in the following order: {}".format(
-            list(base_names & suggested_order)
+        msg = (
+            "Please inherit from base classes in the following order: "
+            f"{list(base_names & suggested_order)}"
         )
         logger.error(msg)
         raise Exception(msg)
@@ -155,10 +156,8 @@ def run_optimization_problem(
                 ).group(1)
                 abstract_method = re.search(" with abstract methods (.*)", str(value)).group(1)
                 logger.error(
-                    "The {} is missing a mixin. Please add a mixin that instantiates "
-                    "abstract method {}, so that the optimizer can run.".format(
-                        failed_class, abstract_method
-                    )
+                    f"The {failed_class} is missing a mixin. Please add a mixin that instantiates "
+                    f"abstract method {abstract_method}, so that the optimizer can run."
                 )
             except Exception:
                 pass
@@ -199,7 +198,7 @@ def run_simulation_problem(
     if base_folder is None:
         # Check command line arguments
         if len(sys.argv) != 2:
-            raise Exception("Usage: {} BASE_FOLDER".format(sys.argv[0]))
+            raise Exception(f"Usage: {sys.argv[0]} BASE_FOLDER")
 
         base_folder = sys.argv[1]
     else:
@@ -214,7 +213,7 @@ def run_simulation_problem(
     # Set up logging
     logger = logging.getLogger("rtctools")
     if not logger.hasHandlers() and not any(
-        (isinstance(h, logging.StreamHandler) for h in logger.handlers)
+        isinstance(h, logging.StreamHandler) for h in logger.handlers
     ):
         handler = logging.StreamHandler()
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
@@ -223,15 +222,15 @@ def run_simulation_problem(
 
     # Add pi.DiagHandler, if using PIMixin. Only add it if it does not already exist.
     if issubclass(simulation_problem_class, SimulationPIMixin) and not any(
-        (isinstance(h, pi.DiagHandler) for h in logger.handlers)
+        isinstance(h, pi.DiagHandler) for h in logger.handlers
     ):
         handler = pi.DiagHandler(output_folder)
         logger.addHandler(handler)
 
     logger.setLevel(log_level)
 
-    logger.info("Using RTC-Tools {}".format(__version__))
-    logger.debug("Using CasADi {}.".format(casadi.__version__))
+    logger.info(f"Using RTC-Tools {__version__}")
+    logger.debug(f"Using CasADi {casadi.__version__}.")
 
     # Run
     prob = simulation_problem_class(

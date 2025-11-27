@@ -1,5 +1,4 @@
 import logging
-from typing import Union
 
 import casadi as ca
 
@@ -44,7 +43,7 @@ def reduce_matvec(e, v):
 
 
 def substitute_in_external(
-    expr: list[ca.MX], symbols: list[ca.MX], values: list[Union[ca.MX, ca.DM, float]]
+    expr: list[ca.MX], symbols: list[ca.MX], values: list[ca.MX | ca.DM | float]
 ):
     # We expect expr to be a list of (at most) length 1
     assert len(expr) <= 1

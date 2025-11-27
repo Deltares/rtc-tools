@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, Union
 
 from .optimization_problem import OptimizationProblem
 from .timeseries import Timeseries
@@ -60,7 +59,7 @@ class HomotopyMixin(OptimizationProblem):
 
         return parameters
 
-    def homotopy_options(self) -> Dict[str, Union[str, float]]:
+    def homotopy_options(self) -> dict[str, str | float]:
         """
         Returns a dictionary of options controlling the homotopy process.
 
@@ -117,7 +116,7 @@ class HomotopyMixin(OptimizationProblem):
         self.__theta = options["theta_start"]
 
         while self.__theta <= 1.0:
-            logger.info("Solving with homotopy parameter theta = {}.".format(self.__theta))
+            logger.info(f"Solving with homotopy parameter theta = {self.__theta}.")
 
             success = super().optimize(
                 preprocessing=False, postprocessing=False, log_solver_failure_as_error=False

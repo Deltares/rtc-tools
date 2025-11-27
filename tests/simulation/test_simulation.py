@@ -1,6 +1,5 @@
 import os
 import re
-from typing import List
 
 import casadi as ca
 import numpy as np
@@ -434,7 +433,7 @@ class SimulationModelInfeasibleInitialValueCSV(CSVMixin, SimulationProblem):
         )
 
 
-def contains_regex(regex: re.Pattern, messages: List[str]):
+def contains_regex(regex: re.Pattern, messages: list[str]):
     """
     Check that a list of messages contains a given regex
 

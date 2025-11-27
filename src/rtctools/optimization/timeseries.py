@@ -1,5 +1,3 @@
-from typing import Union
-
 import casadi as ca
 import numpy as np
 
@@ -9,7 +7,7 @@ class Timeseries:
     Time series object, bundling time stamps with values.
     """
 
-    def __init__(self, times: np.ndarray, values: Union[float, np.ndarray, list, ca.DM]):
+    def __init__(self, times: np.ndarray, values: float | np.ndarray | list | ca.DM):
         """
         Create a new time series object.
 
@@ -50,7 +48,7 @@ class Timeseries:
         return self.__class__(self.times, -self.values)
 
     def __repr__(self) -> str:
-        return "Timeseries({}, {})".format(self.__times, self.__values)
+        return f"Timeseries({self.__times}, {self.__values})"
 
     def __eq__(self, other: "Timeseries") -> bool:
         return np.array_equal(self.times, other.times) and np.array_equal(self.values, other.values)

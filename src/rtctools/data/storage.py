@@ -1,7 +1,7 @@
 import logging
 from abc import ABCMeta, abstractmethod
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Iterable, List, Tuple, Union
 
 import numpy as np
 
@@ -93,7 +93,7 @@ class DataStore:
         self.__ensemble_size = ensemble_size
 
     @property
-    def datetimes(self) -> List[datetime]:
+    def datetimes(self) -> list[datetime]:
         """
         Returns the timeseries times in seconds.
 
@@ -126,10 +126,8 @@ class DataStore:
             # loosened in the future.
             if self.reference_datetime not in self.__timeseries_datetimes:
                 raise Exception(
-                    "Reference datetime {} should be equal to "
-                    "one of the timeseries datetimes {}".format(
-                        self.reference_datetime, self.__timeseries_datetimes
-                    )
+                    f"Reference datetime {self.reference_datetime} should be equal to "
+                    f"one of the timeseries datetimes {self.__timeseries_datetimes}"
                 )
             self.__timeseries_times_sec = self.datetime_to_sec(
                 self.__timeseries_datetimes, self.reference_datetime
@@ -169,9 +167,8 @@ class DataStore:
 
         if len(self.__timeseries_datetimes) != len(values):
             raise ValueError(
-                "Length of values ({}) must be the same as length of datetimes ({})".format(
-                    len(values), len(self.__timeseries_datetimes)
-                )
+                f"Length of values ({len(values)}) must be the same as "
+                f"length of datetimes ({len(self.__timeseries_datetimes)})"
             )
 
         if ensemble_member >= self.__ensemble_size:
@@ -179,22 +176,22 @@ class DataStore:
 
         if check_duplicates and variable in self.__timeseries_values[ensemble_member].keys():
             logger.warning(
-                "Time series values for ensemble member {} and variable {} set twice. "
-                "Overwriting old values.".format(ensemble_member, variable)
+                f"Time series values for ensemble member {ensemble_member} and "
+                f"variable {variable} set twice. Overwriting old values."
             )
 
         self.__timeseries_values[ensemble_member][variable] = values
 
     def get_timeseries(
         self, variable: str, ensemble_member: int = 0
-    ) -> Tuple[List[datetime], np.ndarray]:
+    ) -> tuple[list[datetime], np.ndarray]:
         """
         Looks up the time series in the internal data store.
 
         :return a tuple (datetimes, values)
         """
         if ensemble_member >= self.__ensemble_size:
-            raise KeyError("ensemble_member {} does not exist".format(ensemble_member))
+            raise KeyError(f"ensemble_member {ensemble_member} does not exist")
         return self.__timeseries_datetimes, self.__timeseries_values[ensemble_member][variable]
 
     def get_timeseries_names(self, ensemble_member: int = 0) -> Iterable[str]:
@@ -236,9 +233,8 @@ class DataStore:
 
         if len(self.__timeseries_datetimes) != len(values):
             raise ValueError(
-                "Length of values ({}) must be the same as length of times ({})".format(
-                    len(values), len(self.__timeseries_datetimes)
-                )
+                f"Length of values ({len(values)}) must be the same as "
+                f"length of times ({len(self.__timeseries_datetimes)})"
             )
 
         if ensemble_member >= self.__ensemble_size:
@@ -246,15 +242,15 @@ class DataStore:
 
         if check_duplicates and variable in self.__timeseries_values[ensemble_member].keys():
             logger.warning(
-                "Time series values for ensemble member {} and variable {} set twice. "
-                "Overwriting old values.".format(ensemble_member, variable)
+                f"Time series values for ensemble member {ensemble_member} and "
+                f"variable {variable} set twice. Overwriting old values."
             )
 
         self.__timeseries_values[ensemble_member][variable] = values
 
     def get_timeseries_sec(
         self, variable: str, ensemble_member: int = 0
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Looks up the time series in the internal data store.
 
@@ -266,7 +262,7 @@ class DataStore:
         self._datetimes_to_seconds()
 
         if ensemble_member >= self.__ensemble_size:
-            raise KeyError("ensemble_member {} does not exist".format(ensemble_member))
+            raise KeyError(f"ensemble_member {ensemble_member} does not exist")
         return self.__timeseries_times_sec, self.__timeseries_values[ensemble_member][variable]
 
     def set_parameter(
@@ -290,8 +286,8 @@ class DataStore:
 
         if check_duplicates and parameter_name in self.__parameters[ensemble_member].keys():
             logger.warning(
-                "Attempting to set parameter value for ensemble member {} and name {} twice. "
-                "Using new value of {}.".format(ensemble_member, parameter_name, value)
+                f"Attempting to set parameter value for ensemble member {ensemble_member} "
+                f"and name {parameter_name} twice. Using new value of {value}."
             )
 
         self.__parameters[ensemble_member][parameter_name] = value
@@ -301,7 +297,7 @@ class DataStore:
         Looks up the parameter value in the internal data store.
         """
         if ensemble_member >= self.__ensemble_size:
-            raise KeyError("ensemble_member {} does not exist".format(ensemble_member))
+            raise KeyError(f"ensemble_member {ensemble_member} does not exist")
         return self.__parameters[ensemble_member][parameter_name]
 
     def parameters(self, ensemble_member: int = 0) -> AliasDict:
@@ -309,13 +305,11 @@ class DataStore:
         Returns an AliasDict of parameters to its values for the specified ensemble member.
         """
         if ensemble_member >= self.__ensemble_size:
-            raise KeyError("ensemble_member {} does not exist".format(ensemble_member))
+            raise KeyError(f"ensemble_member {ensemble_member} does not exist")
         return self.__parameters[ensemble_member]
 
     @staticmethod
-    def datetime_to_sec(
-        d: Union[Iterable[datetime], datetime], t0: datetime
-    ) -> Union[np.ndarray, float]:
+    def datetime_to_sec(d: Iterable[datetime] | datetime, t0: datetime) -> np.ndarray | float:
         """
         Returns the date/timestamps in seconds since t0.
 
@@ -328,9 +322,7 @@ class DataStore:
             return (d - t0).total_seconds()
 
     @staticmethod
-    def sec_to_datetime(
-        s: Union[Iterable[float], float], t0: datetime
-    ) -> Union[List[datetime], datetime]:
+    def sec_to_datetime(s: Iterable[float] | float, t0: datetime) -> list[datetime] | datetime:
         """
         Return the date/timestamps in seconds since t0 as datetime objects.
 

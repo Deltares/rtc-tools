@@ -75,7 +75,7 @@ class CSVMixin(IOMixin):
             for key in _parameters.dtype.names:
                 self.io.set_parameter(key, float(_parameters[key]))
             logger.debug("CSVMixin: Read parameters.")
-        except IOError:
+        except OSError:
             pass
 
         try:
@@ -87,7 +87,7 @@ class CSVMixin(IOMixin):
             self.__initial_state = {
                 key: float(_initial_state[key]) for key in _initial_state.dtype.names
             }
-        except IOError:
+        except OSError:
             self.__initial_state = {}
 
         # Check for collisions in __initial_state and timeseries import (CSV)
@@ -96,8 +96,8 @@ class CSVMixin(IOMixin):
                 continue
             else:
                 logger.warning(
-                    "CSVMixin: Entry {} in initial_state.csv conflicts with "
-                    "timeseries_import.csv".format(collision)
+                    f"CSVMixin: Entry {collision} in initial_state.csv conflicts with "
+                    "timeseries_import.csv"
                 )
 
         # Timestamp check
@@ -116,8 +116,8 @@ class CSVMixin(IOMixin):
                 if times[i + 1] - times[i] != dt:
                     raise Exception(
                         "CSVMixin: Expecting equidistant timeseries, the time step "
-                        "towards {} is not the same as the time step(s) before. "
-                        "Set equidistant=False if this is intended.".format(times[i + 1])
+                        f"towards {times[i + 1]} is not the same as the time step(s) before. "
+                        "Set equidistant=False if this is intended."
                     )
 
     def write(self):
@@ -161,11 +161,9 @@ class CSVMixin(IOMixin):
                 initial_state[canonical_var] = value * sign
 
                 if logger.getEffectiveLevel() == logging.DEBUG:
-                    logger.debug("CSVMixin: Read initial state {} = {}".format(variable, value))
+                    logger.debug(f"CSVMixin: Read initial state {variable} = {value}")
             else:
                 logger.warning(
-                    "CSVMixin: In initial_state.csv, {} is not an input or state variable.".format(
-                        variable
-                    )
+                    f"CSVMixin: In initial_state.csv, {variable} is not an input or state variable."
                 )
         return initial_state

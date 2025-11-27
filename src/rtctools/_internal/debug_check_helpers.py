@@ -28,10 +28,10 @@ def debug_check(level):
                 do_check = True
 
             if do_check:
-                logger.info("Starting debug check '{}'".format(func.__qualname__))
+                logger.info(f"Starting debug check '{func.__qualname__}'")
                 extra_options = this._debug_check_options.get(func.__qualname__, {})
                 ret = func(*args, **kwargs, **extra_options)
-                logger.info("Finished debug check '{}'".format(func.__qualname__))
+                logger.info(f"Finished debug check '{func.__qualname__}'")
                 return ret
             else:
                 return noop(*args, **kwargs)

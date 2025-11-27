@@ -1,6 +1,6 @@
 import logging
 from abc import ABCMeta, abstractmethod, abstractproperty
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union, overload
+from typing import Any, Literal, overload
 
 import casadi as ca
 import numpy as np
@@ -16,7 +16,7 @@ logger = logging.getLogger("rtctools")
 
 
 # Typical type for a bound on a variable
-BT = Union[float, np.ndarray, Timeseries]
+BT = float | np.ndarray | Timeseries
 
 
 class LookupTable:
@@ -25,7 +25,7 @@ class LookupTable:
     """
 
     @property
-    def inputs(self) -> List[ca.MX]:
+    def inputs(self) -> list[ca.MX]:
         """
         List of lookup table input variables.
         """
@@ -188,7 +188,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         if success:
             logger.log(
                 log_level,
-                "Solver succeeded with status {} ({}).".format(return_status, wall_clock_time),
+                f"Solver succeeded with status {return_status} ({wall_clock_time}).",
             )
         else:
             try:
@@ -203,12 +203,12 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
                         log_level = logging.INFO
                 logger.log(
                     log_level,
-                    "Solver failed with status {} ({}).".format(return_status, wall_clock_time),
+                    f"Solver failed with status {return_status} ({wall_clock_time}).",
                 )
             except (AttributeError, ValueError):
                 logger.log(
                     log_level,
-                    "Solver failed with status {} ({}).".format(return_status, wall_clock_time),
+                    f"Solver failed with status {return_status} ({wall_clock_time}).",
                 )
 
         # Do any postprocessing
@@ -246,8 +246,8 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
     @abstractmethod
     def transcribe(
         self,
-    ) -> Tuple[
-        np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, Dict[str, ca.MX]
+    ) -> tuple[
+        np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict[str, ca.MX]
     ]:
         """
         Transcribe the continuous optimization problem to a discretized, solver-ready
@@ -255,7 +255,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         pass
 
-    def solver_options(self) -> Dict[str, Union[str, int, float, bool, str]]:
+    def solver_options(self) -> dict[str, str | int | float | bool | str]:
         """
         Returns a dictionary of CasADi optimization problem solver options.
 
@@ -286,8 +286,8 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return options
 
     def solver_success(
-        self, solver_stats: Dict[str, Union[str, bool]], log_solver_failure_as_error: bool
-    ) -> Tuple[bool, int]:
+        self, solver_stats: dict[str, str | bool], log_solver_failure_as_error: bool
+    ) -> tuple[bool, int]:
         """
         Translates the returned solver statistics into a boolean and log level
         to indicate whether the solve was succesful, and how to log it.
@@ -355,7 +355,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def extract_results(self, ensemble_member: int = 0) -> Dict[str, np.ndarray]:
+    def extract_results(self, ensemble_member: int = 0) -> dict[str, np.ndarray]:
         """
         Extracts state and control input time series from optimizer results.
 
@@ -378,21 +378,21 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return self.__solver_output
 
     @property
-    def solver_stats(self) -> Dict[str, Any]:
+    def solver_stats(self) -> dict[str, Any]:
         """
         The stats from the last NLP solver run.
         """
         return self.__solver_stats
 
     @property
-    def lagrange_multipliers(self) -> Tuple[Any, Any]:
+    def lagrange_multipliers(self) -> tuple[Any, Any]:
         """
         The lagrange multipliers at the solution.
         """
         return self.__lam_g, self.__lam_x
 
     @property
-    def transcribed_problem(self) -> Dict[str, Any]:
+    def transcribed_problem(self) -> dict[str, Any]:
         """
         The transcribed problem.
         """
@@ -412,14 +412,14 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         pass
 
     @abstractproperty
-    def dae_variables(self) -> Dict[str, List[ca.MX]]:
+    def dae_variables(self) -> dict[str, list[ca.MX]]:
         """
         Dictionary of symbolic variables for the DAE residual.
         """
         pass
 
     @property
-    def path_variables(self) -> List[ca.MX]:
+    def path_variables(self) -> list[ca.MX]:
         """
         List of additional, time-dependent optimization variables, not covered by the DAE model.
         """
@@ -437,20 +437,20 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         raise NotImplementedError
 
     @property
-    def extra_variables(self) -> List[ca.MX]:
+    def extra_variables(self) -> list[ca.MX]:
         """
         List of additional, time-independent optimization variables, not covered by the DAE model.
         """
         return []
 
     @property
-    def output_variables(self) -> List[ca.MX]:
+    def output_variables(self) -> list[ca.MX]:
         """
         List of variables that the user requests to be included in the output files.
         """
         return []
 
-    def delayed_feedback(self) -> List[Tuple[str, str, float]]:
+    def delayed_feedback(self) -> list[tuple[str, str, float]]:
         """
         Returns the delayed feedback mappings.  These are given as a list of triples
         :math:`(x, y, \\tau)`, to indicate that :math:`y = x(t - \\tau)`.
@@ -486,7 +486,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         return 1.0
 
-    def parameters(self, ensemble_member: int) -> AliasDict[str, Union[bool, int, float, ca.MX]]:
+    def parameters(self, ensemble_member: int) -> AliasDict[str, bool | int | float | ca.MX]:
         """
         Returns a dictionary of parameters.
 
@@ -496,7 +496,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         return AliasDict(self.alias_relation)
 
-    def string_parameters(self, ensemble_member: int) -> Dict[str, str]:
+    def string_parameters(self, ensemble_member: int) -> dict[str, str]:
         """
         Returns a dictionary of string parameters.
 
@@ -527,7 +527,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return AliasDict(self.alias_relation)
 
     @staticmethod
-    def merge_bounds(a: Tuple[BT, BT], b: Tuple[BT, BT]) -> Tuple[BT, BT]:
+    def merge_bounds(a: tuple[BT, BT], b: tuple[BT, BT]) -> tuple[BT, BT]:
         """
         Returns a pair of bounds which is the intersection of the two pairs of
         bounds given as input.
@@ -572,9 +572,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
             elif isinstance(v1, np.ndarray) and isinstance(v2, Timeseries):
                 if v2.values.ndim != 2 or len(v1) != v2.values.shape[1]:
                     raise Exception(
-                        "Mismatching vector size when upcasting to Timeseries, {} vs. {}.".format(
-                            v1, v2
-                        )
+                        f"Mismatching vector size when upcasting to Timeseries, {v1} vs. {v2}."
                     )
                 all_bounds[i] = Timeseries(v2.times, np.broadcast_to(v1, v2.values.shape))
             elif isinstance(v1, (int, float)) and isinstance(v2, np.ndarray):
@@ -621,7 +619,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return m, M
 
     @ensemble_bounds_check
-    def bounds(self, ensemble_member: Optional[int] = None) -> AliasDict[str, Tuple[BT, BT]]:
+    def bounds(self, ensemble_member: int | None = None) -> AliasDict[str, tuple[BT, BT]]:
         """
         Returns variable bounds as a dictionary mapping variable names to a pair of bounds.
         A bound may be a constant, or a time series.
@@ -668,7 +666,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         return False
 
-    def variable_nominal(self, variable: str) -> Union[float, np.ndarray]:
+    def variable_nominal(self, variable: str) -> float | np.ndarray:
         """
         Returns the nominal value of the variable.  Variables are scaled by replacing them with
         their nominal value multiplied by the new variable.
@@ -697,7 +695,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         return ca.MX(0)
 
-    def seed(self, ensemble_member: int) -> AliasDict[str, Union[float, Timeseries]]:
+    def seed(self, ensemble_member: int) -> AliasDict[str, float | Timeseries]:
         """
         Seeding data.  The optimization algorithm is seeded with the data returned by this method.
 
@@ -752,7 +750,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     def constraints(
         self, ensemble_member: int
-    ) -> List[Tuple[ca.MX, Union[float, np.ndarray], Union[float, np.ndarray]]]:
+    ) -> list[tuple[ca.MX, float | np.ndarray, float | np.ndarray]]:
         """
         Returns a list of constraints for the given ensemble member.
 
@@ -782,7 +780,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     def path_constraints(
         self, ensemble_member: int
-    ) -> List[Tuple[ca.MX, Union[float, np.ndarray], Union[float, np.ndarray]]]:
+    ) -> list[tuple[ca.MX, float | np.ndarray, float | np.ndarray]]:
         """
         Returns a list of path constraints.
 
@@ -828,13 +826,13 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     def interpolate(
         self,
-        t: Union[float, np.ndarray],
+        t: float | np.ndarray,
         ts: np.ndarray,
         fs: np.ndarray,
         f_left: float = np.nan,
         f_right: float = np.nan,
         mode: int = INTERPOLATION_LINEAR,
-    ) -> Union[float, np.ndarray]:
+    ) -> float | np.ndarray:
         """
         Linear interpolation over time.
 
@@ -893,11 +891,11 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
         if f_left is None:
             if (min(t) if hasattr(t, "__iter__") else t) < ts[0]:
-                raise Exception("Interpolation: Point {} left of range".format(t))
+                raise Exception(f"Interpolation: Point {t} left of range")
 
         if f_right is None:
             if (max(t) if hasattr(t, "__iter__") else t) > ts[-1]:
-                raise Exception("Interpolation: Point {} right of range".format(t))
+                raise Exception(f"Interpolation: Point {t} right of range")
 
         if mode == self.INTERPOLATION_LINEAR:
             # No need to handle f_left / f_right; NumPy already does this for us
@@ -922,7 +920,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return v
 
     @abstractproperty
-    def controls(self) -> List[str]:
+    def controls(self) -> list[str]:
         """
         List of names of the control variables (excluding aliases).
         """
@@ -931,7 +929,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
     @abstractmethod
     def discretize_controls(
         self, resolved_bounds: AliasDict
-    ) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[int, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """
         Performs the discretization of the control inputs, filling lower and upper
         bound vectors for the resulting optimization variables, as well as an initial guess.
@@ -946,7 +944,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         pass
 
-    def dynamic_parameters(self) -> List[ca.MX]:
+    def dynamic_parameters(self) -> list[ca.MX]:
         """
         Returns a list of parameter symbols that may vary from run to run.  The values
         of these parameters are not cached.
@@ -956,7 +954,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         return []
 
     @abstractmethod
-    def extract_controls(self, ensemble_member: int = 0) -> Dict[str, np.ndarray]:
+    def extract_controls(self, ensemble_member: int = 0) -> dict[str, np.ndarray]:
         """
         Extracts state time series from optimizer results.
 
@@ -968,7 +966,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         """
         pass
 
-    def control_vector(self, variable: str, ensemble_member: int = 0) -> Union[ca.MX, List[ca.MX]]:
+    def control_vector(self, variable: str, ensemble_member: int = 0) -> ca.MX | list[ca.MX]:
         """
         Return the optimization variables for the entire time horizon of the given state.
 
@@ -1012,14 +1010,14 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         pass
 
     @abstractproperty
-    def differentiated_states(self) -> List[str]:
+    def differentiated_states(self) -> list[str]:
         """
         List of names of the differentiated state variables (excluding aliases).
         """
         pass
 
     @abstractproperty
-    def algebraic_states(self) -> List[str]:
+    def algebraic_states(self) -> list[str]:
         """
         List of names of the algebraic state variables (excluding aliases).
         """
@@ -1028,7 +1026,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
     @abstractmethod
     def discretize_states(
         self, resolved_bounds: AliasDict
-    ) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[int, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """
         Perform the discretization of the states.
 
@@ -1046,7 +1044,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def extract_states(self, ensemble_member: int = 0) -> Dict[str, np.ndarray]:
+    def extract_states(self, ensemble_member: int = 0) -> dict[str, np.ndarray]:
         """
         Extracts state time series from optimizer results.
 
@@ -1059,7 +1057,7 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def state_vector(self, variable: str, ensemble_member: int = 0) -> Union[ca.MX, List[ca.MX]]:
+    def state_vector(self, variable: str, ensemble_member: int = 0) -> ca.MX | list[ca.MX]:
         """
         Return the optimization variables for the entire time horizon of the given state.
 
@@ -1162,7 +1160,11 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
 
     @abstractmethod
     def integral(
-        self, variable: str, t0: float = None, tf: float = None, ensemble_member: int = 0
+        self,
+        variable: str,
+        t0: float | None = None,
+        tf: float | None = None,
+        ensemble_member: int = 0,
     ) -> ca.MX:
         """
         Returns an expression for the integral over the interval [t0, tf].
@@ -1329,12 +1331,10 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         for vi, g_inds in var_index_assignment.items():
             if len(g_inds) > 1:
                 logger.info(
-                    "Variable '{}' has duplicate constraints setting its value:".format(
-                        var_names[vi]
-                    )
+                    f"Variable '{var_names[vi]}' has duplicate constraints setting its value:"
                 )
                 for g_i in g_inds:
-                    logger.info("row {}: {} = {}".format(g_i, named_g[g_i], lbg[g_i]))
+                    logger.info(f"row {g_i}: {named_g[g_i]} = {lbg[g_i]}")
 
         # Find variables for which the bounds are equal, but also an equality
         # constraint is set. This would result in a constraint `1 = 1` with
@@ -1344,8 +1344,8 @@ class OptimizationProblem(DataStoreAccessor, metaclass=ABCMeta):
         for vi in x_inds:
             if vi in var_index_assignment:
                 logger.info(
-                    "Variable '{}' has equal bounds (value = {}), "
-                    "but also the following equality constraints:".format(var_names[vi], lbx[vi])
+                    f"Variable '{var_names[vi]}' has equal bounds (value = {lbx[vi]}), "
+                    "but also the following equality constraints:"
                 )
                 for g_i in var_index_assignment[vi]:
-                    logger.info("row {}: {} = {}".format(g_i, named_g[g_i], lbg[g_i]))
+                    logger.info(f"row {g_i}: {named_g[g_i]} = {lbg[g_i]}")

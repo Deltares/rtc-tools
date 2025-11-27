@@ -3,7 +3,7 @@ import logging
 import sys
 from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
-from typing import Callable, Dict, List, Union
+from collections.abc import Callable
 
 import casadi as ca
 import numpy as np
@@ -332,14 +332,15 @@ class Goal(metaclass=ABCMeta):
         # This must be deterministic.  See RTCTOOLS-485.
         if not hasattr(Goal, "_function_key_counter"):
             Goal._function_key_counter = 0
-        self.function_key = "{}_{}".format(self.__class__.__name__, Goal._function_key_counter)
+        self.function_key = f"{self.__class__.__name__}_{Goal._function_key_counter}"
         Goal._function_key_counter += 1
 
         return self.function_key
 
     def __repr__(self) -> str:
-        return "{}(priority={}, target_min={}, target_max={}, function_range={})".format(
-            self.__class__, self.priority, self.target_min, self.target_max, self.function_range
+        return (
+            f"{self.__class__}(priority={self.priority}, target_min={self.target_min}, "
+            f"target_max={self.target_max}, function_range={self.function_range})"
         )
 
 
@@ -420,14 +421,12 @@ class StateGoal(Goal):
                     bounds = optimization_problem.bounds()
                 self.function_range = bounds[self.state]
             except KeyError:
-                raise Exception(
-                    "State {} has no bounds or does not exist in the model.".format(self.state)
-                )
+                raise Exception(f"State {self.state} has no bounds or does not exist in the model.")
 
             if self.function_range[0] is None:
-                raise Exception("Please provide a lower bound for state {}.".format(self.state))
+                raise Exception(f"Please provide a lower bound for state {self.state}.")
             if self.function_range[1] is None:
-                raise Exception("Please provide an upper bound for state {}.".format(self.state))
+                raise Exception(f"Please provide an upper bound for state {self.state}.")
 
         # Extract state nominal from model
         self.function_nominal = optimization_problem.variable_nominal(self.state)
@@ -440,13 +439,10 @@ class StateGoal(Goal):
         return optimization_problem.state(self.state)
 
     def __repr__(self):
-        return "{}(priority={}, state={}, target_min={}, target_max={}, function_range={})".format(
-            self.__class__,
-            self.priority,
-            self.state,
-            self.target_min,
-            self.target_max,
-            self.function_range,
+        return (
+            f"{self.__class__}(priority={self.priority}, state={self.state}, "
+            f"target_min={self.target_min}, target_max={self.target_max}, "
+            f"function_range={self.function_range})"
         )
 
 
@@ -455,8 +451,8 @@ class _GoalConstraint:
         self,
         goal: Goal,
         function: Callable[[OptimizationProblem], ca.MX],
-        m: Union[float, np.ndarray, Timeseries],
-        M: Union[float, np.ndarray, Timeseries],
+        m: float | np.ndarray | Timeseries,
+        M: float | np.ndarray | Timeseries,
         optimized: bool,
     ):
         assert isinstance(m, (float, np.ndarray, Timeseries))
@@ -551,10 +547,10 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
             return ca.MX(0)
 
     @abstractmethod
-    def goal_programming_options(self) -> Dict[str, Union[float, bool]]:
+    def goal_programming_options(self) -> dict[str, float | bool]:
         raise NotImplementedError()
 
-    def goals(self) -> List[Goal]:
+    def goals(self) -> list[Goal]:
         """
         User problem returns list of :class:`Goal` objects.
 
@@ -562,7 +558,7 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
         """
         return []
 
-    def path_goals(self) -> List[Goal]:
+    def path_goals(self) -> list[Goal]:
         """
         User problem returns list of path :class:`Goal` objects.
 
@@ -646,7 +642,7 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
             assert isinstance(M, (float, int, np.ndarray))
 
             if np.any(goal.function_nominal <= 0):
-                raise Exception("Nonpositive nominal value specified for goal {}".format(goal))
+                raise Exception(f"Nonpositive nominal value specified for goal {goal}")
 
             if goal.critical and not goal.has_target_bounds:
                 raise Exception("Minimization goals cannot be critical")
@@ -657,52 +653,46 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
                 pass
             elif goal.has_target_bounds:
                 if not np.all(np.isfinite(m)) or not np.all(np.isfinite(M)):
-                    raise Exception("No function range specified for goal {}".format(goal))
+                    raise Exception(f"No function range specified for goal {goal}")
 
                 if np.any(m >= M):
-                    raise Exception("Invalid function range for goal {}".format(goal))
+                    raise Exception(f"Invalid function range for goal {goal}")
 
                 if goal.weight <= 0:
-                    raise Exception("Goal weight should be positive for goal {}".format(goal))
+                    raise Exception(f"Goal weight should be positive for goal {goal}")
             else:
                 if goal.function_range != (np.nan, np.nan):
-                    raise Exception(
-                        "Specifying function range not allowed for goal {}".format(goal)
-                    )
+                    raise Exception(f"Specifying function range not allowed for goal {goal}")
 
             if not is_path_goal:
                 if isinstance(goal.target_min, Timeseries):
-                    raise Exception("Target min cannot be a Timeseries for goal {}".format(goal))
+                    raise Exception(f"Target min cannot be a Timeseries for goal {goal}")
                 if isinstance(goal.target_max, Timeseries):
-                    raise Exception("Target max cannot be a Timeseries for goal {}".format(goal))
+                    raise Exception(f"Target max cannot be a Timeseries for goal {goal}")
 
             try:
                 int(goal.priority)
             except ValueError:
-                raise Exception("Priority of not int or castable to int for goal {}".format(goal))
+                raise Exception(f"Priority of not int or castable to int for goal {goal}")
 
             if options["keep_soft_constraints"]:
                 if goal.relaxation != 0.0:
                     raise Exception(
-                        "Relaxation not allowed with `keep_soft_constraints` for goal {}".format(
-                            goal
-                        )
+                        f"Relaxation not allowed with `keep_soft_constraints` for goal {goal}"
                     )
                 if goal.violation_timeseries_id is not None:
                     raise Exception(
                         "Violation timeseries id not allowed with "
-                        "`keep_soft_constraints` for goal {}".format(goal)
+                        f"`keep_soft_constraints` for goal {goal}"
                     )
             else:
                 if goal.size > 1:
                     raise Exception(
-                        "Option `keep_soft_constraints` needs to be set for vector goal {}".format(
-                            goal
-                        )
+                        f"Option `keep_soft_constraints` needs to be set for vector goal {goal}"
                     )
 
             if goal.critical and goal.size > 1:
-                raise Exception("Vector goal cannot be critical for goal {}".format(goal))
+                raise Exception(f"Vector goal cannot be critical for goal {goal}")
 
         if is_path_goal:
             target_shape = len(self.times())
@@ -733,8 +723,8 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
                         if goal.has_target_min:
                             if np.any(goal_m[indices] < other_m[indices]):
                                 raise Exception(
-                                    "Target minimum of goal {} must be greater or equal than "
-                                    "target minimum of goal {}.".format(goal, prev)
+                                    f"Target minimum of goal {goal} must be greater or equal than "
+                                    f"target minimum of goal {prev}."
                                 )
 
                         indices = np.where(
@@ -743,8 +733,8 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
                         if goal.has_target_max:
                             if np.any(goal_M[indices] > other_M[indices]):
                                 raise Exception(
-                                    "Target maximum of goal {} must be less or equal than "
-                                    "target maximum of goal {}".format(goal, prev)
+                                    f"Target maximum of goal {goal} must be less or equal than "
+                                    f"target maximum of goal {prev}"
                                 )
 
         for goal in goals:
@@ -758,37 +748,35 @@ class _GoalProgrammingMixinBase(OptimizationProblem, metaclass=ABCMeta):
                 )
 
                 if np.any(goal_m[indices] > goal_M[indices]):
-                    raise Exception(
-                        "Target minimum exceeds target maximum for goal {}".format(goal)
-                    )
+                    raise Exception(f"Target minimum exceeds target maximum for goal {goal}")
 
             if goal.has_target_min and not goal.critical:
                 indices = np.where(np.isfinite(goal_m))
                 if np.any(goal_m[indices] <= goal_lb[indices]):
                     raise Exception(
                         "Target minimum should be greater than the lower bound "
-                        "of the function range for goal {}".format(goal)
+                        f"of the function range for goal {goal}"
                     )
                 if np.any(goal_m[indices] > goal_ub[indices]):
                     raise Exception(
                         "Target minimum should not be greater than the upper bound "
-                        "of the function range for goal {}".format(goal)
+                        f"of the function range for goal {goal}"
                     )
             if goal.has_target_max and not goal.critical:
                 indices = np.where(np.isfinite(goal_M))
                 if np.any(goal_M[indices] >= goal_ub[indices]):
                     raise Exception(
                         "Target maximum should be smaller than the upper bound "
-                        "of the function range for goal {}".format(goal)
+                        f"of the function range for goal {goal}"
                     )
                 if np.any(goal_M[indices] < goal_lb[indices]):
                     raise Exception(
                         "Target maximum should not be smaller than the lower bound "
-                        "of the function range for goal {}".format(goal)
+                        f"of the function range for goal {goal}"
                     )
 
             if goal.relaxation < 0.0:
-                raise Exception("Relaxation of goal {} should be a nonnegative value".format(goal))
+                raise Exception(f"Relaxation of goal {goal} should be a nonnegative value")
 
     def _gp_goal_constraints(self, goals, sym_index, options, is_path_goal):
         """

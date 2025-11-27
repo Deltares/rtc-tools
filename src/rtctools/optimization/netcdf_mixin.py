@@ -1,6 +1,5 @@
 import logging
 from collections import OrderedDict
-from typing import Tuple
 
 import rtctools.data.netcdf as netcdf
 from rtctools.optimization.io_mixin import IOMixin
@@ -44,9 +43,9 @@ class NetCDFMixin(IOMixin):
 
         :return: The variable name used in RTC-Tools
         """
-        return "{}__{}".format(station_id, parameter)
+        return f"{station_id}__{parameter}"
 
-    def netcdf_id_from_variable(self, variable_name: str) -> Tuple[str, str]:
+    def netcdf_id_from_variable(self, variable_name: str) -> tuple[str, str]:
         """
         Maps the variable name in RTC-Tools to a station_id and parameter name
         for writing to a NetCDF file.
@@ -112,8 +111,8 @@ class NetCDFMixin(IOMixin):
                     self.io.set_timeseries(name, self.__timeseries_times, values, 0)
 
                 logger.debug(
-                    'Read timeseries data for station id "{}" and parameter "{}", '
-                    'stored under variable name "{}"'.format(station_id, parameter, name)
+                    f'Read timeseries data for station id "{station_id}" and '
+                    f'parameter "{parameter}", stored under variable name "{name}"'
                 )
 
         logger.debug("NetCDFMixin: Read timeseries")
@@ -165,8 +164,8 @@ class NetCDFMixin(IOMixin):
                             values = ts.values
                     except KeyError:
                         logger.error(
-                            "NetCDFMixin: Output requested for non-existent variable {}. "
-                            "Will not be in output file.".format(var_name)
+                            f"NetCDFMixin: Output requested for non-existent variable {var_name}. "
+                            "Will not be in output file."
                         )
                         continue
 

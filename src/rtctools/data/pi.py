@@ -1,6 +1,5 @@
 import bisect
 import datetime
-import io
 import logging
 import os
 import xml.etree.ElementTree as ET
@@ -83,7 +82,7 @@ class DiagHandler(logging.Handler):
     """
 
     def __init__(self, folder, basename="diag", level=logging.NOTSET):
-        super(DiagHandler, self).__init__(level=level)
+        super().__init__(level=level)
 
         self.__path_xml = os.path.join(folder, basename + ".xml")
 
@@ -91,7 +90,7 @@ class DiagHandler(logging.Handler):
             self.__tree = DefusedElementTree.parse(self.__path_xml)
             self.__xml_root = self.__tree.getroot()
         except Exception:
-            self.__xml_root = ET.Element("{%s}Diag" % (ns["pi"],))
+            self.__xml_root = ET.Element("{%s}Diag" % (ns["pi"],))  # noqa: UP031
             self.__tree = ET.ElementTree(element=self.__xml_root)
 
         self.__map_level = {50: 0, 40: 1, 30: 2, 20: 3, 10: 4, 0: 4}
@@ -100,7 +99,7 @@ class DiagHandler(logging.Handler):
         self.format(record)
 
         self.acquire()
-        el = ET.SubElement(self.__xml_root, "{%s}line" % (ns["pi"],))
+        el = ET.SubElement(self.__xml_root, "{%s}line" % (ns["pi"],))  # noqa: UP031
         # Work around cElementTree issue 21403
         el.set("description", record.message)
         el.set("eventCode", record.module + "." + record.funcName)
@@ -150,7 +149,7 @@ class ParameterConfig:
 
         :returns: The value of the specified parameter.
         """
-        groups = self.__xml_root.findall("pi:group[@id='{}']".format(group_id), ns)
+        groups = self.__xml_root.findall(f"pi:group[@id='{group_id}']", ns)
         for group in groups:
             el = group.find("pi:locationId", ns)
             if location_id is not None and el is not None:
@@ -162,12 +161,12 @@ class ParameterConfig:
                 if model != el.text:
                     continue
 
-            el = group.find("pi:parameter[@id='{}']".format(parameter_id), ns)
+            el = group.find(f"pi:parameter[@id='{parameter_id}']", ns)
             if el is None:
                 raise KeyError
             return self.__parse_parameter(el)
 
-        raise KeyError("No such parameter ({}, {})".format(group_id, parameter_id))
+        raise KeyError(f"No such parameter ({group_id}, {parameter_id})")
 
     def set(self, group_id, parameter_id, new_value, location_id=None, model=None):
         """
@@ -179,7 +178,7 @@ class ParameterConfig:
         :param location_id:  The optional  ID of the parameter location to look in.
         :param model:        The optional ID of the parameter model to look in.
         """
-        groups = self.__xml_root.findall("pi:group[@id='{}']".format(group_id), ns)
+        groups = self.__xml_root.findall(f"pi:group[@id='{group_id}']", ns)
         for group in groups:
             el = group.find("pi:locationId", ns)
             if location_id is not None and el is not None:
@@ -191,7 +190,7 @@ class ParameterConfig:
                 if model != el.text:
                     continue
 
-            el = group.find("pi:parameter[@id='{}']".format(parameter_id), ns)
+            el = group.find(f"pi:parameter[@id='{parameter_id}']", ns)
             if el is None:
                 raise KeyError
             for child in el:
@@ -203,7 +202,7 @@ class ParameterConfig:
                         child.text = "false"
                         return
                     else:
-                        raise Exception("Unsupported value for tag {}".format(child.tag))
+                        raise Exception(f"Unsupported value for tag {child.tag}")
                 elif child.tag.endswith("intValue"):
                     child.text = str(int(new_value))
                     return
@@ -211,9 +210,9 @@ class ParameterConfig:
                     child.text = str(new_value)
                     return
                 else:
-                    raise Exception("Unsupported tag {}".format(child.tag))
+                    raise Exception(f"Unsupported tag {child.tag}")
 
-        raise KeyError("No such parameter ({}, {})".format(group_id, parameter_id))
+        raise KeyError(f"No such parameter ({group_id}, {parameter_id})")
 
     def write(self, folder=None, basename=None):
         """
@@ -234,7 +233,7 @@ class ParameterConfig:
             if folder is not None:
                 if not os.path.exists(folder):
                     # Make sure folder exists
-                    raise FileNotFoundError("Folder not found: {}".format(folder))
+                    raise FileNotFoundError(f"Folder not found: {folder}")
             else:
                 # Reuse folder of original file
                 folder = os.path.dirname(self.path)
@@ -313,7 +312,7 @@ class ParameterConfig:
             elif child.tag.endswith("description"):
                 pass
             else:
-                raise Exception("Unsupported tag {}".format(child.tag))
+                raise Exception(f"Unsupported tag {child.tag}")
 
     def __iter__(self):
         # Iterate over all parameter key, value pairs.
@@ -391,8 +390,8 @@ class Timeseries:
             f = None
             if self.__binary:
                 try:
-                    f = io.open(self.binary_path, "rb")
-                except IOError:
+                    f = open(self.binary_path, "rb")
+                except OSError:
                     # Support placeholder XML files.
                     pass
 
@@ -421,8 +420,8 @@ class Timeseries:
                     dt = self.__parse_time_step(header.find("pi:timeStep", ns))
                 except ValueError:
                     raise Exception(
-                        "PI: Multiplier of time step of variable {} "
-                        "must be a positive integer per the PI schema.".format(variable)
+                        f"PI: Multiplier of time step of variable {variable} "
+                        "must be a positive integer per the PI schema."
                     )
                 if self.__dt is None:
                     self.__dt = dt
@@ -693,7 +692,7 @@ class Timeseries:
 
     def __reset_xml_tree(self):
         # Make a new empty XML tree
-        self.__xml_root = ET.Element("{%s}" % (ns["pi"],) + "TimeSeries")
+        self.__xml_root = ET.Element("{%s}" % (ns["pi"],) + "TimeSeries")  # noqa: UP031
         self.__tree = ET.ElementTree(self.__xml_root)
 
         self.__xml_root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
@@ -784,10 +783,10 @@ class Timeseries:
                 i += 1
 
         # Fill the basics of the series
-        series = ET.Element("{%s}" % (ns["pi"],) + "series")
-        header = ET.SubElement(series, "{%s}" % (ns["pi"],) + "header")
+        series = ET.Element("{%s}" % (ns["pi"],) + "series")  # noqa: UP031
+        header = ET.SubElement(series, "{%s}" % (ns["pi"],) + "header")  # noqa: UP031
         for i in range(len(header_elements)):
-            el = ET.SubElement(header, "{%s}" % (ns["pi"],) + header_elements[i])
+            el = ET.SubElement(header, "{%s}" % (ns["pi"],) + header_elements[i])  # noqa: UP031
             el.text = header_element_texts[i]
 
         el = header.find("pi:timeStep", ns)
@@ -828,7 +827,7 @@ class Timeseries:
         binary_path = self.output_binary_path(output_folder, output_filename)
 
         if self.__binary:
-            f = io.open(binary_path, "wb")
+            f = open(binary_path, "wb")
 
         if self.make_new_file:
             # Force reinitialization in case write() is called more than once
@@ -850,7 +849,7 @@ class Timeseries:
             if self.timezone is not None:
                 timezone = self.__xml_root.find("pi:timeZone", ns)
                 if timezone is None:
-                    timezone = ET.Element("{%s}" % (ns["pi"],) + "timeZone")
+                    timezone = ET.Element("{%s}" % (ns["pi"],) + "timeZone")  # noqa: UP031
                     # timeZone has to be the first element according to the schema
                     self.__xml_root.insert(0, timezone)
                 timezone.text = str(self.timezone)
