@@ -20,7 +20,7 @@
 import os
 import re
 
-from rtctools._version import get_versions
+from rtctools.version import __version__
 
 # -- General configuration ------------------------------------------------
 
@@ -65,8 +65,7 @@ author = "Deltares"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-release = get_versions()["version"]
-del get_versions
+release = __version__
 
 # The short X.Y version.
 version = ".".join(release.split(".")[:2])
