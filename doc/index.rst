@@ -73,7 +73,6 @@ lexicographic goal programming methods, as well as optimization under
 uncertainty using ensemble forecasts.
 
 
-
 Contents
 ========
 
@@ -84,6 +83,7 @@ Contents
    optimization
    simulation
    examples
+   advanced
    related-projects
 
 
