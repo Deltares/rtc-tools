@@ -84,6 +84,7 @@ Contents
    optimization
    simulation
    examples
+   related-projects
 
 
 Indices and tables
