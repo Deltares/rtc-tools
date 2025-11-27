@@ -1,7 +1,6 @@
 exclude: |
   (?x)^(
     src/rtctools/_version\.py|
-    src/rtctools/data/interpolation/__init__\.py|
     versioneer.py
   )$
 repos:
