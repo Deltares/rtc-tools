@@ -20,10 +20,10 @@ Visit the `RTC-Tools website <https://oss.deltares.nl/web/rtc-tools/home>`_
 for a general product description and information on available services.
 
 This first chapter covers getting the software running on your computer.  The
-subsequent two chapters describe the RTC-Tools Python API.  The fourth and final
-chapter discusses several illustrative examples, including the use of goal
-programming for multi-objective optimization, as well as the use of forecast
-ensembles.
+subsequent two chapters describe the RTC-Tools Python API.  The fourth chapter
+discusses several illustrative examples, including the use of goal programming
+for multi-objective optimization, as well as the use of forecast ensembles. The
+final chapter covers advanced topics and configurations.
 
 
 Contents
@@ -36,6 +36,7 @@ Contents
    optimization
    simulation
    examples
+   advanced
 
 
 Indices and tables
