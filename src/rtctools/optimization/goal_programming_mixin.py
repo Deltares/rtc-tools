@@ -107,6 +107,8 @@ class GoalProgrammingMixin(_GoalProgrammingMixinBase):
 
     def parameters(self, ensemble_member):
         parameters = super().parameters(ensemble_member)
+        for parameter, value in self.io.parameters(ensemble_member).items():
+            parameters[parameter] = value
 
         if ensemble_member not in self.__original_parameter_keys:
             self.__original_parameter_keys[ensemble_member] = set(parameters.keys())

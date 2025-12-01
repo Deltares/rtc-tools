@@ -309,7 +309,7 @@ class DataStore:
         Returns an AliasDict of parameters to its values for the specified ensemble member.
         """
         if ensemble_member >= self.__ensemble_size:
-            raise KeyError("ensemble_member {} does not exist".format(ensemble_member))
+            self.__update_ensemble_size(ensemble_member + 1)
         return self.__parameters[ensemble_member]
 
     @staticmethod
