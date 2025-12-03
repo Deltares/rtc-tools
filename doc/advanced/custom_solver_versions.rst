@@ -17,12 +17,36 @@ This guide explains how to use custom solver library versions with RTC-Tools.
 How It Works
 ------------
 
-RTC-Tools uses Python's ``ctypes`` module to **preload** custom solver libraries **before** CasADi loads its bundled versions. The preloading happens automatically at package initialization when the ``RTCTOOLS_PRELOAD_SOLVER_LIBS`` environment variable is set, or explicitly via function call.
+There are multiple ways to preload custom solver libraries before CasADi loads its bundled versions:
 
-Method 1: Environment Variable (Recommended for Deployment)
-------------------------------------------------------------
+1. **Native OS preloading** (Linux/macOS) - Uses standard ``LD_PRELOAD`` or ``DYLD_INSERT_LIBRARIES``
+2. **RTC-Tools Python preloading** (Cross-platform) - Uses Python's ``ctypes`` module with the ``RTCTOOLS_PRELOAD_SOLVER_LIBS`` environment variable
+3. **Direct ctypes** (Windows fallback) - Manual ``ctypes.CDLL()`` call in your script
 
-The simplest approach is to set the ``RTCTOOLS_PRELOAD_SOLVER_LIBS`` environment variable before running your application.
+Method 1: Native OS Preloading (Linux/macOS Only)
+--------------------------------------------------
+
+On Linux and macOS, you can use the operating system's native library preloading mechanisms. This is often the simplest approach for these platforms.
+
+**Linux:**
+
+.. code-block:: bash
+
+   LD_PRELOAD=/opt/highs-1.12/lib/libhighs.so.1 python my_optimization_script.py
+
+**macOS:**
+
+.. code-block:: bash
+
+   DYLD_INSERT_LIBRARIES=/opt/highs-1.12/lib/libhighs.dylib python my_optimization_script.py
+
+.. note::
+   This method only works on Linux and macOS. Windows does not have an equivalent mechanism.
+
+Method 2: RTC-Tools Environment Variable (Cross-Platform)
+----------------------------------------------------------
+
+For a cross-platform solution, use the ``RTCTOOLS_PRELOAD_SOLVER_LIBS`` environment variable. This works on Linux, macOS, and Windows.
 
 **Linux/macOS:**
 
@@ -70,7 +94,25 @@ directory as ``libhighs.dll`` so they are discovered alongside the solver.
    WORKDIR /app
    CMD ["python", "run_optimization.py"]
 
-Method 2: Explicit Function Call (Recommended for Development)
+Method 3: Direct ctypes Call (Windows/Development)
+---------------------------------------------------
+
+For Windows without environment variables, or for development/testing, you can manually preload in your Python code:
+
+.. code-block:: python
+
+   import ctypes
+
+   # Windows example
+   ctypes.CDLL(r"C:\highs-1.12\bin\libhighs.dll")
+
+   # Now import RTC-Tools
+   import rtctools
+   from rtctools.optimization.collocated_integrated_optimization_problem import (
+       CollocatedIntegratedOptimizationProblem
+   )
+
+Method 4: Explicit Function Call (Recommended for Development)
 ---------------------------------------------------------------
 
 For more control, explicitly preload in your Python code before importing optimization modules:
@@ -134,12 +176,39 @@ CasADi loads before preloading runs (for example, after importing ``rtctools.opt
 
 Check logs for preload errors, confirm the import order, and inspect ``get_solver_library_info()`` for the active paths.
 
+**Segmentation fault or crash**
+
+This indicates ABI incompatibility between your custom solver and CasADi. Common causes:
+
+* **Compiler mismatch**: Custom solver built with a different compiler than CasADi (e.g., GCC vs Intel vs MSVC)
+* **C++ runtime mismatch**: Different C++ standard library versions or ABIs
+* **Bitness mismatch**: Mixing 32-bit and 64-bit libraries
+* **Missing dependencies**: Solver depends on libraries not available at runtime
+
+To diagnose:
+
+1. Check CasADi's compiler: ``python -c "import casadi; print(casadi.CasadiMeta.compiler())"``
+2. Verify your custom solver was built with the same compiler toolchain
+3. Check for missing dependencies: ``ldd`` (Linux), ``otool -L`` (macOS), or Dependencies tool (Windows)
+4. If the issue persists, fall back to CasADi's bundled version or build the solver from source with matching toolchain
+
 Compatibility Notes
 -------------------
 
-* **HiGHS**: Only solver validated with this guide; its C API has been stable since v1.7.0.
+.. warning::
+   **ABI Compatibility is Critical**: Custom solver libraries must match CasADi's build configuration (compiler, C++ runtime, bitness). Incompatible builds may cause:
+
+   * Segmentation faults (crashes)
+   * Silent data corruption
+   * Incorrect optimization results
+
+   Always test thoroughly before using custom solver versions in production. If you experience crashes, verify that your custom solver was built with the same compiler toolchain as CasADi's bundled solvers.
+
+Currently supported and tested solver: **HiGHS**
+
+* **HiGHS**: Validated with this guide; C API has been stable since v1.7.0. Known to work with versions 1.7.x through 1.12.x when built with compatible toolchains.
 * **IPOPT on Windows**: Preloading does not work with precompiled binaries - publicly available IPOPT binaries are compiled with Intel compilers while CasADi's Windows wheels use GCC/MinGW, causing ABI incompatibility. Julia's GCC-compiled IPOPT binaries also fail due to missing dependencies. Workaround: use preloading in a Linux environment (e.g., Docker, WSL2, native Linux) with conda-forge GCC-compiled IPOPT binaries.
-* Other CasADi solvers may work with the same approach, but they have not been officially tested. Validate thoroughly before relying on them in production.
+* **Other solvers** (BONMIN, CBC, etc.): May work with the same approach, but have not been officially tested. Validate thoroughly before relying on them in production.
 * Requires Python 3.7+ (``ctypes`` standard library) and CasADi 3.6.0 or newer for the preload hooks used here.
 
 Solver Coverage
